@@ -30,6 +30,7 @@ All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/
 | Body text on light bg | `--ink` |
 | Text on dark bg | `--cream` |
 | Primary accent / CTAs | `--gold` → hover `--gold-soft` |
+| Button label text | `--btn-color` (`rgba(20,38,28,0.67)` / `#14261C` @ 67%) — sidebar nav, `.btn`, `.btn-gold` |
 | Borders & dividers | `--line` |
 | Muted labels | `#6B6650` |
 | Active nav item bg | `#EAE3CE` (`--slot-bg`) |
@@ -40,6 +41,11 @@ All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/
 - **Display / headings:** `'Fraunces', serif`
 - **UI / body:** `'Work Sans', sans-serif`
 - **Font sizes & spacing:** rem only — `--text-*` and `--space-*` from `Styles/Shared/_tokens.css`; px only for borders, shadows, radius, fixed shell (see `.cursor/rules/css-typography-rem.mdc`)
+
+## Token sources
+
+- **Define colors once** in `Styles/Shared/_tokens.css` (`:root`)
+- **Tailwind utilities** (`text-pine`, `bg-gold`, …) read from `@theme` in `app.css`, which must reference `var(--…)` from `_tokens.css` — do not duplicate hex in `@theme`
 
 ## Do not
 

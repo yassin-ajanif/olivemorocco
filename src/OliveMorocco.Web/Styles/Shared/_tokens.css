@@ -6,6 +6,7 @@ html {
 :root {
   /* Core */
   --pine: #14261C;
+  --btn-color: rgba(20, 38, 28, 0.67); /* #14261C @ 67% — button label text site-wide */
   --pine-mid: #2C4229;
   --gold: #C7A24A;
   --gold-soft: #E4C878;

@@ -8,18 +8,20 @@
 @source "../Views/**/*.cshtml";
 @source "../wwwroot/js/**/*.js";
 
+/* Tailwind palette — mirrors _tokens.css (single source of truth for hex values) */
 @theme {
-  --color-pine: #14261c;
-  --color-pine-mid: #2c4229;
-  --color-gold: #c7a24a;
-  --color-gold-soft: #e4c878;
-  --color-cream: #f4efe1;
-  --color-ink: #1e1b12;
-  --color-line: #dcd3b8;
-  --color-muted: #6b6650;
-  --color-slot: #eae3ce;
-  --color-surface: #fffcf5;
-  --color-footer: #0f1c14;
+  --color-pine: var(--pine);
+  --color-pine-mid: var(--pine-mid);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-slot: var(--slot-bg);
+  --color-surface: var(--surface);
+  --color-footer: var(--footer-bg);
+  --color-btn: var(--btn-color);
 
   --font-display: "Fraunces", serif;
   --font-sans: "Work Sans", sans-serif;
@@ -51,7 +53,8 @@
   }
 
   .btn-gold {
-    @apply inline-flex items-center justify-center rounded-zaho bg-gold px-8 py-4 text-sm font-semibold tracking-wide text-pine shadow-[0_10px_30px_-12px_rgba(199,162,74,0.6)] transition duration-200 hover:-translate-y-0.5 hover:bg-gold-soft;
+    @apply inline-flex items-center justify-center rounded-zaho bg-gold px-8 py-4 text-sm font-semibold tracking-wide shadow-[0_10px_30px_-12px_rgba(199,162,74,0.6)] transition duration-200 hover:-translate-y-0.5 hover:bg-gold-soft;
+    color: var(--btn-color);
   }
 
   .btn-ghost {

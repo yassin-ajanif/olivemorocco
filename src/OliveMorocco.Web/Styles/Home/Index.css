@@ -90,7 +90,7 @@
 
 .nav-cta:hover {
   background: var(--gold);
-  color: var(--pine);
+  color: var(--btn-color);
 }
 
 .nav-actions {
