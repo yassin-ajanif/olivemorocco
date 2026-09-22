@@ -1,22 +1,4 @@
-﻿/* Views/Shared/_DashboardLayout.cshtml */
-:root{
-  --pine:#14261C;
-  --pine-mid:#2C4229;
-  --gold:#C7A24A;
-  --gold-soft:#E4C878;
-  --cream:#F4EFE1;
-  --ink:#1E1B12;
-  --line:#DCD3B8;
-  --muted:#6B6650;
-  --slot-bg:#EAE3CE;
-  --surface:#FFFCF5;
-  --sidebar-w:200px;
-  --topbar-h:56px;
-  --footer-h:52px;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--cream);color:var(--ink);font-family:'Work Sans',sans-serif;min-height:100vh;}
-a{color:inherit;text-decoration:none;}
+﻿/* Views/Shared/_DashboardLayout.cshtml — tokens in Shared/_tokens.css */
 
 /* Top bar */
 .dash-topbar{
@@ -29,10 +11,12 @@ a{color:inherit;text-decoration:none;}
 .dash-topbar-link{font-size:12px;letter-spacing:1px;color:var(--gold-soft);border:1px solid rgba(199,162,74,.45);padding:7px 16px;border-radius:0;transition:.25s;}
 .dash-topbar-link:hover{background:var(--gold);color:var(--pine);}
 
-/* Shell layout â€” mirrors AppShellView Grid ColumnDefinitions="200,*" Margin="12" */
+/* Shell layout — mirrors AppShellView Grid ColumnDefinitions="200,*" Margin="12" */
 .dash-layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:0;padding:68px 12px 12px;min-height:100vh;}
+.dash-sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);max-width:var(--sidebar-w);}
+.dash-nav{display:flex;flex-direction:column;}
 
-/* Sidebar panel â€” sharp corners, ZAHO style */
+/* Sidebar panel — sharp corners, ZAHO style */
 .dash-sidebar-inner{
   background:var(--surface);border:1px solid var(--line);border-radius:0;padding:10px;
   position:sticky;top:68px;max-height:calc(100vh - 80px);overflow-y:auto;

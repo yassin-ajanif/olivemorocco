@@ -1,184 +1,184 @@
-﻿@{
-    Layout = "_HomeLayout";
-    ViewData["Title"] = "ZAHO — Huile d'Olive Extra Vierge, Essaouira";
-}
-
-<nav id="mainNav">
-    <div class="nav-word">ZAHO</div>
-    <ul class="nav-links">
-        <li><a href="#origine">Origine</a></li>
-        <li><a href="#processus">Processus</a></li>
-        <li><a href="#produit">Produit</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div class="nav-actions">
-        <a class="nav-dashboard" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-        <a class="nav-cta" href="#contact">Demander un échantillon</a>
-    </div>
-</nav>
-
-<header class="hero">
-    <svg class="hero-branch" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <path d="M200 0 C160 120 240 200 200 320 C160 440 240 520 200 640 C170 720 220 760 200 800"
-              stroke="#3E5A3A" stroke-width="1.4" fill="none" />
-        <g fill="none" stroke="#C7A24A" stroke-width="1">
-            <ellipse cx="150" cy="160" rx="26" ry="12" transform="rotate(-30 150 160)" />
-            <ellipse cx="250" cy="260" rx="26" ry="12" transform="rotate(30 250 260)" />
-            <ellipse cx="150" cy="400" rx="26" ry="12" transform="rotate(-25 150 400)" />
-            <ellipse cx="250" cy="500" rx="26" ry="12" transform="rotate(25 250 500)" />
-            <ellipse cx="160" cy="620" rx="26" ry="12" transform="rotate(-20 160 620)" />
-        </g>
-    </svg>
-    <div class="hero-inner">
-        <p class="eyebrow hero-eyebrow">Had Touabet · Chiadma · Essaouira, Maroc</p>
-        <h1>ZAHO</h1>
-        <p class="hero-sub">« Fleur sauvage » — signification tamazight</p>
-        <p class="hero-desc">Huile d'olive extra vierge de production limitée, cultivée sur notre propre exploitation de 36 hectares, terroir AOP Tyout Chiadma. Récolte 2026.</p>
-        <div class="hero-ctas">
-            <a href="#contact" class="btn-gold">Demander un échantillon</a>
-            <a href="#origine" class="btn-ghost">Découvrir l'histoire</a>
-        </div>
-    </div>
-    <div class="scroll-cue"><span>Découvrir</span><span class="line"></span></div>
-</header>
-
-<section id="origine">
-    <div class="section-head reveal">
-        <p class="eyebrow">Notre terroir</p>
-        <h2>Une seule exploitation.<br>Une seule origine.</h2>
-    </div>
-    <div class="origine-grid">
-        <div class="photo-slot reveal">
-            <img src="@Url.Content("~/images/origine-olives.jpg")" alt="Olives sur branche, lumière dorée — photo Flor Saurina / Unsplash" width="1200" height="1500" />
-        </div>
-        <div class="origine-text reveal">
-            <p>ZAHO naît sur 36 hectares à Had Touabet, dans la région de Chiadma, à quelques kilomètres d'Essaouira. Une conduite en super haute densité, pensée pour la qualité plutôt que le volume, sur un terroir reconnu par l'appellation AOP Tyout Chiadma.</p>
-            <p>Chaque bouteille porte le numéro de son lot et l'année de sa récolte — la traçabilité n'est pas un argument marketing, c'est la manière dont nous travaillons depuis le premier jour.</p>
-            <div class="stat-row">
-                <div class="stat"><b>36</b><span>Hectares</span></div>
-                <div class="stat"><b>5<sup>e</sup></b><span>Année de production</span></div>
-                <div class="stat"><b>2026</b><span>Récolte actuelle</span></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="processus" class="section-dark process-wrap">
-    <div class="section-head reveal">
-        <p class="eyebrow">De l'arbre à la bouteille</p>
-        <h2>Cinq étapes, sans détour.</h2>
-    </div>
-    <svg class="process-svg-track" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
-        <path id="processPath" class="process-path" d="M20 30 C 200 -10, 300 70, 500 30 C 700 -10, 800 70, 980 30" />
-    </svg>
-    <div class="process-steps">
-        <div class="p-step reveal"><span class="p-num">I</span><h3>Récolte</h3><p>Cueillette précoce des olives en septembre, triée par lot dès le champ.</p></div>
-        <div class="p-step reveal"><span class="p-num">II</span><h3>Transport</h3><p>Acheminement au moulin en moins de 24h pour préserver l'acidité.</p></div>
-        <div class="p-step reveal"><span class="p-num">III</span><h3>Pression</h3><p>Extraction à froid, sans additif, sans chaleur ajoutée.</p></div>
-        <div class="p-step reveal"><span class="p-num">IV</span><h3>Mise en bouteille</h3><p>Conditionnement immédiat, numéro de lot appliqué à la source.</p></div>
-        <div class="p-step reveal"><span class="p-num">V</span><h3>Expédition</h3><p>Vers nos partenaires restaurateurs et importateurs, au Maroc et en Europe.</p></div>
-    </div>
-</section>
-
-<section id="produit">
-    <div class="produit-grid">
-        <div class="photo-slot reveal" style="aspect-ratio:3/4;">
-            <img src="@Url.Content("~/images/produit-bouteille.jpg")" alt="Bouteille ZAHO Extra Vierge versée sur une salade" width="900" height="1200" />
-        </div>
-        <div class="produit-text reveal">
-            <p class="eyebrow">La bouteille</p>
-            <h2 style="font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,3.5vw,42px); margin-top:14px;">Une production que l'on peut compter, pas mesurer en tonnes.</h2>
-            <div class="tag-row">
-                <span class="pill">Extra vierge</span>
-                <span class="pill">Première pression à froid</span>
-                <span class="pill">AOP Tyout Chiadma</span>
-                <span class="pill">500ml</span>
-            </div>
-            <ul class="spec-list">
-                <li><span>Acidité</span><b>&lt; 0,3%</b></li>
-                <li><span>Récolte</span><b>Septembre 2026</b></li>
-                <li><span>Conduite</span><b>Super haute densité</b></li>
-                <li><span>Origine</span><b>Had Touabet, Essaouira</b></li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section id="pourquoi">
-    <div class="section-head reveal">
-        <p class="eyebrow">Pourquoi ZAHO</p>
-        <h2>Ce qui ne se copie pas.</h2>
-    </div>
-    <div class="diff-grid reveal">
-        <div class="diff-card">
-            <div class="mark">1</div>
-            <h3>Traçabilité réelle</h3>
-            <p>Chaque lot est identifiable jusqu'à la parcelle et la date de récolte — pas une promesse générique.</p>
-        </div>
-        <div class="diff-card">
-            <div class="mark">2</div>
-            <h3>Terroir protégé</h3>
-            <p>AOP Tyout Chiadma : un terroir reconnu, pas un argument marketing inventé pour l'export.</p>
-        </div>
-        <div class="diff-card">
-            <div class="mark">3</div>
-            <h3>Production limitée</h3>
-            <p>Nous ne cherchons pas le volume. Chaque récolte est vendue avant d'être diluée en qualité.</p>
-        </div>
-    </div>
-</section>
-
-<section id="contact" class="cta-section">
-    <p class="eyebrow" style="color:var(--gold-soft); margin-bottom:24px;">Restaurateurs &amp; Importateurs</p>
-    <h2>Une dégustation vaut mille descriptions. Parlons de votre carte.</h2>
-    <div class="cta-row">
-        <a href="tel:+212661990570" class="btn-gold">Appeler directement</a>
-        <a href="#form" class="btn-ghost">Demander un échantillon</a>
-    </div>
-    <form class="inline-form" id="form">
-        <label for="name">Nom / Restaurant</label>
-        <input id="name" type="text" placeholder="Votre nom ou établissement" required />
-        <label for="type">Vous êtes</label>
-        <select id="type">
-            <option>Restaurant</option>
-            <option>Importateur / Distributeur</option>
-            <option>Épicerie / Détaillant</option>
-            <option>Particulier</option>
-        </select>
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="vous@exemple.com" required />
-        <label for="msg">Message</label>
-        <textarea id="msg" rows="3" placeholder="Dites-nous où et comment vous souhaitez déguster ZAHO"></textarea>
-        <div style="margin-top:10px;">
-            <button type="submit" class="btn-gold" style="border:none; cursor:pointer;">Envoyer la demande</button>
-        </div>
-        <p class="form-msg" id="formMsg"></p>
-    </form>
-</section>
-
-<footer>
-    <div class="foot-top">
-        <div class="foot-word">ZAHO</div>
-        <div class="foot-cols">
-            <div class="foot-col">
-                <h4>Exploitation</h4>
-                <p>Had Touabet, Chiadma</p>
-                <p>Essaouira, Maroc</p>
-            </div>
-            <div class="foot-col">
-                <h4>Contact</h4>
-                <a href="mailto:contact@zaho-oil.com">contact@zaho-oil.com</a>
-                <a href="tel:+212661990570">+212 661 990 570</a>
-            </div>
-            <div class="foot-col">
-                <h4>Suivre ZAHO</h4>
-                <a href="#">Instagram</a>
-                <a href="#">LinkedIn</a>
-            </div>
-        </div>
-    </div>
-    <div class="foot-bottom">
-        <span>&copy; @DateTime.UtcNow.Year ZAHO — Blad Atouaa Elmahdi</span>
-        <span>Récolte AOP Tyout Chiadma</span>
-    </div>
-</footer>
+﻿@{
+    Layout = "_HomeLayout";
+    ViewData["Title"] = "ZAHO — Huile d'Olive Extra Vierge, Essaouira";
+}
+
+<nav id="mainNav">
+    <div class="nav-word">ZAHO</div>
+    <ul class="nav-links">
+        <li><a href="#origine">Origine</a></li>
+        <li><a href="#processus">Processus</a></li>
+        <li><a href="#produit">Produit</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+        <a class="nav-dashboard" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        <a class="nav-cta" href="#contact">Demander un échantillon</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <svg class="hero-branch" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path d="M200 0 C160 120 240 200 200 320 C160 440 240 520 200 640 C170 720 220 760 200 800"
+              stroke="#3E5A3A" stroke-width="1.4" fill="none" />
+        <g fill="none" stroke="#C7A24A" stroke-width="1">
+            <ellipse cx="150" cy="160" rx="26" ry="12" transform="rotate(-30 150 160)" />
+            <ellipse cx="250" cy="260" rx="26" ry="12" transform="rotate(30 250 260)" />
+            <ellipse cx="150" cy="400" rx="26" ry="12" transform="rotate(-25 150 400)" />
+            <ellipse cx="250" cy="500" rx="26" ry="12" transform="rotate(25 250 500)" />
+            <ellipse cx="160" cy="620" rx="26" ry="12" transform="rotate(-20 160 620)" />
+        </g>
+    </svg>
+    <div class="hero-inner">
+        <p class="eyebrow hero-eyebrow">Had Touabet · Chiadma · Essaouira, Maroc</p>
+        <h1>ZAHO</h1>
+        <p class="hero-sub">« Fleur sauvage » — signification tamazight</p>
+        <p class="hero-desc">Huile d'olive extra vierge de production limitée, cultivée sur notre propre exploitation de 36 hectares, terroir AOP Tyout Chiadma. Récolte 2026.</p>
+        <div class="hero-ctas">
+            <a href="#contact" class="btn-gold">Demander un échantillon</a>
+            <a href="#origine" class="btn-ghost">Découvrir l'histoire</a>
+        </div>
+    </div>
+    <div class="scroll-cue"><span>Découvrir</span><span class="line"></span></div>
+</header>
+
+<section id="origine">
+    <div class="section-head reveal">
+        <p class="eyebrow">Notre terroir</p>
+        <h2>Une seule exploitation.<br>Une seule origine.</h2>
+    </div>
+    <div class="origine-grid">
+        <div class="photo-slot reveal">
+            <img src="@Url.Content("~/images/origine-olives.jpg")" alt="Olives sur branche, lumière dorée — photo Flor Saurina / Unsplash" width="1200" height="1500" />
+        </div>
+        <div class="origine-text reveal">
+            <p>ZAHO naît sur 36 hectares à Had Touabet, dans la région de Chiadma, à quelques kilomètres d'Essaouira. Une conduite en super haute densité, pensée pour la qualité plutôt que le volume, sur un terroir reconnu par l'appellation AOP Tyout Chiadma.</p>
+            <p>Chaque bouteille porte le numéro de son lot et l'année de sa récolte — la traçabilité n'est pas un argument marketing, c'est la manière dont nous travaillons depuis le premier jour.</p>
+            <div class="stat-row">
+                <div class="stat"><b>36</b><span>Hectares</span></div>
+                <div class="stat"><b>5<sup>e</sup></b><span>Année de production</span></div>
+                <div class="stat"><b>2026</b><span>Récolte actuelle</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="processus" class="section-dark process-wrap">
+    <div class="section-head reveal">
+        <p class="eyebrow">De l'arbre à la bouteille</p>
+        <h2>Cinq étapes, sans détour.</h2>
+    </div>
+    <svg class="process-svg-track" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
+        <path id="processPath" class="process-path" d="M20 30 C 200 -10, 300 70, 500 30 C 700 -10, 800 70, 980 30" />
+    </svg>
+    <div class="process-steps">
+        <div class="p-step reveal"><span class="p-num">I</span><h3>Récolte</h3><p>Cueillette précoce des olives en septembre, triée par lot dès le champ.</p></div>
+        <div class="p-step reveal"><span class="p-num">II</span><h3>Transport</h3><p>Acheminement au moulin en moins de 24h pour préserver l'acidité.</p></div>
+        <div class="p-step reveal"><span class="p-num">III</span><h3>Pression</h3><p>Extraction à froid, sans additif, sans chaleur ajoutée.</p></div>
+        <div class="p-step reveal"><span class="p-num">IV</span><h3>Mise en bouteille</h3><p>Conditionnement immédiat, numéro de lot appliqué à la source.</p></div>
+        <div class="p-step reveal"><span class="p-num">V</span><h3>Expédition</h3><p>Vers nos partenaires restaurateurs et importateurs, au Maroc et en Europe.</p></div>
+    </div>
+</section>
+
+<section id="produit">
+    <div class="produit-grid">
+        <div class="photo-slot reveal" style="aspect-ratio:3/4;">
+            <img src="@Url.Content("~/images/produit-bouteille.jpg")" alt="Bouteille ZAHO Extra Vierge versée sur une salade" width="900" height="1200" />
+        </div>
+        <div class="produit-text reveal">
+            <p class="eyebrow">La bouteille</p>
+            <h2 style="font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,3.5vw,42px); margin-top:14px;">Une production que l'on peut compter, pas mesurer en tonnes.</h2>
+            <div class="tag-row">
+                <span class="pill">Extra vierge</span>
+                <span class="pill">Première pression à froid</span>
+                <span class="pill">AOP Tyout Chiadma</span>
+                <span class="pill">500ml</span>
+            </div>
+            <ul class="spec-list">
+                <li><span>Acidité</span><b>&lt; 0,3%</b></li>
+                <li><span>Récolte</span><b>Septembre 2026</b></li>
+                <li><span>Conduite</span><b>Super haute densité</b></li>
+                <li><span>Origine</span><b>Had Touabet, Essaouira</b></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="pourquoi">
+    <div class="section-head reveal">
+        <p class="eyebrow">Pourquoi ZAHO</p>
+        <h2>Ce qui ne se copie pas.</h2>
+    </div>
+    <div class="diff-grid reveal">
+        <div class="diff-card">
+            <div class="mark">1</div>
+            <h3>Traçabilité réelle</h3>
+            <p>Chaque lot est identifiable jusqu'à la parcelle et la date de récolte — pas une promesse générique.</p>
+        </div>
+        <div class="diff-card">
+            <div class="mark">2</div>
+            <h3>Terroir protégé</h3>
+            <p>AOP Tyout Chiadma : un terroir reconnu, pas un argument marketing inventé pour l'export.</p>
+        </div>
+        <div class="diff-card">
+            <div class="mark">3</div>
+            <h3>Production limitée</h3>
+            <p>Nous ne cherchons pas le volume. Chaque récolte est vendue avant d'être diluée en qualité.</p>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="cta-section">
+    <p class="eyebrow" style="color:var(--gold-soft); margin-bottom:24px;">Restaurateurs &amp; Importateurs</p>
+    <h2>Une dégustation vaut mille descriptions. Parlons de votre carte.</h2>
+    <div class="cta-row">
+        <a href="tel:+212661990570" class="btn-gold">Appeler directement</a>
+        <a href="#form" class="btn-ghost">Demander un échantillon</a>
+    </div>
+    <form class="inline-form" id="form">
+        <label for="name">Nom / Restaurant</label>
+        <input id="name" type="text" placeholder="Votre nom ou établissement" required />
+        <label for="type">Vous êtes</label>
+        <select id="type">
+            <option>Restaurant</option>
+            <option>Importateur / Distributeur</option>
+            <option>Épicerie / Détaillant</option>
+            <option>Particulier</option>
+        </select>
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="vous@exemple.com" required />
+        <label for="msg">Message</label>
+        <textarea id="msg" rows="3" placeholder="Dites-nous où et comment vous souhaitez déguster ZAHO"></textarea>
+        <div style="margin-top:10px;">
+            <button type="submit" class="btn-gold" style="border:none; cursor:pointer;">Envoyer la demande</button>
+        </div>
+        <p class="form-msg" id="formMsg"></p>
+    </form>
+</section>
+
+<footer class="home-footer">
+    <div class="foot-top">
+        <div class="foot-word">ZAHO</div>
+        <div class="foot-cols">
+            <div class="foot-col">
+                <h4>Exploitation</h4>
+                <p>Had Touabet, Chiadma</p>
+                <p>Essaouira, Maroc</p>
+            </div>
+            <div class="foot-col">
+                <h4>Contact</h4>
+                <a href="mailto:contact@zaho-oil.com">contact@zaho-oil.com</a>
+                <a href="tel:+212661990570">+212 661 990 570</a>
+            </div>
+            <div class="foot-col">
+                <h4>Suivre ZAHO</h4>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </div>
+    <div class="foot-bottom">
+        <span>&copy; @DateTime.UtcNow.Year ZAHO — Blad Atouaa Elmahdi</span>
+        <span>Récolte AOP Tyout Chiadma</span>
+    </div>
+</footer>

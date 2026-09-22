@@ -1,0 +1,31 @@
+/* ZAHO design tokens — docs/DESIGN-SYSTEM.md */
+:root {
+  /* Core */
+  --pine: #14261C;
+  --pine-mid: #2C4229;
+  --gold: #C7A24A;
+  --gold-soft: #E4C878;
+  --cream: #F4EFE1;
+  --ink: #1E1B12;
+  --line: #DCD3B8;
+  --muted: #6B6650;
+  --slot-bg: #EAE3CE;
+  --surface: #FFFCF5;
+
+  /* Extended (vitrine + dashboard) */
+  --pine-gradient: #1C3226;
+  --footer-bg: #0F1C14;
+  --olive-stroke: #3E5A3A;
+  --hero-body: #D9D6C6;
+  --scroll-cue: #B9C4AE;
+  --muted-dark: #C7CDBE;
+  --card-body: #5C5844;
+  --placeholder: #8C8365;
+  --footer-link: #8FA085;
+  --form-option: #111111;
+
+  /* Layout (dashboard) */
+  --sidebar-w: 200px;
+  --topbar-h: 56px;
+  --footer-h: 52px;
+}
