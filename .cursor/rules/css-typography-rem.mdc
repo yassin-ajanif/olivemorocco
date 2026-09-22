@@ -1,0 +1,79 @@
+---
+description: rem for font sizes and spacing; px only for borders, shadows, and fixed shell
+globs: src/OliveMorocco.Web/Styles/**/*.css
+alwaysApply: false
+---
+
+# CSS Units — rem vs px
+
+Baseline: `html { font-size: 100%; }` in `Styles/Shared/_tokens.css` (16px).
+
+## Use rem (via tokens)
+
+**Font sizes** — always `--text-*`:
+
+```css
+.dash-item { font-size: var(--text-md); }
+```
+
+**Spacing** — padding, margin, gap — always rem via `--space-*`:
+
+```css
+.dash-item { padding: var(--space-md) var(--space-lg); }
+.dash-sidebar-inner { padding: var(--space-lg); }
+.list-toolbar { gap: var(--space-sm); }
+```
+
+| Token | rem | px @ 16px |
+|-------|-----|-----------|
+| `--space-xs` | 0.25rem | 4 |
+| `--space-sm` | 0.5rem | 8 |
+| `--space-md` | 0.75rem | 12 |
+| `--space-lg` | 1rem | 16 |
+| `--space-xl` | 1.5rem | 24 |
+| `--space-2xl` | 2rem | 32 |
+| `--space-1_5` | 0.375rem | 6 |
+| `--space-2_5` | 0.625rem | 10 |
+| `--space-3_5` | 0.875rem | 14 |
+| `--space-4_5` | 1.125rem | 18 |
+| `--space-5` | 1.25rem | 20 |
+| `--space-3xl` | 3rem | 48 |
+| `--space-section` | 7.5rem | 120 |
+| `--control-h` | 2.25rem | 36 |
+| `--control-h-lg` | 2.875rem | 46 |
+
+Add new steps to `_tokens.css` before inventing one-off rem values.
+
+## px allowed (small / non-layout)
+
+Use **px only** for properties that should **not** scale with user font settings:
+
+- `border-width` (e.g. `1px`)
+- `border-radius` (dashboard: `0`; vitrine CTAs: `2px` max per design system)
+- `box-shadow` offsets and blur
+- `outline-width` / small `outline-offset`
+- Fixed **shell** dimensions: `--sidebar-w`, `--topbar-h`, `--footer-h`
+
+```css
+/* OK */
+border: 1px solid var(--line);
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+border-radius: 0;
+width: var(--sidebar-w); /* 280px token */
+```
+
+## Do not use px for
+
+- `font-size`
+- `padding`, `margin`, `gap` on UI components
+- `min-height` / `min-width` of buttons, inputs, nav items (use rem)
+
+## Other exceptions
+
+- **Vitrine display type**: `clamp()` with rem/vw for hero headlines
+- **Raw rem**: only if no `--text-*` / `--space-*` token exists yet — then add the token
+
+## Do not
+
+- Write `padding: 12px`, `margin: 8px`, or `font-size: 14px` in new CSS
+- Duplicate scales in page files — use `_tokens.css` via `app.css`

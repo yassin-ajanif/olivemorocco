@@ -39,6 +39,7 @@ All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/
 
 - **Display / headings:** `'Fraunces', serif`
 - **UI / body:** `'Work Sans', sans-serif`
+- **Font sizes & spacing:** rem only — `--text-*` and `--space-*` from `Styles/Shared/_tokens.css`; px only for borders, shadows, radius, fixed shell (see `.cursor/rules/css-typography-rem.mdc`)
 
 ## Do not
 
