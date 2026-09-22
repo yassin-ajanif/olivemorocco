@@ -41,6 +41,7 @@ npm run css:watch
 | `wwwroot/images/` | Brand photography |
 | `docs/DATABASE_SCHEMA.md` | Database schema |
 | `docs/DESIGN-SYSTEM.md` | Full UI specification |
+| `docs/GIT-WORKFLOW.md` | Branching model (`main`, `dev`, feature branches) & PR process |
 
 ## Design system
 
@@ -52,3 +53,4 @@ Colors, typography, and components follow `docs/DESIGN-SYSTEM.md`. Cursor enforc
 
 - [Database schema](docs/DATABASE_SCHEMA.md)
 - [Design system](docs/DESIGN-SYSTEM.md)
+- [Git workflow](docs/GIT-WORKFLOW.md)
