@@ -1,0 +1,120 @@
+@model ClientListViewModel
+@{
+    const string cols = "2fr 1fr 1fr auto auto";
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Vente</p>
+    <h1>Clients</h1>
+    <p class="module-section">Restaurateurs, importateurs, épiciers</p>
+</div>
+
+<form method="get" asp-action="Index" class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>Nom</span>
+        <span>ICE</span>
+        <span>Ville</span>
+        <span>Actif</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <div class="list-empty">Aucun enregistrement — cliquez sur Nouveau pour commencer.</div>
+        }
+        else
+        {
+            foreach (var client in Model.Items)
+            {
+                <div class="list-row" style="grid-template-columns:@cols">
+                    <span>
+                        <a asp-action="Edit" asp-route-id="@client.Id" class="list-link">@client.Nom</a>
+                    </span>
+                    <span>@client.ICE</span>
+                    <span>@client.Ville</span>
+                    <span>
+                        @if (client.Actif)
+                        {
+                            <span class="badge badge-ok">Actif</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warn">Inactif</span>
+                        }
+                    </span>
+                    <span class="list-row-actions">
+                        <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm">Modifier</a>
+                        <form asp-action="ToggleActif" method="post" class="inline-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@client.Id" />
+                            <input type="hidden" name="search" value="@Model.Search" />
+                            <input type="hidden" name="page" value="@Model.Page" />
+                            <button type="submit" class="btn btn-sm" title="@(client.Actif ? "Désactiver" : "Activer")">
+                                @(client.Actif ? "Off" : "On")
+                            </button>
+                        </form>
+                    </span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="list-pagination">
+    <div class="list-pagination-inner">
+        <span class="total">@Model.TotalCount enregistrement@(Model.TotalCount != 1 ? "s" : "")</span>
+        <div class="pagination-nav">
+            @if (Model.HasPrevious)
+            {
+                <a asp-action="Index"
+                   asp-route-search="@Model.Search"
+                   asp-route-page="1"
+                   class="pagination-link"
+                   title="Première page">⏮</a>
+                <a asp-action="Index"
+                   asp-route-search="@Model.Search"
+                   asp-route-page="@(Model.Page - 1)"
+                   class="pagination-link"
+                   title="Page précédente">‹</a>
+            }
+            else
+            {
+                <span class="pagination-link disabled">⏮</span>
+                <span class="pagination-link disabled">‹</span>
+            }
+
+            <span class="page-indicator"><b>@Model.Page</b> / @Model.TotalPages</span>
+
+            @if (Model.HasNext)
+            {
+                <a asp-action="Index"
+                   asp-route-search="@Model.Search"
+                   asp-route-page="@(Model.Page + 1)"
+                   class="pagination-link"
+                   title="Page suivante">›</a>
+                <a asp-action="Index"
+                   asp-route-search="@Model.Search"
+                   asp-route-page="@Model.TotalPages"
+                   class="pagination-link"
+                   title="Dernière page">⏭</a>
+            }
+            else
+            {
+                <span class="pagination-link disabled">›</span>
+                <span class="pagination-link disabled">⏭</span>
+            }
+        </div>
+    </div>
+</div>

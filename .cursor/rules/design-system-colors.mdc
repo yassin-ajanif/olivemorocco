@@ -5,23 +5,16 @@ alwaysApply: true
 
 # ZAHO Design System — Color Rule
 
-All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/DESIGN-SYSTEM.md`. Do not introduce new accent colors.
+All UI (site vitrine, dashboard, future modules) **must** use tokens from `Styles/Shared/_tokens.css`. Do not hardcode hex/rgb in page or layout CSS.
 
-## Required CSS variables
+## Workflow (reuse first)
 
-```css
-:root {
-  --pine: #14261C;
-  --pine-mid: #2C4229;
-  --gold: #C7A24A;
-  --gold-soft: #E4C878;
-  --cream: #F4EFE1;
-  --ink: #1E1B12;
-  --line: #DCD3B8;
-}
-```
+1. **Read `_tokens.css`** before styling — use an existing token if it fits.
+2. **Use `color-mix()`** for tints/opacity on an existing token (e.g. `color-mix(in srgb, var(--gold) 45%, transparent)`) before inventing a new hex.
+3. **Add a new token** in `_tokens.css` only when no existing token can express the intent — then update `docs/DESIGN-SYSTEM.md`.
+4. **Never duplicate hex** in `_DashboardLayout.css`, `Home/Index.css`, or `@theme` in `app.css` — `@theme` must reference `var(--…)` from `_tokens.css`.
 
-## Semantic usage
+## Core tokens
 
 | Purpose | Token |
 |---------|-------|
@@ -30,33 +23,40 @@ All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/
 | Body text on light bg | `--ink` |
 | Text on dark bg | `--cream` |
 | Primary accent / CTAs | `--gold` → hover `--gold-soft` |
-| Button label text | `--btn-color` (`rgba(20,38,28,0.67)` / `#14261C` @ 67%) — sidebar nav, `.btn`, `.btn-gold` |
+| Button label text | `--btn-color` |
 | Borders & dividers | `--line` |
-| Muted labels | `#6B6650` |
-| Active nav item bg | `#EAE3CE` (`--slot-bg`) |
+| Muted labels | `--muted` |
+| Active nav / table header bg | `--slot-bg` |
+| Card / panel surface | `--surface` |
 | Focus ring | `--gold-soft` |
+| Olive accent (borders, success) | `--footer-link` |
+
+## Semantic tokens (dashboard)
+
+| Purpose | Token |
+|---------|-------|
+| Success bg (badge, alert) | `--success-bg` |
+| Warning bg | `--warn-bg` |
+| Danger / delete / validation error | `--danger` |
+| Danger hover & error text | `--danger-hover` |
+| Danger alert bg | `--danger-bg` |
+| Box shadow | `--shadow-color` |
 
 ## Typography
 
 - **Display / headings:** `'Fraunces', serif`
 - **UI / body:** `'Work Sans', sans-serif`
-- **Font sizes & spacing:** rem only — `--text-*` and `--space-*` from `Styles/Shared/_tokens.css`; px only for borders, shadows, radius, fixed shell (see `.cursor/rules/css-typography-rem.mdc`)
-
-## Token sources
-
-- **Define colors once** in `Styles/Shared/_tokens.css` (`:root`)
-- **Tailwind utilities** (`text-pine`, `bg-gold`, …) read from `@theme` in `app.css`, which must reference `var(--…)` from `_tokens.css` — do not duplicate hex in `@theme`
+- **Font sizes & spacing:** rem only — `--text-*` and `--space-*` from `_tokens.css`; px only for borders, shadows, radius, fixed shell (see `.cursor/rules/css-typography-rem.mdc`)
 
 ## Do not
 
-- Use generic blues, grays, or Bootstrap defaults for buttons/borders
-- Hardcode `#007bff`, `#E5E7EB`, or navy without mapping to ZAHO tokens
-- Add new brand colors without updating `docs/DESIGN-SYSTEM.md` first
-- Use rounded corners (8px+) on dashboard buttons, tables, or panels — keep edges **sharp** (`border-radius: 0`), matching the vitrine CTAs
+- Hardcode `#8B2942`, `#E8F0E4`, `#FFF8E1`, `rgba(199,162,74,.45)`, etc. in component CSS
+- Use generic blues, grays, or Bootstrap defaults
+- Add new tokens for every shade — prefer `color-mix` on `--gold`, `--slot-bg`, `--pine`, etc.
+- Use rounded corners (8px+) on dashboard buttons, tables, or panels — keep edges **sharp** (`border-radius: 0`)
 
 ## Reference files
 
+- `Styles/Shared/_tokens.css` — **single source of truth** for color hex values
 - `docs/DESIGN-SYSTEM.md` — full token and component spec
-- `Views/Home/Index.cshtml` — site accueil patterns
-- `Views/Shared/_DashboardLayout.cshtml` — sidebar menu pattern (Vente / Achat / Opérationnel)
-- `wwwroot/images/` — brand photography for the web app
+- `Styles/app.css` — `@theme` mirrors tokens for Tailwind utilities

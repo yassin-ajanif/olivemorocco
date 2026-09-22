@@ -1,6 +1,9 @@
+@using OliveMorocco.Web.Routing
 @{
-    var dashSection = ViewData["DashSection"] as string ?? "vente";
-    var dashModule = ViewData["DashModule"] as string ?? "";
+    var nav = DashboardNav.Resolve(Context);
+    var dashSection = nav?.Section ?? "vente";
+    var dashModule = nav?.ModuleKey ?? "";
+    var pageTitle = DashboardNav.PageTitle(Context, nav);
     string NavClass(string module) => dashModule == module ? "dash-item active" : "dash-item";
     string SectionClass(string section) => dashSection == section ? "dash-section open" : "dash-section";
     string SectionArrow(string section) => dashSection == section ? "▼" : "▶";
@@ -11,7 +14,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — ZAHO Gestion</title>
+    <title>@pageTitle — ZAHO Gestion</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -35,12 +38,12 @@
                         <span class="arrow">@SectionArrow("vente")</span> Vente
                     </button>
                     <div class="dash-section-items">
-                        <a asp-controller="Clients" asp-action="Index" class="@NavClass("clients")">Clients</a>
-                        <a asp-controller="Devis" asp-action="Index" class="@NavClass("devis")">Devis</a>
-                        <a asp-controller="BonsCommande" asp-action="Index" class="@NavClass("bons-commande")">Bons de commande</a>
-                        <a asp-controller="BonsLivraison" asp-action="Index" class="@NavClass("bons-livraison")">Bons de livraison</a>
-                        <a asp-controller="Facturation" asp-action="Index" class="@NavClass("facturation")">Facturation</a>
-                        <a asp-controller="Avoirs" asp-action="Index" class="@NavClass("avoirs")">Avoirs</a>
+                        <a href="/@AppSections.Vente/Clients" class="@NavClass("clients")">Clients</a>
+                        <a href="/@AppSections.Vente/Devis" class="@NavClass("devis")">Devis</a>
+                        <a href="/@AppSections.Vente/BonsCommande" class="@NavClass("bons-commande")">Bons de commande</a>
+                        <a href="/@AppSections.Vente/BonsLivraison" class="@NavClass("bons-livraison")">Bons de livraison</a>
+                        <a href="/@AppSections.Vente/Facturation" class="@NavClass("facturation")">Facturation</a>
+                        <a href="/@AppSections.Vente/Avoirs" class="@NavClass("avoirs")">Avoirs</a>
                     </div>
                 </div>
 
@@ -49,12 +52,12 @@
                         <span class="arrow">@SectionArrow("achat")</span> Achat
                     </button>
                     <div class="dash-section-items">
-                        <a asp-controller="Fournisseurs" asp-action="Index" class="@NavClass("fournisseurs")">Fournisseurs</a>
-                        <a asp-controller="BonsCommandeAchat" asp-action="Index" class="@NavClass("bons-commande-achat")">Bons de commande</a>
-                        <a asp-controller="BonsReception" asp-action="Index" class="@NavClass("bons-reception")">Bons de réception</a>
-                        <a asp-controller="FacturesFournisseurs" asp-action="Index" class="@NavClass("factures-fournisseurs")">Factures fournisseur</a>
-                        <a asp-controller="AvoirFournisseur" asp-action="Index" class="@NavClass("avoir-fournisseur")">Avoir fournisseur</a>
-                        <a asp-controller="Charges" asp-action="Index" class="@NavClass("charges")">Charges</a>
+                        <a href="/@AppSections.Achat/Fournisseurs" class="@NavClass("fournisseurs")">Fournisseurs</a>
+                        <a href="/@AppSections.Achat/BonsCommande" class="@NavClass("bons-commande-achat")">Bons de commande</a>
+                        <a href="/@AppSections.Achat/BonsReception" class="@NavClass("bons-reception")">Bons de réception</a>
+                        <a href="/@AppSections.Achat/FacturesFournisseurs" class="@NavClass("factures-fournisseurs")">Factures fournisseur</a>
+                        <a href="/@AppSections.Achat/AvoirFournisseur" class="@NavClass("avoir-fournisseur")">Avoir fournisseur</a>
+                        <a href="/@AppSections.Achat/Charges" class="@NavClass("charges")">Charges</a>
                     </div>
                 </div>
 

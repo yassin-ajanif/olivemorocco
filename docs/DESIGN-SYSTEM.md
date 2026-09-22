@@ -56,8 +56,13 @@
 | Muted label (dark) | `#C7CDBE` | Process step descriptions |
 | Card body (light) | `#5C5844` | Differentiator card paragraphs |
 | Placeholder text | `#8C8365` | Photo slot instructions |
-| Footer links | `#8FA085` | Footer body and links |
+| Footer links | `#8FA085` | Footer body and links; success badge/alert borders (`--footer-link`) |
 | Form option text | `#111111` | `<select>` dropdown options (light context) |
+| Success bg | `#E8F0E4` | Active/success badges and alerts (`--success-bg`) |
+| Warning bg | `#FFF8E1` | Warning badges and ops alerts (`--warn-bg`) |
+| Danger | `#8B2942` | Delete buttons, validation errors (`--danger`) |
+| Danger hover | `#6B1F33` | Danger hover + error text (`--danger-hover`) |
+| Danger bg | `#FFF5F7` | Error alert backgrounds (`--danger-bg`) |
 
 #### Semantic mapping
 

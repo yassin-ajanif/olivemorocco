@@ -1,0 +1,18 @@
+@if (TempData["Success"] is string success)
+{
+    <div class="dash-alert dash-alert-ok" role="status">@success</div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="dash-alert dash-alert-error" role="alert">
+        @if (TempData["ErrorTitle"] is string errorTitle)
+        {
+            <strong>@errorTitle</strong>
+            <span>@error</span>
+        }
+        else
+        {
+            @error
+        }
+    </div>
+}

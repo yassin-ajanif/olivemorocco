@@ -1,0 +1,23 @@
+@using OliveMorocco.Web.Routing
+@{
+    Layout = "_DashboardLayout";
+    var nav = DashboardNav.Resolve(Context);
+    var eyebrow = nav?.Section switch
+    {
+        "vente" => "Vente",
+        "achat" => "Achat",
+        _ => ""
+    };
+}
+
+<div class="page-head">
+    @if (!string.IsNullOrEmpty(eyebrow))
+    {
+        <p class="eyebrow">@eyebrow</p>
+    }
+    @if (nav is not null)
+    {
+        <h1>@nav.Label</h1>
+    }
+    <p class="module-section">Module en construction.</p>
+</div>

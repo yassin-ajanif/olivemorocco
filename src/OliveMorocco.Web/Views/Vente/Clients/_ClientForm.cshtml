@@ -1,0 +1,61 @@
+@model ClientFormViewModel
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label for="Nom">Nom</label>
+        <input asp-for="Nom" autocomplete="organization" />
+        <span asp-validation-for="Nom" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="ICE">ICE</label>
+        <input asp-for="ICE" maxlength="15" />
+        <span asp-validation-for="ICE" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Adresse">Adresse</label>
+        <input asp-for="Adresse" autocomplete="street-address" />
+        <span asp-validation-for="Adresse" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Ville">Ville</label>
+        <input asp-for="Ville" autocomplete="address-level2" />
+        <span asp-validation-for="Ville" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Telephone">Téléphone</label>
+        <input asp-for="Telephone" autocomplete="tel" />
+        <span asp-validation-for="Telephone" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Email">E-mail</label>
+        <input asp-for="Email" autocomplete="email" />
+        <span asp-validation-for="Email" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="ConditionsPaiement">Conditions de paiement</label>
+        <input asp-for="ConditionsPaiement" />
+        <span asp-validation-for="ConditionsPaiement" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field form-check">
+        <input asp-for="Actif" type="checkbox" />
+        <label for="Actif">Actif</label>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+    </div>
+</form>
