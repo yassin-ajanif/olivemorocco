@@ -1,8 +1,13 @@
 using OliveMorocco.Business;
 using OliveMorocco.DataAccess;
+using OliveMorocco.Web.Logging;
 using OliveMorocco.Web.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logFilePath = builder.Configuration["Logging:File:Path"];
+if (!string.IsNullOrWhiteSpace(logFilePath))
+    builder.Logging.AddProvider(new FileLoggerProvider(logFilePath));
 
 builder.Services.AddControllersWithViews()
     .AddRazorOptions(options => options.ViewLocationExpanders.Add(new SectionViewLocationExpander()));
@@ -34,7 +39,16 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-using var scope = app.Services.CreateScope();
-await scope.ServiceProvider.GetRequiredService<IAppDatabaseInitializer>().InitializeAsync();
+var startupLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+try
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<IAppDatabaseInitializer>().InitializeAsync();
+}
+catch (Exception ex)
+{
+    startupLogger.LogError(ex, "Database initialization failed");
+    throw;
+}
 
 app.Run();

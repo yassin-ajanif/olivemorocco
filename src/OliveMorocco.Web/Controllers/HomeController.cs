@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using OliveMorocco.Web.Models;
 
@@ -32,6 +33,18 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
+
+        if (feature?.Error is { } ex)
+        {
+            _logger.LogError(
+                ex,
+                "Unhandled error. RequestId={RequestId} Path={Path}",
+                requestId,
+                feature.Path);
+        }
+
+        return View(new ErrorViewModel { RequestId = requestId });
     }
 }
