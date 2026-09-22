@@ -1,0 +1,33 @@
+---
+description: Consult docs/ before coding — stay aligned with architecture, schema, design, and git plan
+alwaysApply: true
+---
+
+# Project docs — source of truth
+
+Before implementing features, refactors, or schema/UI changes, **read the relevant docs** in `docs/`. Do not drift from the intended plan without updating the doc first.
+
+## When to read what
+
+| Task | Read first |
+|------|------------|
+| Solution structure, layers, folders, services, controllers | `docs/ARCHITECTURE.md` |
+| Entities, tables, relationships, enums, business rules | `docs/DATABASE_SCHEMA.md` |
+| Colors, typography, components, UI tokens | `docs/DESIGN-SYSTEM.md` |
+| Branches, PRs, merge flow | `docs/GIT-WORKFLOW.md` |
+
+## Required behavior
+
+1. **Start non-trivial work** by skimming the matching doc(s) — especially for new modules, EF entities, or dashboard sections.
+2. **Follow documented conventions** (Clean Architecture layers; entity folders **Operationnel / Vente / Achat** + `Common/` for shared refs; DTO vs ViewModel; URL sections matching sidebar; ZAHO tokens; no Bon de Préparation).
+3. **If the plan must change**, update the relevant `docs/*.md` in the same change (or propose the doc update before coding).
+4. **Do not** introduce patterns contradicting `ARCHITECTURE.md` (e.g. DbContext in controllers, entities in views, new accent colors without `DESIGN-SYSTEM.md`).
+
+## Quick alignment checks
+
+- New table/entity → exists or is added in `DATABASE_SCHEMA.md`?
+- New page/module → fits layer + folder layout in `ARCHITECTURE.md`?
+- New UI → uses tokens from `DESIGN-SYSTEM.md` / `Styles/app.css` `@theme`?
+- Git workflow → feature branch → PR to `dev` per `GIT-WORKFLOW.md`?
+
+When in doubt, read the doc rather than guessing.

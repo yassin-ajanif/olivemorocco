@@ -39,6 +39,7 @@ npm run css:watch
 | `Styles/Home/`, `Styles/Shared/`, `Styles/Dashboard/` | Page & layout CSS (mirrors `Views/`) |
 | `wwwroot/css/site.css` | Generated CSS (do not edit by hand) |
 | `wwwroot/images/` | Brand photography |
+| `docs/ARCHITECTURE.md` | Clean Architecture (4 layers), folder layout, conventions |
 | `docs/DATABASE_SCHEMA.md` | Database schema |
 | `docs/DESIGN-SYSTEM.md` | Full UI specification |
 | `docs/GIT-WORKFLOW.md` | Branching model (`main`, `dev`, feature branches) & PR process |
@@ -51,6 +52,7 @@ Colors, typography, and components follow `docs/DESIGN-SYSTEM.md`. Cursor enforc
 
 ## Documentation
 
+- [Architecture](docs/ARCHITECTURE.md)
 - [Database schema](docs/DATABASE_SCHEMA.md)
 - [Design system](docs/DESIGN-SYSTEM.md)
 - [Git workflow](docs/GIT-WORKFLOW.md)
