@@ -1,6 +1,11 @@
+using OliveMorocco.Business;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddBusiness(
+    builder.Configuration.GetConnectionString("Default")
+    ?? throw new InvalidOperationException("Connection string 'Default' not found."));
 
 var app = builder.Build();
 

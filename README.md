@@ -45,6 +45,7 @@ dotnet run --project src/OliveMorocco.Web
 | `src/OliveMorocco.Web/` | MVC host — Controllers, Views, Styles, wwwroot |
 | `src/OliveMorocco.Domain/` | Entities, enums (no dependencies) |
 | `src/OliveMorocco.DataAccess/` | EF Core, DbContext, configurations |
+| `src/OliveMorocco.Business/` | Services, DTOs, validation (client CRUD wired) |
 | `src/OliveMorocco.Web/Styles/app.css` | Tailwind entry + ZAHO design tokens |
 | `src/OliveMorocco.Web/wwwroot/css/site.css` | Generated CSS (do not edit by hand) |
 | `src/OliveMorocco.Web/wwwroot/images/` | Brand photography |

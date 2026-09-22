@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliveMorocco.DataAccess", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliveMorocco.Web", "src\OliveMorocco.Web\OliveMorocco.Web.csproj", "{9134E36D-72AA-4D7E-8E37-6AB17B7955ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliveMorocco.Business", "src\OliveMorocco.Business\OliveMorocco.Business.csproj", "{4725294B-D461-4511-AAB6-5A25B96EC387}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +34,15 @@ Global
 		{9134E36D-72AA-4D7E-8E37-6AB17B7955ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9134E36D-72AA-4D7E-8E37-6AB17B7955ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9134E36D-72AA-4D7E-8E37-6AB17B7955ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4725294B-D461-4511-AAB6-5A25B96EC387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4725294B-D461-4511-AAB6-5A25B96EC387}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4725294B-D461-4511-AAB6-5A25B96EC387}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4725294B-D461-4511-AAB6-5A25B96EC387}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{96BB0A1B-79C2-4120-8FEB-D9841C66E6B1} = {D7100F75-B04E-4A64-8923-2C53E3766247}
 		{A4368C63-1D21-49F2-9AEF-87C75E363A2C} = {D7100F75-B04E-4A64-8923-2C53E3766247}
 		{9134E36D-72AA-4D7E-8E37-6AB17B7955ED} = {D7100F75-B04E-4A64-8923-2C53E3766247}
+		{4725294B-D461-4511-AAB6-5A25B96EC387} = {D7100F75-B04E-4A64-8923-2C53E3766247}
 	EndGlobalSection
 EndGlobal
