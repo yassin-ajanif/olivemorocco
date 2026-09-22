@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] — ZAHO Gestion</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+</head>
+
+<body>
+
+
+
+<header class="dash-topbar">
+
+    <div class="dash-topbar-brand">ZAHO <span>Gestion</span></div>
+
+    <a class="dash-topbar-link" asp-controller="Home" asp-action="Index">← Accueil</a>
+
+</header>
+
+
+
+<div class="dash-layout">
+
+    <aside class="dash-sidebar">
+
+        <div class="dash-sidebar-inner">
+
+            <p class="dash-user">Blad Atouaa Elmahdi</p>
+
+
+
+            <nav class="dash-nav" id="dashNav">
+
+                <div class="dash-section open" data-section="vente">
+
+                    <button type="button" class="dash-section-toggle" aria-expanded="true">
+
+                        <span class="arrow">▼</span> Vente
+
+                    </button>
+
+                    <div class="dash-section-items">
+
+                        <button type="button" class="dash-item active" data-module="clients">Clients</button>
+
+                        <button type="button" class="dash-item" data-module="devis">Devis</button>
+
+                        <button type="button" class="dash-item" data-module="bons-commande">Bons de commande</button>
+
+                        <button type="button" class="dash-item" data-module="bons-livraison">Bons de livraison</button>
+
+                        <button type="button" class="dash-item" data-module="facturation">Facturation</button>
+
+                        <button type="button" class="dash-item" data-module="avoirs">Avoirs</button>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="dash-section open" data-section="achat">
+
+                    <button type="button" class="dash-section-toggle" aria-expanded="true">
+
+                        <span class="arrow">▼</span> Achat
+
+                    </button>
+
+                    <div class="dash-section-items">
+
+                        <button type="button" class="dash-item" data-module="fournisseurs">Fournisseurs</button>
+
+                        <button type="button" class="dash-item" data-module="bons-commande-achat">Bons de commande</button>
+
+                        <button type="button" class="dash-item" data-module="bons-reception">Bons de réception</button>
+
+                        <button type="button" class="dash-item" data-module="factures-fournisseurs">Factures fournisseur</button>
+
+                        <button type="button" class="dash-item" data-module="avoir-fournisseur">Avoir fournisseur</button>
+
+                        <button type="button" class="dash-item" data-module="charges">Charges</button>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="dash-section-spacer"></div>
+
+                <div class="dash-section open" data-section="operationnel">
+
+                    <button type="button" class="dash-section-toggle" aria-expanded="true">
+
+                        <span class="arrow">▼</span> Opérationnel
+
+                    </button>
+
+                    <div class="dash-section-items">
+
+                        <button type="button" class="dash-item" data-module="parcelles">Parcelles &amp; blocs</button>
+
+                        <button type="button" class="dash-item" data-module="recolte-lots">Récolte &amp; lots</button>
+
+                        <button type="button" class="dash-item" data-module="intrants">Intrants</button>
+
+                        <button type="button" class="dash-item" data-module="tracabilite">Traçabilité QR</button>
+
+                        <button type="button" class="dash-item" data-module="prix-marche">Prix marché</button>
+
+                    </div>
+
+                </div>
+
+            </nav>
+
+        </div>
+
+    </aside>
+
+
+
+    <main class="dash-main" id="dashMain">@RenderBody()</main>
+
+</div>
+
+
+
+<script src="~/js/store.js" asp-append-version="true"></script>
+
+<script src="~/js/document-lines.js" asp-append-version="true"></script>
+
+<script src="~/js/dashboard-app.js" asp-append-version="true"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>
+

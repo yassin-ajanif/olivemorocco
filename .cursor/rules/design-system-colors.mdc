@@ -1,0 +1,55 @@
+---
+description: Enforce ZAHO design system colors and tokens on all UI work
+alwaysApply: true
+---
+
+# ZAHO Design System — Color Rule
+
+All UI (site vitrine, dashboard, future modules) **must** use tokens from `docs/DESIGN-SYSTEM.md`. Do not introduce new accent colors.
+
+## Required CSS variables
+
+```css
+:root {
+  --pine: #14261C;
+  --pine-mid: #2C4229;
+  --gold: #C7A24A;
+  --gold-soft: #E4C878;
+  --cream: #F4EFE1;
+  --ink: #1E1B12;
+  --line: #DCD3B8;
+}
+```
+
+## Semantic usage
+
+| Purpose | Token |
+|---------|-------|
+| Page background | `--cream` |
+| Dark surfaces (topbar, hero) | `--pine` |
+| Body text on light bg | `--ink` |
+| Text on dark bg | `--cream` |
+| Primary accent / CTAs | `--gold` → hover `--gold-soft` |
+| Borders & dividers | `--line` |
+| Muted labels | `#6B6650` |
+| Active nav item bg | `#EAE3CE` (`--slot-bg`) |
+| Focus ring | `--gold-soft` |
+
+## Typography
+
+- **Display / headings:** `'Fraunces', serif`
+- **UI / body:** `'Work Sans', sans-serif`
+
+## Do not
+
+- Use generic blues, grays, or Bootstrap defaults for buttons/borders
+- Hardcode `#007bff`, `#E5E7EB`, or navy without mapping to ZAHO tokens
+- Add new brand colors without updating `docs/DESIGN-SYSTEM.md` first
+- Use rounded corners (8px+) on dashboard buttons, tables, or panels — keep edges **sharp** (`border-radius: 0`), matching the vitrine CTAs
+
+## Reference files
+
+- `docs/DESIGN-SYSTEM.md` — full token and component spec
+- `Views/Home/Index.cshtml` — site accueil patterns
+- `Views/Shared/_DashboardLayout.cshtml` — sidebar menu pattern (Vente / Achat / Opérationnel)
+- `wwwroot/images/` — brand photography for the web app

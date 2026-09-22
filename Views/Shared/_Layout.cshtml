@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OliveMorocco</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="bg-cream text-ink">
+    <header class="dash-topbar">
+        <div>
+            <span class="dash-brand">OLIVE</span><span class="dash-brand-sub">Morocco · Gestion</span>
+        </div>
+        <nav class="flex items-center gap-4 text-xs tracking-wide">
+            <a class="text-gold-soft transition hover:text-gold" asp-controller="Home" asp-action="Index">Accueil</a>
+            <a class="border border-gold/45 px-4 py-1.5 text-gold-soft transition hover:bg-gold hover:text-pine" asp-controller="Dashboard" asp-action="Index">Tableau de bord</a>
+        </nav>
+    </header>
+
+    <div class="mx-auto grid max-w-[1400px] grid-cols-1 gap-0 px-3 pt-[68px] pb-3 lg:grid-cols-[200px_1fr]">
+        @if (ViewData["ShowSidebar"] as bool? ?? false)
+        {
+            <aside class="dash-sidebar mb-3 lg:mb-0 lg:mr-3">
+                <p class="mb-1 text-[13px] font-semibold">Exploitation</p>
+                <p class="mb-4 text-xs text-muted">Had Touabet · Essaouira</p>
+                <nav class="flex flex-col gap-2">
+                    <a class="dash-item dash-item-active" asp-controller="Dashboard" asp-action="Index">Vue d'ensemble</a>
+                    <span class="dash-item cursor-default opacity-50">Secteurs</span>
+                    <span class="dash-item cursor-default opacity-50">Récoltes</span>
+                    <span class="dash-item cursor-default opacity-50">Pressages</span>
+                </nav>
+                <div class="mt-4 border-t border-line pt-4">
+                    <p class="eyebrow mb-2 text-muted">Commercial</p>
+                    <span class="dash-item cursor-default opacity-50">Vente</span>
+                    <span class="dash-item mt-2 cursor-default opacity-50">Achat</span>
+                </div>
+            </aside>
+        }
+
+        <main class="min-w-0 px-0 py-2">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-t border-line px-6 py-6 text-center text-sm text-muted">
+        &copy; @DateTime.UtcNow.Year — OliveMorocco · Huile d'olive extra vierge
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Page & layout CSS — mirror Views/ (import new files here) */
+@import "./Shared/_DashboardLayout.css";
+@import "./Home/Index.css";
+
+@source "../Views/**/*.cshtml";
+@source "../wwwroot/js/**/*.js";
+
+@theme {
+  --color-pine: #14261c;
+  --color-pine-mid: #2c4229;
+  --color-gold: #c7a24a;
+  --color-gold-soft: #e4c878;
+  --color-cream: #f4efe1;
+  --color-ink: #1e1b12;
+  --color-line: #dcd3b8;
+  --color-muted: #6b6650;
+  --color-slot: #eae3ce;
+  --color-surface: #fffcf5;
+  --color-footer: #0f1c14;
+
+  --font-display: "Fraunces", serif;
+  --font-sans: "Work Sans", sans-serif;
+
+  --radius-zaho: 2px;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-cream font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-[3px] outline-gold-soft;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-sans text-xs font-semibold uppercase tracking-[0.22em];
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-zaho bg-gold px-8 py-4 text-sm font-semibold tracking-wide text-pine shadow-[0_10px_30px_-12px_rgba(199,162,74,0.6)] transition duration-200 hover:-translate-y-0.5 hover:bg-gold-soft;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-zaho border border-cream/35 px-[30px] py-4 text-sm text-cream transition duration-200 hover:border-gold-soft hover:text-gold-soft;
+  }
+
+  .dash-panel {
+    @apply border border-line bg-surface p-6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

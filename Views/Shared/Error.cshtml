@@ -1,0 +1,19 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Erreur";
+    ViewData["ShowSidebar"] = false;
+}
+
+<section class="dash-panel max-w-2xl">
+    <h1 class="font-display text-3xl font-semibold text-pine">Une erreur est survenue</h1>
+    @if (Model.ShowRequestId)
+    {
+        <p class="mt-4 text-sm text-muted">
+            <strong>Request ID:</strong> <code class="text-ink">@Model.RequestId</code>
+        </p>
+    }
+    <p class="mt-4 text-sm text-muted">
+        Activez l'environnement <strong>Development</strong> pour plus de détails en local.
+    </p>
+    <a class="btn-gold mt-6 inline-flex" asp-controller="Home" asp-action="Index">Retour à l'accueil</a>
+</section>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>OliveMorocco</RootNamespace>
+    <AssemblyName>OliveMorocco</AssemblyName>
+  </PropertyGroup>
+
+  <Target Name="TailwindBuild" BeforeTargets="Build">
+    <Exec Command="npm run css:build" WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)package.json')" />
+  </Target>
+
+</Project>
