@@ -36,6 +36,7 @@
 .dash-section.open .dash-section-items{display:flex;}
 
 /* Nav items — full-width stretch buttons, sharp corners */
+a.dash-item{text-decoration:none;}
 .dash-item{
   display:block;width:100%;padding:var(--space-md) var(--space-3_5);min-height:var(--control-h-lg);
   font-size:var(--text-md);font-weight:600;color:var(--btn-color);
@@ -66,6 +67,7 @@
 .page-head .module-section{font-size:var(--text-base);color:var(--muted);}
 
 .list-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-sm);}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;}
 .btn{
   background:var(--surface);border:1px solid var(--line);border-radius:0;
   padding:var(--space-sm) var(--space-3_5);min-height:var(--control-h);font-family:'Work Sans',sans-serif;

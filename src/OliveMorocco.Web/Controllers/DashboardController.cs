@@ -6,6 +6,6 @@ public class DashboardController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        return RedirectToAction("Index", "Clients");
     }
 }
