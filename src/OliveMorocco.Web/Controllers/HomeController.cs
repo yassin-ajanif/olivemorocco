@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using OliveMorocco.Models;
+using OliveMorocco.Web.Models;
 
-namespace OliveMorocco.Controllers;
+namespace OliveMorocco.Web.Controllers;
 
 public class HomeController : Controller
 {

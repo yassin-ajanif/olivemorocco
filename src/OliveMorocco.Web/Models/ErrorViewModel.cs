@@ -1,4 +1,4 @@
-namespace OliveMorocco.Models;
+namespace OliveMorocco.Web.Models;
 
 public class ErrorViewModel
 {

@@ -148,10 +148,10 @@ OliveMorocco.sln
 
 ## 4. Current state vs target
 
-| Today (monolith) | Target |
-|------------------|--------|
-| Single project `olivemorocco.csproj` at repo root | `src/OliveMorocco.Web` + 3 class libraries |
-| Controllers/, Views/, Styles/ at root | Same folders under `OliveMorocco.Web` |
+| Today | Target |
+|-------|--------|
+| `src/OliveMorocco.Web` + Domain + DataAccess | + `OliveMorocco.Business` when validated |
+| Web host under `src/` (same layout as FaturatiWeb) | Business layer wires Web → services → DB |
 | Client-side demo data (`wwwroot/js/store.js`) | EF Core + Business services + PostgreSQL |
 | No EF Core | PostgreSQL via `Npgsql.EntityFrameworkCore.PostgreSQL` |
 

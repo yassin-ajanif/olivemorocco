@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace OliveMorocco.Controllers;
+namespace OliveMorocco.Web.Controllers;
 
 public class DashboardController : Controller
 {

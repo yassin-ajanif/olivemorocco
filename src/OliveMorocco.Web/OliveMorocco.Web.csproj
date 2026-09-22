@@ -4,8 +4,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>OliveMorocco</RootNamespace>
-    <AssemblyName>OliveMorocco</AssemblyName>
+    <RootNamespace>OliveMorocco.Web</RootNamespace>
+    <AssemblyName>OliveMorocco.Web</AssemblyName>
+    <NeutralLanguage>fr</NeutralLanguage>
   </PropertyGroup>
 
   <Target Name="TailwindBuild" BeforeTargets="Build">
