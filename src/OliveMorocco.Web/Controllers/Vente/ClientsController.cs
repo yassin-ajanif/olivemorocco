@@ -167,24 +167,27 @@ public sealed class ClientsController(IClientService clients) : Controller
     private static CreateClientDto ToCreateDto(ClientFormViewModel model) =>
         new(
             model.Nom.Trim(),
-            model.Adresse.Trim(),
-            model.Ville.Trim(),
-            model.Telephone.Trim(),
-            model.Email.Trim(),
-            model.ICE.Trim(),
-            model.ConditionsPaiement.Trim(),
+            TrimOrEmpty(model.Adresse),
+            TrimOrEmpty(model.Ville),
+            TrimOrEmpty(model.Telephone),
+            TrimOrEmpty(model.Email),
+            TrimOrEmpty(model.ICE),
+            TrimOrEmpty(model.ConditionsPaiement),
             model.Actif);
 
     private static UpdateClientDto ToUpdateDto(ClientFormViewModel model) =>
         new(
             model.Nom.Trim(),
-            model.Adresse.Trim(),
-            model.Ville.Trim(),
-            model.Telephone.Trim(),
-            model.Email.Trim(),
-            model.ICE.Trim(),
-            model.ConditionsPaiement.Trim(),
+            TrimOrEmpty(model.Adresse),
+            TrimOrEmpty(model.Ville),
+            TrimOrEmpty(model.Telephone),
+            TrimOrEmpty(model.Email),
+            TrimOrEmpty(model.ICE),
+            TrimOrEmpty(model.ConditionsPaiement),
             model.Actif);
+
+    private static string TrimOrEmpty(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
 
     private static string? Normalize(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

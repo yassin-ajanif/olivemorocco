@@ -6,17 +6,17 @@ public sealed class ClientFormViewModel
 
     public string Nom { get; set; } = string.Empty;
 
-    public string ICE { get; set; } = string.Empty;
+    public string? ICE { get; set; }
 
-    public string Adresse { get; set; } = string.Empty;
+    public string? Adresse { get; set; }
 
-    public string Ville { get; set; } = string.Empty;
+    public string? Ville { get; set; }
 
-    public string Telephone { get; set; } = string.Empty;
+    public string? Telephone { get; set; }
 
-    public string Email { get; set; } = string.Empty;
+    public string? Email { get; set; }
 
-    public string ConditionsPaiement { get; set; } = string.Empty;
+    public string? ConditionsPaiement { get; set; }
 
     public bool Actif { get; set; } = true;
 

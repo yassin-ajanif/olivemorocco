@@ -11,29 +11,19 @@ public class CreateClientDtoValidator : AbstractValidator<CreateClientDto>
             .NotEmpty().WithMessage("Le nom est obligatoire.")
             .MaximumLength(200).WithMessage("Le nom ne doit pas dépasser 200 caractères.");
 
-        RuleFor(x => x.Adresse)
-            .NotEmpty().WithMessage("L'adresse est obligatoire.")
-            .MaximumLength(500);
-
-        RuleFor(x => x.Ville)
-            .NotEmpty().WithMessage("La ville est obligatoire.")
-            .MaximumLength(128);
-
-        RuleFor(x => x.Telephone)
-            .NotEmpty().WithMessage("Le téléphone est obligatoire.")
-            .MaximumLength(32);
+        RuleFor(x => x.Adresse).MaximumLength(500);
+        RuleFor(x => x.Ville).MaximumLength(128);
+        RuleFor(x => x.Telephone).MaximumLength(32);
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("L'e-mail est obligatoire.")
             .EmailAddress().WithMessage("L'adresse e-mail n'est pas valide.")
-            .MaximumLength(256);
+            .MaximumLength(256)
+            .When(x => !string.IsNullOrWhiteSpace(x.Email));
 
         RuleFor(x => x.ICE)
-            .NotEmpty().WithMessage("L'ICE est obligatoire.")
-            .Length(15).WithMessage("L'ICE doit comporter exactement 15 caractères.");
+            .Length(15).WithMessage("L'ICE doit comporter exactement 15 caractères.")
+            .When(x => !string.IsNullOrWhiteSpace(x.ICE));
 
-        RuleFor(x => x.ConditionsPaiement)
-            .NotEmpty().WithMessage("Les conditions de paiement sont obligatoires.")
-            .MaximumLength(256);
+        RuleFor(x => x.ConditionsPaiement).MaximumLength(256);
     }
 }
