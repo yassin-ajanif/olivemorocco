@@ -15,6 +15,7 @@ Before implementing features, refactors, or schema/UI changes, **read the releva
 | Entities, tables, relationships, enums, business rules | `docs/DATABASE_SCHEMA.md` |
 | Colors, typography, components, UI tokens | `docs/DESIGN-SYSTEM.md` |
 | Branches, PRs, merge flow | `docs/GIT-WORKFLOW.md` |
+| Unit tests (MSTest, DataAccess, Business) | `docs/UNIT-TESTING.md` |
 
 ## Required behavior
 
@@ -29,5 +30,6 @@ Before implementing features, refactors, or schema/UI changes, **read the releva
 - New page/module → fits layer + folder layout in `ARCHITECTURE.md`?
 - New UI → uses tokens from `DESIGN-SYSTEM.md` / `Styles/app.css` `@theme`?
 - Git workflow → feature branch → PR to `dev` per `GIT-WORKFLOW.md`?
+- New service/repo tests → follow `UNIT-TESTING.md` (method groups, Covered checklist)?
 
 When in doubt, read the doc rather than guessing.

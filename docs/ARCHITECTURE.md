@@ -139,10 +139,12 @@ OliveMorocco.sln
 │       └── appsettings.json
 │
 ├── docs/                                  (project documentation — this folder)
-└── tests/                                 (deferred)
-    ├── OliveMorocco.Business.Tests/
-    └── OliveMorocco.DataAccess.Tests/
+└── tests/
+    ├── OliveMorocco.Business.Tests/       (MSTest + Moq — services, validators)
+    └── OliveMorocco.DataAccess.Tests/     (MSTest + EF InMemory — Repository<T>)
 ```
+
+Unit test conventions (method-group headers, Covered checklists, folder layout): **[`UNIT-TESTING.md`](UNIT-TESTING.md)**.
 
 ---
 

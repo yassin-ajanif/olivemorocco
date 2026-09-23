@@ -1,0 +1,60 @@
+---
+description: MSTest unit test conventions for DataAccess and Business layers
+globs: tests/**/*.cs
+alwaysApply: false
+---
+
+# Unit testing — DataAccess & Business
+
+Read `docs/UNIT-TESTING.md` before adding or changing tests.
+
+## Scope
+
+- **Test:** `OliveMorocco.DataAccess.Tests`, `OliveMorocco.Business.Tests` only.
+- **Do not** add Web/controller unit tests unless explicitly requested.
+
+## Structure
+
+- One `[TestClass]` per class under test (`ClientServiceTests`, `RepositoryTests`).
+- Mirror source folders: `Services/Vente/`, `Validation/Vente/`, `Repositories/`.
+- Test methods grouped **in interface/API order** — do not mix methods in one block.
+
+## Required method-group header
+
+Before each method's tests:
+
+```csharp
+// ══════════════════════════════════════════════════════════════════════
+// MethodName
+// ──────────────────────────────────────────────────────────────────────
+// Full signature with parameters and return type
+//
+// Short behavior description.
+//
+// Covered:
+//   [x] scenario → expected outcome
+// ══════════════════════════════════════════════════════════════════════
+```
+
+- List every tested scenario under **Covered** with `[x]`.
+- No "gaps to consider later" — add the test or skip the line.
+
+## Naming
+
+`{MethodName}_{scenario}` — e.g. `DeleteAsync_is_no_op_when_entity_missing`.
+
+## DataAccess
+
+- Use `TestDbContextFactory.Create()` — EF **InMemory**, not PostgreSQL.
+- `await using var db` per test.
+- Reference: `tests/OliveMorocco.DataAccess.Tests/Repositories/RepositoryTests.cs`.
+
+## Business
+
+- **Moq** for `IRepository<T>` and other dependencies.
+- **Real** FluentValidation validators and AutoMapper (`MapperFactory.Create()`).
+- `[TestInitialize]` for shared setup.
+
+## Run
+
+`dotnet test` before finishing test work.

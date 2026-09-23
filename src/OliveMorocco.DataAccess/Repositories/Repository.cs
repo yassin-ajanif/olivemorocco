@@ -17,6 +17,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         => Set.FindAsync([id], cancellationToken).AsTask();
 
+    
     public async Task<T?> GetByIdWithNavigationsAsync(
         int id,
         Expression<Func<T, object>>[] includes,
