@@ -23,9 +23,23 @@
 <body>
 
 <header class="dash-topbar">
-    <div class="dash-topbar-brand">ZAHO <span>Gestion</span></div>
+    <div class="dash-topbar-start">
+        <button type="button"
+                class="dash-nav-toggle"
+                id="dashNavToggle"
+                aria-controls="dashNav"
+                aria-expanded="false"
+                aria-label="Ouvrir le menu">
+            <span class="dash-nav-toggle-bar" aria-hidden="true"></span>
+            <span class="dash-nav-toggle-bar" aria-hidden="true"></span>
+            <span class="dash-nav-toggle-bar" aria-hidden="true"></span>
+        </button>
+        <div class="dash-topbar-brand">ZAHO <span>Gestion</span></div>
+    </div>
     <a class="dash-topbar-link" asp-controller="Home" asp-action="Index">← Accueil</a>
 </header>
+
+<button type="button" class="dash-nav-backdrop" id="dashNavBackdrop" hidden aria-label="Fermer le menu"></button>
 
 <div class="dash-layout">
     <aside class="dash-sidebar">

@@ -1,0 +1,43 @@
+@model ListPaginationViewModel
+
+<div class="list-pagination">
+    <div class="list-pagination-inner">
+        <div class="pagination-nav">
+            @if (Model.HasPrevious)
+            {
+                <a asp-route-search="@Model.Search"
+                   asp-route-page="1"
+                   class="pagination-link"
+                   title="Première page">⏮</a>
+                <a asp-route-search="@Model.Search"
+                   asp-route-page="@(Model.Page - 1)"
+                   class="pagination-link"
+                   title="Page précédente">‹</a>
+            }
+            else
+            {
+                <span class="pagination-link disabled">⏮</span>
+                <span class="pagination-link disabled">‹</span>
+            }
+
+            <span class="page-indicator"><b>@Model.Page</b> / @Model.TotalPages</span>
+
+            @if (Model.HasNext)
+            {
+                <a asp-route-search="@Model.Search"
+                   asp-route-page="@(Model.Page + 1)"
+                   class="pagination-link"
+                   title="Page suivante">›</a>
+                <a asp-route-search="@Model.Search"
+                   asp-route-page="@Model.TotalPages"
+                   class="pagination-link"
+                   title="Dernière page">⏭</a>
+            }
+            else
+            {
+                <span class="pagination-link disabled">›</span>
+                <span class="pagination-link disabled">⏭</span>
+            }
+        </div>
+    </div>
+</div>
