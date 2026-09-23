@@ -1,0 +1,78 @@
+@model BonReceptionFormViewModel
+@{
+    var title = Model.IsEdit ? "Modifier le bon de rÃ©ception" : "Nouveau bon de rÃ©ception";
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Achat</p>
+    <h1>@title</h1>
+    <p class="form-ref">R├⌐f├⌐rence <strong>@Model.Numero</strong></p>
+</div>
+
+<div class="form-toolbar">
+    <a asp-action="Index" class="btn">ΓåÉ Retour</a>
+    @if (Model.IsEdit)
+    {
+        if (Model.IsFactured)
+        {
+            <a asp-controller="FacturesFournisseurs"
+               asp-action="Edit"
+               asp-route-id="@Model.FactureId"
+               class="btn btn-primary">
+                Voir facture @Model.FactureNumero
+            </a>
+        }
+        else if (Model.Lignes.Count > 0)
+        {
+            <a asp-controller="FacturesFournisseurs"
+               asp-action="FromBonsReception"
+               asp-route-ids="@Model.Id"
+               class="btn btn-primary">
+                Vers facture
+            </a>
+        }
+    }
+    @if (!Model.IsFactured)
+    {
+        <button type="submit" form="bon-reception-form" class="btn btn-primary">Enregistrer</button>
+    }
+</div>
+
+@if (Model.IsEdit)
+{
+    if (Model.IsFactured)
+    {
+        <partial name="_FormBody" model="Model" />
+    }
+    else
+    {
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="bon-reception-form">
+            @Html.AntiForgeryToken()
+            <partial name="_FormBody" model="Model" />
+        </form>
+
+        <form asp-action="Delete"
+              asp-route-id="@Model.Id"
+              method="post"
+              class="form-delete"
+              onsubmit="return confirm('Supprimer ce bon de rÃ©ception ?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    }
+}
+else
+{
+    <form asp-action="Create" method="post" id="bon-reception-form">
+        @Html.AntiForgeryToken()
+        <partial name="_FormBody" model="Model" />
+    </form>
+}
+
+@section Scripts {
+    <script src="~/js/document-totals.js" asp-append-version="true"></script>
+    <script src="~/js/achat-document-form.js" asp-append-version="true"></script>
+    <script src="~/js/bon-reception-form.js" asp-append-version="true"></script>
+}

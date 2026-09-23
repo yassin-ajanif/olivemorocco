@@ -25,7 +25,16 @@ public sealed class TiersUsageService(
         if (linked.Count == 0)
             return;
 
-        throw new ValidationException(BuildDeleteBlockedMessage(linked));
+        throw new ValidationException(BuildDeleteBlockedMessage("client", linked));
+    }
+
+    public async Task EnsureCanDeleteFournisseurAsync(int fournisseurId, CancellationToken cancellationToken = default)
+    {
+        var linked = await GetLinkedFournisseurDocumentLabelsAsync(fournisseurId, cancellationToken);
+        if (linked.Count == 0)
+            return;
+
+        throw new ValidationException(BuildDeleteBlockedMessage("fournisseur", linked));
     }
 
     private async Task<List<string>> GetLinkedDocumentLabelsAsync(int tiersId, CancellationToken cancellationToken)
@@ -56,10 +65,28 @@ public sealed class TiersUsageService(
         return linked;
     }
 
-    private static string BuildDeleteBlockedMessage(IReadOnlyList<string> linked)
+    private async Task<List<string>> GetLinkedFournisseurDocumentLabelsAsync(int tiersId, CancellationToken cancellationToken)
+    {
+        var linked = new List<string>();
+
+        if (await bonsCommandeFournisseur.AnyAsync(b => b.FournisseurId == tiersId, cancellationToken))
+            linked.Add("Bons de commande fournisseur");
+        if (await bonsReception.AnyAsync(b => b.FournisseurId == tiersId, cancellationToken))
+            linked.Add("Bons de réception");
+        if (await facturesFournisseur.AnyAsync(f => f.FournisseurId == tiersId, cancellationToken))
+            linked.Add("Factures fournisseur");
+        if (await avoirsFournisseur.AnyAsync(a => a.FournisseurId == tiersId, cancellationToken))
+            linked.Add("Avoirs fournisseur");
+        if (await pressages.AnyAsync(p => p.FournisseurId == tiersId, cancellationToken))
+            linked.Add("Pressages");
+
+        return linked;
+    }
+
+    private static string BuildDeleteBlockedMessage(string tiersKind, IReadOnlyList<string> linked)
     {
         var message = new StringBuilder();
-        message.AppendLine("Impossible de supprimer ce client.");
+        message.AppendLine($"Impossible de supprimer ce {tiersKind}.");
         message.AppendLine();
         message.AppendLine("Documents liés :");
         foreach (var label in linked)

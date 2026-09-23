@@ -1,0 +1,22 @@
+@model IReadOnlyList<OliveMorocco.Web.Models.Achat.FournisseurSelectItem>
+
+@if (Model.Count == 0)
+{
+    <p class="doc-suggest-empty">Aucun fournisseur trouvÃ©.</p>
+}
+else
+{
+    <ul class="doc-suggest-list">
+        @foreach (var fournisseur in Model)
+        {
+            <li>
+                <button type="button"
+                        class="fournisseur-suggestion doc-suggest-item"
+                        data-fournisseur-id="@fournisseur.Id"
+                        data-fournisseur-nom="@fournisseur.Nom">
+                    @fournisseur.Nom
+                </button>
+            </li>
+        }
+    </ul>
+}

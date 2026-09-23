@@ -4,6 +4,8 @@
 /* Page & layout CSS — mirror Views/ (import new files here) */
 @import "./Shared/_DashboardLayout.css";
 @import "./Home/Index.css";
+@import "./Achat/Fournisseurs.css";
+@import "./Achat/Documents.css";
 
 @source "../Views/**/*.cshtml";
 @source "../wwwroot/js/**/*.js";

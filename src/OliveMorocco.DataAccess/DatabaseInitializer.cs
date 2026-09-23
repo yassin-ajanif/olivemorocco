@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OliveMorocco.Domain.Entities.Common;
+using OliveMorocco.Domain.Entities.Vente;
+using OliveMorocco.Domain.Enums;
 
 namespace OliveMorocco.DataAccess;
 
@@ -10,5 +13,113 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync(cancellationToken);
+        await SeedDemoProduitsAsync(db, cancellationToken);
+        await SeedDemoFournisseursAsync(db, cancellationToken);
+    }
+
+    private static async Task SeedDemoProduitsAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Produits.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Produits.AddRange(
+            new Produit
+            {
+                Reference = "HVO-500",
+                Designation = "Huile d'olive vierge extra 500 ml",
+                Unite = "bouteille",
+                PrixAchatHT = 45,
+                PrixVenteHT = 75,
+                TauxTVA = 20,
+                StockActuel = 120,
+                StockMinimum = 20,
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Produit
+            {
+                Reference = "HVO-1L",
+                Designation = "Huile d'olive vierge extra 1 L",
+                Unite = "bouteille",
+                PrixAchatHT = 80,
+                PrixVenteHT = 130,
+                TauxTVA = 20,
+                StockActuel = 80,
+                StockMinimum = 15,
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Produit
+            {
+                Reference = "HVO-5L",
+                Designation = "Huile d'olive vierge extra 5 L",
+                Unite = "bidon",
+                PrixAchatHT = 350,
+                PrixVenteHT = 520,
+                TauxTVA = 20,
+                StockActuel = 40,
+                StockMinimum = 8,
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoFournisseursAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Tiers.AnyAsync(t => t.Type == TypeTiers.Fournisseur || t.Type == TypeTiers.LesDeux, cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Tiers.AddRange(
+            new Tiers
+            {
+                Nom = "Coopérative Oléicole Atlas",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Route de Fès, Km 12",
+                Ville = "Meknès",
+                Telephone = "+212 5 35 00 00 01",
+                Email = "contact@coop-atlas.ma",
+                ICE = "000000000000001",
+                ConditionsPaiement = "30 jours fin de mois",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Tiers
+            {
+                Nom = "Emballages Maroc SA",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Zone industrielle Aïn Sebaâ",
+                Ville = "Casablanca",
+                Telephone = "+212 5 22 00 00 02",
+                Email = "achats@emballages-maroc.ma",
+                ICE = "000000000000002",
+                ConditionsPaiement = "45 jours",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Tiers
+            {
+                Nom = "Matières Premières du Rif",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Bd Mohammed V",
+                Ville = "Taza",
+                Telephone = "+212 5 35 00 00 03",
+                Email = "info@mp-rif.ma",
+                ICE = "000000000000003",
+                ConditionsPaiement = "Comptant",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
     }
 }
