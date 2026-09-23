@@ -271,6 +271,25 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;}
   margin-top:var(--space-sm);padding-top:var(--space-md);border-top:1px solid var(--line);
   font-size:var(--text-xl);font-weight:600;color:var(--pine);
 }
+.doc-suggest-wrap{position:relative;}
+.doc-suggest-grow{flex:1;min-width:260px;}
+.doc-toolbar-label{display:block;font-size:var(--text-base);font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:var(--space-1_5);}
+.doc-suggestions{
+  position:absolute;left:0;right:0;top:100%;z-index:20;margin-top:var(--space-xs);
+  max-height:240px;overflow:auto;border:1px solid var(--line);background:var(--surface);
+  box-shadow:0 8px 24px var(--shadow-color);
+}
+.doc-suggest-list{list-style:none;margin:0;padding:0;}
+.doc-suggest-item{
+  display:block;width:100%;padding:var(--space-sm) var(--space-md);border:none;border-bottom:1px solid var(--line);
+  background:var(--surface);font-family:'Work Sans',sans-serif;font-size:var(--text-md);text-align:left;
+  color:var(--ink);cursor:pointer;
+}
+.doc-suggest-item:hover{background:var(--slot-bg);}
+.doc-suggest-ref{font-weight:600;color:var(--pine);margin-right:var(--space-xs);}
+.doc-suggest-label{color:var(--muted);}
+.doc-suggest-empty{margin:0;padding:var(--space-sm) var(--space-md);font-size:var(--text-sm);color:var(--muted);}
+.hidden{display:none !important;}
 
 /* OpÃ©rationnel â€” sketch / explanation pages */
 .ops-sketch{max-width:1100px;padding-bottom:var(--space-xl);}
