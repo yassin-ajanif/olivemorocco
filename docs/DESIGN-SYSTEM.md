@@ -60,9 +60,9 @@
 | Form option text | `#111111` | `<select>` dropdown options (light context) |
 | Success bg | `#E8F0E4` | Active/success badges and alerts (`--success-bg`) |
 | Warning bg | `#FFF8E1` | Warning badges and ops alerts (`--warn-bg`) |
-| Danger | `#8B2942` | Delete buttons, validation errors (`--danger`) |
-| Danger hover | `#6B1F33` | Danger hover + error text (`--danger-hover`) |
-| Danger bg | `#FFF5F7` | Error alert backgrounds (`--danger-bg`) |
+| Danger | `#ff0000` | Delete buttons, validation errors (`--danger`) |
+| Danger hover | `#cc0000` | Danger hover + error text (`--danger-hover`) |
+| Danger bg | `color-mix` on `--danger` + `--cream` | Error alert backgrounds (`--danger-bg`) |
 
 #### Semantic mapping
 

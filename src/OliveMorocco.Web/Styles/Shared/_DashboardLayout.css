@@ -154,14 +154,14 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;}
 }
 .form-grid{display:flex;flex-direction:column;gap:var(--space-lg);}
 .form-field{display:flex;flex-direction:column;gap:var(--space-1_5);}
-.form-field > span{font-size:var(--text-base);font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;}
+.form-field > label{font-size:var(--text-base);font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;}
 .form-field input,.form-field select,.form-field textarea{
   background:var(--cream);border:1px solid var(--line);border-radius:0;
   padding:var(--space-2_5);font-family:'Work Sans',sans-serif;font-size:var(--text-md);color:var(--ink);outline:none;
 }
 .form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--gold);}
 .form-check{flex-direction:row;align-items:center;gap:var(--space-2_5);}
-.form-check span{text-transform:none;font-size:var(--text-md);color:var(--ink);}
+.form-check label{text-transform:none;font-size:var(--text-md);color:var(--ink);font-weight:400;letter-spacing:normal;}
 .form-ref{font-size:var(--text-base);color:var(--muted);margin-bottom:var(--space-xs);}
 .form-ref strong{color:var(--pine);font-weight:600;}
 .btn-danger{background:var(--danger);border-color:var(--danger);color:var(--cream);}
@@ -171,7 +171,10 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;}
   padding:var(--space-md);border:1px solid var(--danger);background:var(--danger-bg);
   color:var(--danger-hover);font-size:var(--text-base);
 }
-.field-validation-error{display:block;margin-top:var(--space-1);font-size:var(--text-sm);color:var(--danger);}
+.form-field .field-validation-error{
+  display:block;margin-top:var(--space-xs);font-size:var(--text-sm);font-weight:500;
+  letter-spacing:normal;text-transform:none;color:var(--danger);
+}
 .dash-alert{
   padding:var(--space-md) var(--space-lg);margin-bottom:var(--space-lg);
   border:1px solid var(--line);font-size:var(--text-base);

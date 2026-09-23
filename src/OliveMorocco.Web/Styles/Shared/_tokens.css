@@ -32,9 +32,9 @@ html {
   /* Semantic — dashboard states (reuse before adding more) */
   --success-bg: #E8F0E4;
   --warn-bg: #FFF8E1;
-  --danger: #8B2942;
-  --danger-hover: #6B1F33;
-  --danger-bg: #FFF5F7;
+  --danger: #ff0000;
+  --danger-hover: #cc0000;
+  --danger-bg: color-mix(in srgb, var(--danger) 8%, var(--cream));
   --shadow-color: rgb(0 0 0 / 0.12);
 
   /* Typography scale (1rem = 16px) */
