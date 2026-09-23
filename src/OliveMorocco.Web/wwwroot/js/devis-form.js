@@ -143,11 +143,29 @@
         if (ttcEl) ttcEl.textContent = `${formatMoney(totalTtc)} DH`;
     };
 
+    const findLineByProduitId = (produitId) => {
+        const id = String(produitId);
+        for (const row of body.querySelectorAll(".devis-line")) {
+            if (row.querySelector(".produit-id")?.value === id)
+                return row;
+        }
+        return null;
+    };
+
     const addLine = (data = {}) => {
         const designation = (data.designation || "").trim();
         const produitId = data.produitId || "";
         if (!produitId || !designation) {
             alert("Impossible d'ajouter cet article : données incomplètes.");
+            return;
+        }
+
+        const existingRow = findLineByProduitId(produitId);
+        if (existingRow) {
+            const qteInput = existingRow.querySelector(".line-qte");
+            if (qteInput)
+                qteInput.value = String(parseNum(qteInput.value) + 1);
+            recalculate();
             return;
         }
 

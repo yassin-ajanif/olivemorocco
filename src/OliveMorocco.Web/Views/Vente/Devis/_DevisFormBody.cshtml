@@ -87,19 +87,19 @@
                             </div>
                         </td>
                         <td class="col-qty col-details" data-label="Qté">
-                            <input name="Lignes[@i].Quantite" value="@line.Quantite.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="0.01" min="0" class="line-qte calc-trigger" />
+                            <input name="Lignes[@i].Quantite" value="@line.Quantite.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-qte calc-trigger" />
                         </td>
                         <td class="col-unite col-details" data-label="Unité">
                             <input name="Lignes[@i].Unite" value="@line.Unite" class="line-unite" readonly required />
                         </td>
                         <td class="col-pu col-details" data-label="PU HT">
-                            <input name="Lignes[@i].PrixUnitaireHT" value="@line.PrixUnitaireHT.ToString(CultureInfo.InvariantCulture)" type="number" step="0.01" min="0" class="line-pu calc-trigger" readonly />
+                            <input name="Lignes[@i].PrixUnitaireHT" value="@line.PrixUnitaireHT.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
                         </td>
                         <td class="col-rem col-details" data-label="Remise">
-                            <input name="Lignes[@i].Remise" value="@line.Remise.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="0.01" min="0" class="line-remise calc-trigger" />
+                            <input name="Lignes[@i].Remise" value="@line.Remise.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-remise calc-trigger" />
                         </td>
                         <td class="col-tva col-details" data-label="TVA %">
-                            <input name="Lignes[@i].TauxTVA" value="@line.TauxTVA.ToString(CultureInfo.InvariantCulture)" type="number" step="0.01" min="0" class="line-tva calc-trigger" readonly />
+                            <input name="Lignes[@i].TauxTVA" value="@line.TauxTVA.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
                         </td>
                         <td class="col-ht" data-label="PU TTC">
                             <span class="line-pu-ttc">0,00</span>
@@ -161,19 +161,19 @@
             </div>
         </td>
         <td class="col-qty col-details" data-label="Qté">
-            <input name="Lignes[__index__].Quantite" value="1" type="number" step="0.01" min="0" class="line-qte calc-trigger" />
+            <input name="Lignes[__index__].Quantite" value="1" type="number" step="1" min="0" class="line-qte calc-trigger" />
         </td>
         <td class="col-unite col-details" data-label="Unité">
             <input name="Lignes[__index__].Unite" class="line-unite" readonly required />
         </td>
         <td class="col-pu col-details" data-label="PU HT">
-            <input name="Lignes[__index__].PrixUnitaireHT" value="0" type="number" step="0.01" min="0" class="line-pu calc-trigger" readonly />
+            <input name="Lignes[__index__].PrixUnitaireHT" value="0" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
         </td>
         <td class="col-rem col-details" data-label="Remise">
-            <input name="Lignes[__index__].Remise" value="0" type="number" step="0.01" min="0" class="line-remise calc-trigger" />
+            <input name="Lignes[__index__].Remise" value="0" type="number" step="1" min="0" class="line-remise calc-trigger" />
         </td>
         <td class="col-tva col-details" data-label="TVA %">
-            <input name="Lignes[__index__].TauxTVA" value="20" type="number" step="0.01" min="0" class="line-tva calc-trigger" readonly />
+            <input name="Lignes[__index__].TauxTVA" value="20" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
         </td>
         <td class="col-ht" data-label="PU TTC">
             <span class="line-pu-ttc">0,00</span>
