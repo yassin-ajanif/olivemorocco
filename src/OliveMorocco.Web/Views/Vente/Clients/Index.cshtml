@@ -55,7 +55,13 @@
                         }
                     </span>
                     <span class="list-row-actions">
-                        <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm">Modifier</a>
+                        <a asp-action="Edit"
+                           asp-route-id="@client.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
                         <form asp-action="ToggleActif" method="post" class="inline-form">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@client.Id" />
