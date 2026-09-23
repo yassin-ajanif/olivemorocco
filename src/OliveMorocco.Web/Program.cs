@@ -7,7 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 var logFilePath = builder.Configuration["Logging:File:Path"];
 if (!string.IsNullOrWhiteSpace(logFilePath))
-    builder.Logging.AddProvider(new FileLoggerProvider(logFilePath));
+{
+    var resolvedLogPath = Path.IsPathRooted(logFilePath)
+        ? logFilePath
+        : Path.Combine(builder.Environment.ContentRootPath, logFilePath);
+    builder.Logging.AddProvider(new FileLoggerProvider(resolvedLogPath));
+}
 
 builder.Services.AddControllersWithViews()
     .AddRazorOptions(options => options.ViewLocationExpanders.Add(new SectionViewLocationExpander()));
