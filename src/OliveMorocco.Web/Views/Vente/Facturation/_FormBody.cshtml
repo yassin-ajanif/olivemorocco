@@ -1,0 +1,191 @@
+@model FactureFormViewModel
+@using System.Globalization
+
+<div asp-validation-summary="All" class="form-validation-summary"></div>
+
+<div class="doc-meta">
+    <div class="form-field">
+        <label asp-for="Numero">Référence</label>
+        <input asp-for="Numero" readonly />
+    </div>
+    <div class="form-field">
+        <label asp-for="Date">Date</label>
+        <input asp-for="Date" type="date" />
+        <span asp-validation-for="Date" class="field-validation-error"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="DateEcheance">Échéance</label>
+        <input asp-for="DateEcheance" type="date" />
+        <span asp-validation-for="DateEcheance" class="field-validation-error"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="BonCommandeReference">Réf. bon de commande</label>
+        <input asp-for="BonCommandeReference" />
+        <span asp-validation-for="BonCommandeReference" class="field-validation-error"></span>
+    </div>
+    <div class="form-field doc-suggest-wrap">
+        <label for="client-search">Client</label>
+        <input type="hidden" asp-for="ClientId" id="client-id" />
+        <input type="search"
+               id="client-search"
+               value="@Model.ClientNom"
+               placeholder="Rechercher un client…"
+               autocomplete="off" />
+        <div id="client-suggestions" class="doc-suggestions" hidden></div>
+        <span asp-validation-for="ClientId" class="field-validation-error"></span>
+    </div>
+</div>
+
+<input type="hidden" asp-for="RemiseGlobale" id="remise-globale" value="@Model.RemiseGlobale.ToString(CultureInfo.InvariantCulture)" />
+<input type="hidden" asp-for="EstPayee" />
+
+<div class="doc-lines-section">
+    <div class="doc-lines-toolbar">
+        <div class="doc-suggest-wrap doc-suggest-grow">
+            <label for="article-search" class="doc-toolbar-label">Ajouter un article</label>
+            <input type="search"
+                   id="article-search"
+                   class="doc-product-pick"
+                   placeholder="Rechercher par référence ou désignation…"
+                   autocomplete="off" />
+            <div id="article-suggestions" class="doc-suggestions" hidden></div>
+        </div>
+        <button type="button" id="remove-selected-line" class="btn btn-sm">Supprimer la ligne</button>
+    </div>
+    <div class="doc-lines-scroll">
+        <table class="doc-lines-table" id="facturation-lignes-table">
+            <thead>
+                <tr>
+                    <th class="col-actions"></th>
+                    <th class="col-ref">Réf.</th>
+                    <th class="col-designation">Désignation</th>
+                    <th class="col-qty">Qté</th>
+                    <th class="col-unite">Unité</th>
+                    <th class="col-pu">PU HT</th>
+                    <th class="col-rem">Remise</th>
+                    <th class="col-tva">TVA %</th>
+                    <th class="col-ht">PU TTC</th>
+                    <th class="col-ttc">Montant TTC</th>
+                </tr>
+            </thead>
+            <tbody id="facturation-lignes-body">
+                @for (var i = 0; i < Model.Lignes.Count; i++)
+                {
+                    var line = Model.Lignes[i];
+                    <tr class="devis-line">
+                        <td class="col-actions col-details" data-label="Sélection">
+                            <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
+                        </td>
+                        <td class="col-ref col-details" data-label="Réf.">
+                            <input type="hidden" name="Lignes[@i].ProduitId" value="@line.ProduitId" class="produit-id" />
+                            <input name="Lignes[@i].Reference" value="@line.Reference" class="line-ref" readonly />
+                        </td>
+                        <td class="col-designation" data-label="Désignation">
+                            <div class="devis-line-head">
+                                <button type="button"
+                                        class="devis-line-toggle"
+                                        aria-expanded="true"
+                                        aria-label="Afficher ou masquer le détail de la ligne">
+                                    <span class="devis-line-toggle-icon" aria-hidden="true"></span>
+                                </button>
+                                <input name="Lignes[@i].Designation" value="@line.Designation" class="line-designation" readonly required />
+                                <span class="devis-line-head-ttc" aria-hidden="true">0,00</span>
+                            </div>
+                        </td>
+                        <td class="col-qty col-details" data-label="Qté">
+                            <input name="Lignes[@i].Quantite" value="@line.Quantite.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-qte calc-trigger" />
+                        </td>
+                        <td class="col-unite col-details" data-label="Unité">
+                            <input name="Lignes[@i].Unite" value="@line.Unite" class="line-unite" readonly required />
+                        </td>
+                        <td class="col-pu col-details" data-label="PU HT">
+                            <input name="Lignes[@i].PrixUnitaireHT" value="@line.PrixUnitaireHT.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
+                        </td>
+                        <td class="col-rem col-details" data-label="Remise">
+                            <input name="Lignes[@i].Remise" value="@line.Remise.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-remise calc-trigger" />
+                        </td>
+                        <td class="col-tva col-details" data-label="TVA %">
+                            <input name="Lignes[@i].TauxTVA" value="@line.TauxTVA.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
+                        </td>
+                        <td class="col-ht" data-label="PU TTC">
+                            <span class="line-pu-ttc">0,00</span>
+                        </td>
+                        <td class="col-ttc" data-label="Montant TTC">
+                            <span class="line-ttc">0,00</span>
+                        </td>
+                    </tr>
+                }
+                <tr id="facturation-empty-hint" class="@(Model.Lignes.Count > 0 ? "hidden" : string.Empty)">
+                    <td colspan="10" class="list-empty">Ajoutez des articles via la recherche ci-dessus.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="doc-footer">
+    <div class="doc-notes-wrap">
+        <label asp-for="Note">Note</label>
+        <textarea asp-for="Note" rows="5"></textarea>
+    </div>
+    <div class="doc-totals">
+        <h3>Totaux</h3>
+        <div class="doc-totals-row">
+            <span>Total HT</span>
+            <span id="total-ht">0,00 DH</span>
+        </div>
+        <div class="doc-totals-row">
+            <span>TVA</span>
+            <span id="total-tva">0,00 DH</span>
+        </div>
+        <div class="doc-totals-row doc-totals-ttc">
+            <span>Total TTC</span>
+            <span id="total-ttc">0,00 DH</span>
+        </div>
+    </div>
+</div>
+
+<template id="facturation-line-template">
+    <tr class="devis-line">
+        <td class="col-actions col-details" data-label="Sélection">
+            <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
+        </td>
+        <td class="col-ref col-details" data-label="Réf.">
+            <input type="hidden" name="Lignes[__index__].ProduitId" class="produit-id" />
+            <input name="Lignes[__index__].Reference" class="line-ref" readonly />
+        </td>
+        <td class="col-designation" data-label="Désignation">
+            <div class="devis-line-head">
+                <button type="button"
+                        class="devis-line-toggle"
+                        aria-expanded="true"
+                        aria-label="Afficher ou masquer le détail de la ligne">
+                    <span class="devis-line-toggle-icon" aria-hidden="true"></span>
+                </button>
+                <input name="Lignes[__index__].Designation" class="line-designation" readonly required />
+                <span class="devis-line-head-ttc" aria-hidden="true">0,00</span>
+            </div>
+        </td>
+        <td class="col-qty col-details" data-label="Qté">
+            <input name="Lignes[__index__].Quantite" value="1" type="number" step="1" min="0" class="line-qte calc-trigger" />
+        </td>
+        <td class="col-unite col-details" data-label="Unité">
+            <input name="Lignes[__index__].Unite" class="line-unite" readonly required />
+        </td>
+        <td class="col-pu col-details" data-label="PU HT">
+            <input name="Lignes[__index__].PrixUnitaireHT" value="0" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
+        </td>
+        <td class="col-rem col-details" data-label="Remise">
+            <input name="Lignes[__index__].Remise" value="0" type="number" step="1" min="0" class="line-remise calc-trigger" />
+        </td>
+        <td class="col-tva col-details" data-label="TVA %">
+            <input name="Lignes[__index__].TauxTVA" value="20" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
+        </td>
+        <td class="col-ht" data-label="PU TTC">
+            <span class="line-pu-ttc">0,00</span>
+        </td>
+        <td class="col-ttc" data-label="Montant TTC">
+            <span class="line-ttc">0,00</span>
+        </td>
+    </tr>
+</template>
