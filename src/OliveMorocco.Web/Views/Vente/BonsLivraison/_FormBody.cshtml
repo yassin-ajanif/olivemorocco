@@ -3,6 +3,8 @@
 
 <div asp-validation-summary="All" class="form-validation-summary"></div>
 
+<fieldset class="doc-fieldset" @(Model.IsFactured ? "disabled" : null)>
+
 <div class="doc-meta">
     <div class="form-field">
         <label asp-for="Numero">Référence</label>
@@ -131,6 +133,7 @@
         </div>
     </div>
 </div>
+</fieldset>
 
 <template id="bon-livraison-line-template">
     <tr class="devis-line">

@@ -16,5 +16,11 @@ public sealed class BonLivraisonFormViewModel
 
     public List<BonLivraisonLigneViewModel> Lignes { get; set; } = [];
 
+    public int? FactureId { get; set; }
+
+    public string? FactureNumero { get; set; }
+
     public bool IsEdit => Id.HasValue;
+
+    public bool IsFactured => FactureId is > 0;
 }

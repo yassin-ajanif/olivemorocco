@@ -24,5 +24,9 @@ public sealed class FactureFormViewModel
 
     public List<FactureLigneViewModel> Lignes { get; set; } = [];
 
+    public List<LinkedBonLivraisonViewModel> LinkedBonsLivraison { get; set; } = [];
+
+    public bool LockClient { get; set; }
+
     public bool IsEdit => Id.HasValue;
 }

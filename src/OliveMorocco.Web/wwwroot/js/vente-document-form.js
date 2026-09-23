@@ -50,11 +50,15 @@
             }
         }, 300);
 
-        clientSearchInput?.addEventListener("input", () => {
-            if (clientIdInput)
-                clientIdInput.value = "";
-            fetchSuggestions("/Vente/Suggestions/Clients", clientSearchInput.value.trim(), clientSuggestions);
-        });
+    const clientLocked = clientSearchInput?.hasAttribute("readonly") ?? false;
+
+    clientSearchInput?.addEventListener("input", () => {
+        if (clientLocked)
+            return;
+        if (clientIdInput)
+            clientIdInput.value = "";
+        fetchSuggestions("/Vente/Suggestions/Clients", clientSearchInput.value.trim(), clientSuggestions);
+    });
 
         clientSuggestions?.addEventListener("click", (event) => {
             const btn = event.target.closest(".client-suggestion");
@@ -158,14 +162,18 @@
             if (ttcEl) ttcEl.textContent = `${formatMoney(totalTtc)} DH`;
         };
 
-        const findLineByProduitId = (produitId) => {
-            const id = String(produitId);
-            for (const row of body.querySelectorAll(`.${lineRowClass}`)) {
-                if (row.querySelector(".produit-id")?.value === id)
-                    return row;
-            }
-            return null;
-        };
+    const findLineByProduitId = (produitId) => {
+        const id = String(produitId);
+        for (const row of body.querySelectorAll(`.${lineRowClass}`)) {
+            if (row.querySelector(".produit-id")?.value !== id)
+                continue;
+            const blInput = row.querySelector('input[name*="BonLivraisonId"]');
+            if (blInput?.value)
+                continue;
+            return row;
+        }
+        return null;
+    };
 
         const incrementQty = (row) => {
             const qteInput = row.querySelector(".line-qte");

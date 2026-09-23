@@ -18,12 +18,14 @@ public sealed class BonLivraisonClientService
     private readonly IRepository<BonLivraisonClientLigne> _lignes;
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<FactureClientLigne> _factureLignes;
+    private readonly IRepository<FactureClient> _factures;
 
     public BonLivraisonClientService(
         IRepository<BonLivraisonClient> bons,
         IRepository<BonLivraisonClientLigne> lignes,
         IRepository<Tiers> tiers,
         IRepository<FactureClientLigne> factureLignes,
+        IRepository<FactureClient> factures,
         IMapper mapper,
         IEnumerable<IValidator<CreateBonLivraisonClientDto>> createValidators,
         IEnumerable<IValidator<UpdateBonLivraisonClientDto>> updateValidators)
@@ -32,6 +34,7 @@ public sealed class BonLivraisonClientService
         _lignes = lignes;
         _tiers = tiers;
         _factureLignes = factureLignes;
+        _factures = factures;
     }
 
     public async Task<PagedResult<BonLivraisonClientListItemDto>> GetBonsLivraisonAsync(
@@ -69,6 +72,16 @@ public sealed class BonLivraisonClientService
             cancellationToken);
 
         var byId = headers.ToDictionary(b => b.Id);
+        var factureIds = headers
+            .Where(b => b.FactureId is not null)
+            .Select(b => b.FactureId!.Value)
+            .Distinct()
+            .ToList();
+        var factureNumeros = factureIds.Count == 0
+            ? new Dictionary<int, string>()
+            : (await _factures.FindAsync(f => factureIds.Contains(f.Id), cancellationToken))
+                .ToDictionary(f => f.Id, f => f.Numero);
+
         var listItems = items
             .Where(b => byId.ContainsKey(b.Id))
             .Select(b =>
@@ -84,6 +97,10 @@ public sealed class BonLivraisonClientService
                         l.Remise,
                         l.TauxTVA)));
 
+                string? factureNumero = null;
+                if (full.FactureId is int factureId && factureNumeros.TryGetValue(factureId, out var numero))
+                    factureNumero = numero;
+
                 return new BonLivraisonClientListItemDto(
                     full.Id,
                     full.Numero,
@@ -91,7 +108,9 @@ public sealed class BonLivraisonClientService
                     full.Client.Nom,
                     full.Date,
                     ttc,
-                    full.Note);
+                    full.Note,
+                    full.FactureId,
+                    factureNumero);
             })
             .ToList();
 
@@ -123,6 +142,13 @@ public sealed class BonLivraisonClientService
                 l.Remise,
                 l.TauxTVA)));
 
+        string? factureNumero = null;
+        if (entity.FactureId is int factureId)
+        {
+            var facture = await _factures.GetByIdAsync(factureId, cancellationToken);
+            factureNumero = facture?.Numero;
+        }
+
         return new BonLivraisonClientDto(
             entity.Id,
             entity.Numero,
@@ -130,6 +156,7 @@ public sealed class BonLivraisonClientService
             entity.DevisId,
             entity.BonCommandeClientId,
             entity.FactureId,
+            factureNumero,
             entity.Date,
             ttc,
             entity.Note,
@@ -201,7 +228,7 @@ public sealed class BonLivraisonClientService
     {
         var year = DateTime.Today.Year;
         var prefix = $"BL-{year}-";
-        var existing = await FindAsync(b => b.Numero.StartsWith(prefix), cancellationToken);
+        var existing = await Repo.FindAsync(b => b.Numero.StartsWith(prefix), cancellationToken);
         var next = existing
             .Select(b =>
             {

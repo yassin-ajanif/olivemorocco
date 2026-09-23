@@ -205,7 +205,7 @@ public sealed class AvoirClientService
     {
         var year = DateTime.Today.Year;
         var prefix = $"AV-{year}-";
-        var existing = await FindAsync(a => a.Numero.StartsWith(prefix), cancellationToken);
+        var existing = await Repo.FindAsync(a => a.Numero.StartsWith(prefix), cancellationToken);
         var next = existing
             .Select(a =>
             {

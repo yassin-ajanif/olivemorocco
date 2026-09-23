@@ -213,7 +213,7 @@ public sealed class DevisClientService
     {
         var year = DateTime.Today.Year;
         var prefix = $"DEV-{year}-";
-        var existing = await FindAsync(d => d.Numero.StartsWith(prefix), cancellationToken);
+        var existing = await Repo.FindAsync(d => d.Numero.StartsWith(prefix), cancellationToken);
         var next = existing
             .Select(d =>
             {

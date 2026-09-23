@@ -13,24 +13,55 @@
 
 <div class="form-toolbar">
     <a asp-action="Index" class="btn">← Retour</a>
-    <button type="submit" form="bon-livraison-form" class="btn btn-primary">Enregistrer</button>
+    @if (Model.IsEdit)
+    {
+        if (Model.IsFactured)
+        {
+            <a asp-controller="Facturation"
+               asp-action="Edit"
+               asp-route-id="@Model.FactureId"
+               class="btn btn-primary">
+                Voir facture @Model.FactureNumero
+            </a>
+        }
+        else if (Model.Lignes.Count > 0)
+        {
+            <a asp-controller="Facturation"
+               asp-action="FromBonsLivraison"
+               asp-route-ids="@Model.Id"
+               class="btn btn-primary">
+                Vers facture
+            </a>
+        }
+    }
+    @if (!Model.IsFactured)
+    {
+        <button type="submit" form="bon-livraison-form" class="btn btn-primary">Enregistrer</button>
+    }
 </div>
 
 @if (Model.IsEdit)
 {
-    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="bon-livraison-form">
-        @Html.AntiForgeryToken()
+    if (Model.IsFactured)
+    {
         <partial name="_FormBody" model="Model" />
-    </form>
+    }
+    else
+    {
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="bon-livraison-form">
+            @Html.AntiForgeryToken()
+            <partial name="_FormBody" model="Model" />
+        </form>
 
-    <form asp-action="Delete"
-          asp-route-id="@Model.Id"
-          method="post"
-          class="form-delete"
-          onsubmit="return confirm('Supprimer ce bon de livraison ?');">
-        @Html.AntiForgeryToken()
-        <button type="submit" class="btn btn-danger">Supprimer</button>
-    </form>
+        <form asp-action="Delete"
+              asp-route-id="@Model.Id"
+              method="post"
+              class="form-delete"
+              onsubmit="return confirm('Supprimer ce bon de livraison ?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    }
 }
 else
 {

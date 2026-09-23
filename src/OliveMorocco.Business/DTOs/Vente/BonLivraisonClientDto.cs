@@ -28,6 +28,7 @@ public record BonLivraisonClientDto(
     int? DevisId,
     int? BonCommandeClientId,
     int? FactureId,
+    string? FactureNumero,
     DateTime Date,
     decimal TotalTtc,
     string Note,
@@ -57,4 +58,6 @@ public record BonLivraisonClientListItemDto(
     string ClientNom,
     DateTime Date,
     decimal TotalTtc,
-    string Note);
+    string Note,
+    int? FactureId,
+    string? FactureNumero);

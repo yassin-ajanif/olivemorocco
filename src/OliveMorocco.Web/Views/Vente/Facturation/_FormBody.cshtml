@@ -3,6 +3,20 @@
 
 <div asp-validation-summary="All" class="form-validation-summary"></div>
 
+@if (Model.LinkedBonsLivraison.Count > 0)
+{
+    <div class="doc-linked-docs">
+        <span class="doc-linked-label">Bons de livraison</span>
+        @foreach (var bl in Model.LinkedBonsLivraison)
+        {
+            <a asp-controller="BonsLivraison"
+               asp-action="Edit"
+               asp-route-id="@bl.Id"
+               class="doc-linked-chip">@bl.Numero</a>
+        }
+    </div>
+}
+
 <div class="doc-meta">
     <div class="form-field">
         <label asp-for="Numero">Référence</label>
@@ -30,7 +44,8 @@
                id="client-search"
                value="@Model.ClientNom"
                placeholder="Rechercher un client…"
-               autocomplete="off" />
+               autocomplete="off"
+               @(Model.LockClient ? "readonly" : null) />
         <div id="client-suggestions" class="doc-suggestions" hidden></div>
         <span asp-validation-for="ClientId" class="field-validation-error"></span>
     </div>
@@ -77,6 +92,10 @@
                             <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
                         </td>
                         <td class="col-ref col-details" data-label="Réf.">
+                            @if (line.BonLivraisonId is not null)
+                            {
+                                <input type="hidden" name="Lignes[@i].BonLivraisonId" value="@line.BonLivraisonId" />
+                            }
                             <input type="hidden" name="Lignes[@i].ProduitId" value="@line.ProduitId" class="produit-id" />
                             <input name="Lignes[@i].Reference" value="@line.Reference" class="line-ref" readonly />
                         </td>
@@ -151,6 +170,7 @@
             <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
         </td>
         <td class="col-ref col-details" data-label="Réf.">
+            <input type="hidden" name="Lignes[__index__].BonLivraisonId" class="line-bl-id" />
             <input type="hidden" name="Lignes[__index__].ProduitId" class="produit-id" />
             <input name="Lignes[__index__].Reference" class="line-ref" readonly />
         </td>

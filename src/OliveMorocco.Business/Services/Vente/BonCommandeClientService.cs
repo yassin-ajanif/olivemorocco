@@ -202,7 +202,7 @@ public sealed class BonCommandeClientService
     {
         var year = DateTime.Today.Year;
         var prefix = $"BC-{year}-";
-        var existing = await FindAsync(b => b.Numero.StartsWith(prefix), cancellationToken);
+        var existing = await Repo.FindAsync(b => b.Numero.StartsWith(prefix), cancellationToken);
         var next = existing
             .Select(b =>
             {

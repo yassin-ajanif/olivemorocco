@@ -10,6 +10,7 @@ namespace OliveMorocco.Web.Controllers.Vente;
 [Route(AppSections.Vente + "/[controller]")]
 public sealed class FacturationController(
     IFactureClientService factures,
+    IBonLivraisonClientService bonsLivraison,
     IClientService clients) : Controller
 {
     [HttpGet("")]
@@ -48,6 +49,92 @@ public sealed class FacturationController(
         });
     }
 
+    /// <summary>Prefills a new facture from one or more bons de livraison.</summary>
+    [HttpGet("FromBonsLivraison")]
+    public async Task<IActionResult> FromBonsLivraison(
+        [FromQuery] int[] ids,
+        CancellationToken cancellationToken)
+    {
+        var distinctIds = ids.Where(id => id > 0).Distinct().ToList();
+        if (distinctIds.Count == 0)
+        {
+            TempData["Error"] = "Sélectionnez au moins un bon de livraison.";
+            return RedirectToAction("Index", "BonsLivraison");
+        }
+
+        var loaded = new List<BonLivraisonClientDto>();
+        foreach (var id in distinctIds)
+        {
+            var bl = await bonsLivraison.GetBonLivraisonByIdAsync(id, cancellationToken);
+            if (bl is null)
+            {
+                TempData["Error"] = $"Bon de livraison {id} introuvable.";
+                return RedirectToAction("Index", "BonsLivraison");
+            }
+
+            loaded.Add(bl);
+        }
+
+        var clientIds = loaded.Select(b => b.ClientId).Distinct().ToList();
+        if (clientIds.Count > 1)
+        {
+            TempData["Error"] = "Les bons de livraison sélectionnés doivent appartenir au même client.";
+            return RedirectToAction("Index", "BonsLivraison");
+        }
+
+        var alreadyInvoiced = loaded.FirstOrDefault(b => b.FactureId is not null);
+        if (alreadyInvoiced is not null)
+        {
+            TempData["Error"] =
+                $"Le bon {alreadyInvoiced.Numero} est déjà lié à la facture {alreadyInvoiced.FactureNumero ?? alreadyInvoiced.FactureId.ToString()}.";
+            if (alreadyInvoiced.FactureId is int factureId)
+                return RedirectToAction(nameof(Edit), new { id = factureId });
+            return RedirectToAction("Index", "BonsLivraison");
+        }
+
+        var empty = loaded.FirstOrDefault(b => b.Lignes.Count == 0);
+        if (empty is not null)
+        {
+            TempData["Error"] = $"Le bon {empty.Numero} ne contient aucune ligne à facturer.";
+            return RedirectToAction("Edit", "BonsLivraison", new { id = empty.Id });
+        }
+
+        var clientId = clientIds[0];
+        var client = await clients.GetClientByIdAsync(clientId, cancellationToken);
+        var numero = await factures.GenerateNumeroAsync(cancellationToken);
+        var blNumeros = string.Join(", ", loaded.Select(b => b.Numero));
+
+        var model = new FactureFormViewModel
+        {
+            Numero = numero,
+            ClientId = clientId,
+            ClientNom = client?.Nom ?? string.Empty,
+            Date = DateTime.Today,
+            DateEcheance = DateTime.Today.AddDays(30),
+            Note = $"Depuis {blNumeros}",
+            LockClient = true,
+            LinkedBonsLivraison = loaded
+                .Select(b => new LinkedBonLivraisonViewModel { Id = b.Id, Numero = b.Numero })
+                .ToList(),
+            Lignes = loaded
+                .SelectMany(bl => bl.Lignes.Select(l => new FactureLigneViewModel
+                {
+                    BonLivraisonId = bl.Id,
+                    ProduitId = l.ProduitId,
+                    Reference = l.Reference,
+                    Designation = l.Designation,
+                    Unite = "U",
+                    Quantite = l.QuantiteLivree,
+                    PrixUnitaireHT = l.PrixUnitaireHT,
+                    Remise = l.Remise,
+                    TauxTVA = l.TauxTVA,
+                }))
+                .ToList(),
+        };
+
+        return View("Edit", model);
+    }
+
     [HttpPost("Create")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
@@ -68,6 +155,7 @@ public sealed class FacturationController(
         {
             AddValidationErrors(exception);
             await ResolveClientNomAsync(model, cancellationToken);
+            await PopulateLinkedBonsLivraisonAsync(model, cancellationToken);
             return View("Edit", model);
         }
 
@@ -111,6 +199,7 @@ public sealed class FacturationController(
         {
             AddValidationErrors(exception);
             await ResolveClientNomAsync(model, cancellationToken);
+            await PopulateLinkedBonsLivraisonAsync(model, cancellationToken);
             return View(model);
         }
 
@@ -155,7 +244,7 @@ public sealed class FacturationController(
     {
         var client = await clients.GetClientByIdAsync(dto.ClientId, cancellationToken);
 
-        return new FactureFormViewModel
+        var model = new FactureFormViewModel
         {
             Id = dto.Id,
             Numero = dto.Numero,
@@ -169,6 +258,7 @@ public sealed class FacturationController(
             Note = dto.Note,
             Lignes = dto.Lignes.Select(l => new FactureLigneViewModel
             {
+                BonLivraisonId = l.BonLivraisonId,
                 ProduitId = l.ProduitId,
                 Reference = l.Reference,
                 Designation = l.Designation,
@@ -179,6 +269,36 @@ public sealed class FacturationController(
                 TauxTVA = l.TauxTVA,
             }).ToList(),
         };
+
+        await PopulateLinkedBonsLivraisonAsync(model, cancellationToken);
+        return model;
+    }
+
+    private async Task PopulateLinkedBonsLivraisonAsync(
+        FactureFormViewModel model,
+        CancellationToken cancellationToken)
+    {
+        if (model.LinkedBonsLivraison.Count > 0)
+            return;
+
+        var ids = model.Lignes
+            .Where(l => l.BonLivraisonId is > 0)
+            .Select(l => l.BonLivraisonId!.Value)
+            .Distinct()
+            .ToList();
+
+        foreach (var id in ids)
+        {
+            var bl = await bonsLivraison.GetBonLivraisonByIdAsync(id, cancellationToken);
+            if (bl is not null)
+            {
+                model.LinkedBonsLivraison.Add(new LinkedBonLivraisonViewModel
+                {
+                    Id = bl.Id,
+                    Numero = bl.Numero,
+                });
+            }
+        }
     }
 
     private static CreateFactureClientDto ToCreateDto(FactureFormViewModel model) =>
@@ -211,7 +331,7 @@ public sealed class FacturationController(
     private static List<CreateFactureClientLigneDto> ToLineDtos(IEnumerable<FactureLigneViewModel> lignes) =>
         lignes
             .Select(l => new CreateFactureClientLigneDto(
-                null,
+                l.BonLivraisonId is > 0 ? l.BonLivraisonId : null,
                 l.ProduitId,
                 l.Designation.Trim(),
                 l.Quantite,

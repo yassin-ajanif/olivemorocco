@@ -1,6 +1,26 @@
 /* Views/Vente/Devis — document form, line items, suggestions */
 
 .form-panel-wide{max-width:none;padding:0;border:none;background:transparent;}
+.doc-fieldset{border:none;margin:0;padding:0;min-width:0;}
+.doc-linked-docs{
+  display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-sm);
+  margin-bottom:var(--space-md);padding:var(--space-md) var(--space-lg);
+  background:var(--slot-bg);border:1px solid var(--line);
+}
+.doc-linked-label{
+  font-size:var(--text-base);font-weight:600;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted);margin-right:var(--space-sm);
+}
+.doc-linked-chip{
+  display:inline-block;padding:var(--space-xs) var(--space-md);
+  background:var(--surface);border:1px solid var(--line);
+  font-size:var(--text-sm);font-weight:600;color:var(--pine);
+}
+.doc-linked-chip:hover{background:var(--cream);}
+.list-toolbar-form{display:inline-flex;}
+.list-toolbar-search{display:flex;flex:1;min-width:0;}
+.list-muted{color:var(--muted);}
+.list-row .bl-select{width:1.125rem;height:1.125rem;accent-color:var(--gold);}
 .doc-meta{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-lg);
   background:var(--surface);border:1px solid var(--line);padding:var(--space-5);margin-bottom:var(--space-md);

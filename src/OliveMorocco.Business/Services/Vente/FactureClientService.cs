@@ -19,6 +19,7 @@ public sealed class FactureClientService
     private readonly IRepository<PaiementClient> _paiements;
     private readonly IRepository<AvoirClient> _avoirs;
     private readonly IRepository<Tiers> _tiers;
+    private readonly IRepository<BonLivraisonClient> _bonsLivraison;
 
     public FactureClientService(
         IRepository<FactureClient> factures,
@@ -26,6 +27,7 @@ public sealed class FactureClientService
         IRepository<PaiementClient> paiements,
         IRepository<AvoirClient> avoirs,
         IRepository<Tiers> tiers,
+        IRepository<BonLivraisonClient> bonsLivraison,
         IMapper mapper,
         IEnumerable<IValidator<CreateFactureClientDto>> createValidators,
         IEnumerable<IValidator<UpdateFactureClientDto>> updateValidators)
@@ -35,6 +37,7 @@ public sealed class FactureClientService
         _paiements = paiements;
         _avoirs = avoirs;
         _tiers = tiers;
+        _bonsLivraison = bonsLivraison;
     }
 
     public async Task<PagedResult<FactureClientListItemDto>> GetFacturesAsync(
@@ -134,6 +137,7 @@ public sealed class FactureClientService
         NormalizeLines(entity.Lignes);
 
         await Repo.AddAsync(entity, cancellationToken);
+        await LinkBonsLivraisonAsync(entity.Id, dto.ClientId, dto.Lignes, cancellationToken);
         return (await GetFactureByIdAsync(entity.Id, cancellationToken))!;
     }
 
@@ -178,7 +182,7 @@ public sealed class FactureClientService
     {
         var year = DateTime.Today.Year;
         var prefix = $"FAC-{year}-";
-        var existing = await FindAsync(f => f.Numero.StartsWith(prefix), cancellationToken);
+        var existing = await Repo.FindAsync(f => f.Numero.StartsWith(prefix), cancellationToken);
         var next = existing
             .Select(f =>
             {
@@ -207,6 +211,47 @@ public sealed class FactureClientService
             throw new ValidationException([
                 new ValidationFailure(nameof(CreateFactureClientDto.ClientId),
                     "Le tiers sélectionné n'est pas un client.")]);
+        }
+    }
+
+    private async Task LinkBonsLivraisonAsync(
+        int factureId,
+        int clientId,
+        IEnumerable<CreateFactureClientLigneDto> lignes,
+        CancellationToken cancellationToken)
+    {
+        var blIds = lignes
+            .Where(l => l.BonLivraisonId is > 0)
+            .Select(l => l.BonLivraisonId!.Value)
+            .Distinct()
+            .ToList();
+
+        if (blIds.Count == 0)
+            return;
+
+        foreach (var blId in blIds)
+        {
+            var bl = await _bonsLivraison.GetByIdAsync(blId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Bon de livraison {blId} introuvable.");
+
+            if (bl.FactureId is int existingFactureId && existingFactureId != factureId)
+            {
+                throw new ValidationException([
+                    new ValidationFailure(
+                        "Lignes",
+                        $"Le bon de livraison {bl.Numero} est déjà lié à une autre facture.")]);
+            }
+
+            if (bl.ClientId != clientId)
+            {
+                throw new ValidationException([
+                    new ValidationFailure(
+                        nameof(CreateFactureClientDto.ClientId),
+                        $"Le bon de livraison {bl.Numero} n'appartient pas au même client.")]);
+            }
+
+            bl.FactureId = factureId;
+            await _bonsLivraison.UpdateAsync(bl, cancellationToken);
         }
     }
 

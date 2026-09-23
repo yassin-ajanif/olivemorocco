@@ -162,6 +162,8 @@ public sealed class BonsLivraisonController(
             ClientNom = client?.Nom ?? string.Empty,
             Date = dto.Date.Date,
             Note = dto.Note,
+            FactureId = dto.FactureId,
+            FactureNumero = dto.FactureNumero,
             Lignes = dto.Lignes.Select(l => new BonLivraisonLigneViewModel
             {
                 ProduitId = l.ProduitId,

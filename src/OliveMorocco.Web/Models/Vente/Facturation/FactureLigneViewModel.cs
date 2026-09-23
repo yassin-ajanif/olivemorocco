@@ -2,6 +2,8 @@ namespace OliveMorocco.Web.Models.Vente.Facturation;
 
 public sealed class FactureLigneViewModel
 {
+    public int? BonLivraisonId { get; set; }
+
     public int ProduitId { get; set; }
 
     public string Reference { get; set; } = string.Empty;
