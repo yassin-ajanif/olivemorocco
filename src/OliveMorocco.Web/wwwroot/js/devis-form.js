@@ -124,6 +124,11 @@
                 remise,
                 tva,
                 formatMoney);
+
+            const headTtc = row.querySelector(".devis-line-head-ttc");
+            const lineTtc = row.querySelector(".line-ttc");
+            if (headTtc && lineTtc)
+                headTtc.textContent = lineTtc.textContent;
         });
 
         const remiseGlobale = parseNum(remiseGlobaleInput?.value);
@@ -148,9 +153,12 @@
 
         const index = body.querySelectorAll(".devis-line").length;
         const html = template.innerHTML.replaceAll("__index__", String(index));
-        body.insertAdjacentHTML("beforeend", html);
+        if (emptyHint)
+            emptyHint.insertAdjacentHTML("beforebegin", html);
+        else
+            body.insertAdjacentHTML("beforeend", html);
 
-        const row = body.lastElementChild;
+        const row = emptyHint?.previousElementSibling ?? body.lastElementChild;
         if (!row)
             return;
 
@@ -201,6 +209,19 @@
     body.addEventListener("input", (event) => {
         if (event.target.classList.contains("calc-trigger"))
             recalculate();
+    });
+
+    body.addEventListener("click", (event) => {
+        const toggle = event.target.closest(".devis-line-toggle");
+        if (!toggle)
+            return;
+
+        const row = toggle.closest(".devis-line");
+        if (!row)
+            return;
+
+        const collapsed = row.classList.toggle("is-collapsed");
+        toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
     });
 
     form?.addEventListener("submit", (event) => {
