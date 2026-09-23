@@ -517,7 +517,7 @@
   flex-wrap: wrap;
 }
 
-form.inline-form {
+form.contact-form {
   max-width: 520px;
   margin: 3.5rem auto 0;
   display: flex;
@@ -526,7 +526,7 @@ form.inline-form {
   text-align: left;
 }
 
-form.inline-form label {
+form.contact-form label {
   font-size: var(--text-sm);
   letter-spacing: 1px;
   color: var(--gold-soft);
@@ -534,9 +534,9 @@ form.inline-form label {
   margin-bottom: -var(--space-1_5);
 }
 
-form.inline-form input,
-form.inline-form select,
-form.inline-form textarea {
+form.contact-form input,
+form.contact-form select,
+form.contact-form textarea {
   background: transparent;
   border: none;
   border-bottom: 1px solid rgba(244, 239, 225, 0.3);
@@ -548,13 +548,13 @@ form.inline-form textarea {
   transition: border-color 0.25s;
 }
 
-form.inline-form input:focus,
-form.inline-form select:focus,
-form.inline-form textarea:focus {
+form.contact-form input:focus,
+form.contact-form select:focus,
+form.contact-form textarea:focus {
   border-color: var(--gold);
 }
 
-form.inline-form option {
+form.contact-form option {
   color: var(--form-option);
 }
 

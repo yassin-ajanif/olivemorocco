@@ -104,8 +104,15 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;}
 .list-row.selected{background:var(--slot-bg);}
 .list-link{color:var(--pine);font-weight:600;text-decoration:none;}
 .list-link:hover{text-decoration:underline;}
-.list-row-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-xs);justify-content:flex-end;}
-.inline-form{display:inline;}
+.list-row-actions{
+  display:inline-flex;flex-wrap:nowrap;align-items:center;gap:var(--space-xs);justify-content:flex-end;
+  min-width:calc(var(--control-h) * 2 + var(--space-xs));
+  white-space:nowrap;
+}
+.list-row-actions .inline-form{
+  display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;
+  margin:0;max-width:none;gap:0;text-align:inherit;
+}
 .list-row .cell-bold{font-weight:600;text-align:end;}
 .list-row .cell-muted{opacity:.75;}
 .badge{display:inline-block;padding:0.125rem var(--space-sm);font-size:var(--text-sm);font-weight:600;border:1px solid;border-radius:0;}
