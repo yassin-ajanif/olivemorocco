@@ -1,0 +1,101 @@
+/* Stockage · État du stock */
+
+.stock-toolbar{
+  flex-wrap:wrap;
+  gap:var(--space-md);
+}
+
+.stock-filter-check{
+  display:inline-flex;
+  align-items:center;
+  gap:var(--space-sm);
+  font-size:var(--text-sm);
+  color:var(--pine);
+  white-space:nowrap;
+}
+
+.stock-filter-check input[type="checkbox"]{
+  width:1rem;
+  height:1rem;
+  accent-color:var(--gold);
+}
+
+.badge-stock-rupture{
+  background:var(--danger-bg);
+  border:1px solid var(--danger);
+  color:var(--danger-hover);
+}
+
+.stock-detail-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(260px,340px);
+  gap:var(--space-lg);
+  margin-bottom:var(--space-xl);
+  align-items:start;
+}
+
+.stock-summary-panel,
+.stock-ajustement-panel{
+  padding:var(--space-lg);
+}
+
+.stock-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:var(--space-md);
+  margin:0 0 var(--space-lg);
+}
+
+.stock-summary-grid dt{
+  margin:0 0 var(--space-xs);
+  font-size:var(--text-sm);
+  color:var(--muted);
+}
+
+.stock-summary-grid dd{
+  margin:0;
+  font-size:var(--text-base);
+  color:var(--pine);
+}
+
+.stock-summary-value{
+  font-family:'Fraunces',serif;
+  font-size:var(--text-xl);
+  font-weight:600;
+}
+
+.stock-panel-title{
+  margin:0 0 var(--space-sm);
+  font-family:'Fraunces',serif;
+  font-size:var(--text-lg);
+  font-weight:600;
+  color:var(--pine);
+}
+
+.stock-panel-hint{
+  margin:0 0 var(--space-md);
+  font-size:var(--text-sm);
+  color:var(--muted);
+}
+
+.stock-ajustement-form{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-md);
+}
+
+.stock-mouvements-section{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-md);
+}
+
+@media (max-width:768px){
+  .stock-detail-layout{
+    grid-template-columns:1fr;
+  }
+
+  .stock-summary-grid{
+    grid-template-columns:1fr;
+  }
+}

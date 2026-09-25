@@ -1,0 +1,177 @@
+@model StockDetailViewModel
+@using OliveMorocco.Domain.Enums
+@{
+    var p = Model.Produit;
+    const string cols = "1.1fr 0.75fr 0.7fr 0.8fr 0.8fr 1fr minmax(0,1.2fr)";
+    const string emptyMessage = "Aucun mouvement enregistré pour ce produit.";
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Stockage · État du stock</p>
+    <h1>@p.Designation</h1>
+    <p class="module-section">@p.Reference · @(p.VarieteNom ?? "Sans variété")</p>
+</div>
+
+<div class="stock-detail-layout">
+    <div class="dash-panel stock-summary-panel">
+        <dl class="stock-summary-grid">
+            <div>
+                <dt>Stock actuel</dt>
+                <dd class="stock-summary-value">@p.StockActuel.ToString("N0") @p.Unite</dd>
+            </div>
+            <div>
+                <dt>Stock minimum</dt>
+                <dd>@p.StockMinimum.ToString("N0") @p.Unite</dd>
+            </div>
+            <div>
+                <dt>Statut</dt>
+                <dd>
+                    @if (p.Rupture)
+                    {
+                        <span class="badge badge-stock-rupture">Rupture</span>
+                    }
+                    else if (p.StockBas)
+                    {
+                        <span class="badge badge-warn">Stock bas</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-ok">OK</span>
+                    }
+                </dd>
+            </div>
+        </dl>
+        <a asp-action="Index" class="btn btn-sm">← Retour à la liste</a>
+    </div>
+
+    <div class="dash-panel stock-ajustement-panel">
+        <h2 class="stock-panel-title">Ajustement manuel</h2>
+        <p class="stock-panel-hint">Entrez une variation positive (entrée) ou négative (sortie).</p>
+        <form asp-action="Ajustement"
+              asp-route-id="@p.Id"
+              asp-route-page="@Model.MouvementPage"
+              method="post"
+              class="stock-ajustement-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="form-validation-summary"></div>
+            <div class="form-field">
+                <label asp-for="Ajustement.Variation">Variation</label>
+                <input asp-for="Ajustement.Variation"
+                       type="number"
+                       step="1"
+                       placeholder="Ex. 10 ou -5" />
+                <span asp-validation-for="Ajustement.Variation" class="field-validation-error"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="Ajustement.Note">Note</label>
+                <input asp-for="Ajustement.Note"
+                       type="text"
+                       maxlength="500"
+                       placeholder="Motif de l'ajustement (optionnel)" />
+                <span asp-validation-for="Ajustement.Note" class="field-validation-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer l'ajustement</button>
+        </form>
+    </div>
+</div>
+
+<div class="stock-mouvements-section">
+    <h2 class="stock-panel-title">Historique des mouvements</h2>
+
+    <div class="list-wrap">
+        <div class="list-header" style="grid-template-columns:@cols">
+            <span>Date</span>
+            <span>Type</span>
+            <span>Quantité</span>
+            <span>Stock avant</span>
+            <span>Stock après</span>
+            <span>Origine</span>
+            <span>Note</span>
+        </div>
+        <div class="list-body">
+            @if (Model.Mouvements.Count == 0)
+            {
+                <partial name="_ListEmpty" model="emptyMessage" />
+            }
+            else
+            {
+                foreach (var m in Model.Mouvements)
+                {
+                    <div class="list-row" style="grid-template-columns:@cols">
+                        <span data-label="Date">@m.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        <span data-label="Type">
+                            @switch (m.Type)
+                            {
+                                case TypeMouvement.Entree:
+                                    <span class="badge badge-ok">Entrée</span>
+                                    break;
+                                case TypeMouvement.Sortie:
+                                    <span class="badge badge-warn">Sortie</span>
+                                    break;
+                                default:
+                                    <span class="badge badge-gold">Ajustement</span>
+                                    break;
+                            }
+                        </span>
+                        <span data-label="Quantité" class="cell-bold">@m.Quantite.ToString("N0")</span>
+                        <span data-label="Stock avant">@m.StockAvant.ToString("N0")</span>
+                        <span data-label="Stock après" class="cell-bold">@m.StockApres.ToString("N0")</span>
+                        <span data-label="Origine">@m.OrigineLabel</span>
+                        <span data-label="Note">@(string.IsNullOrWhiteSpace(m.Note) ? "—" : m.Note)</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    @if (Model.MouvementTotalPages > 1)
+    {
+        <div class="list-pagination">
+            <div class="list-pagination-inner">
+                <div class="pagination-nav">
+                    @if (Model.MouvementHasPrevious)
+                    {
+                        <a asp-action="Detail"
+                           asp-route-id="@p.Id"
+                           asp-route-page="1"
+                           class="pagination-link"
+                           title="Première page">⏮</a>
+                        <a asp-action="Detail"
+                           asp-route-id="@p.Id"
+                           asp-route-page="@(Model.MouvementPage - 1)"
+                           class="pagination-link"
+                           title="Page précédente">‹</a>
+                    }
+                    else
+                    {
+                        <span class="pagination-link disabled">⏮</span>
+                        <span class="pagination-link disabled">‹</span>
+                    }
+
+                    <span class="page-indicator"><b>@Model.MouvementPage</b> / @Model.MouvementTotalPages</span>
+
+                    @if (Model.MouvementHasNext)
+                    {
+                        <a asp-action="Detail"
+                           asp-route-id="@p.Id"
+                           asp-route-page="@(Model.MouvementPage + 1)"
+                           class="pagination-link"
+                           title="Page suivante">›</a>
+                        <a asp-action="Detail"
+                           asp-route-id="@p.Id"
+                           asp-route-page="@Model.MouvementTotalPages"
+                           class="pagination-link"
+                           title="Dernière page">⏭</a>
+                    }
+                    else
+                    {
+                        <span class="pagination-link disabled">›</span>
+                        <span class="pagination-link disabled">⏭</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

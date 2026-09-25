@@ -10,4 +10,5 @@
 @import "../Operationnel/OpsPages.css";
 @import "../Stockage/Produits.css";
 @import "../Stockage/Secteurs.css";
+@import "../Stockage/Stock.css";
 @import "./_DashboardUtilities.css";

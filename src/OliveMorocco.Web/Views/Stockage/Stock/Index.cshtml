@@ -1,9 +1,141 @@
+@model StockListViewModel
+@{
+    const string cols = "1fr 1.5fr 1fr 0.7fr 0.9fr 0.9fr auto minmax(5.5rem, auto)";
+    const string emptyMessage = "Aucun produit en stock — créez des produits dans le catalogue.";
+}
+
+<partial name="_DashboardAlerts" />
+
 <div class="page-head">
     <p class="eyebrow">Stockage</p>
     <h1>État du stock</h1>
-    <p class="module-section">Quantités disponibles et mouvements de stock</p>
+    <p class="module-section">Quantités disponibles et alertes de réapprovisionnement</p>
 </div>
 
-<div class="dash-panel p-6">
-    <p class="text-muted">Module en cours de développement.</p>
+<form method="get" asp-action="Index" class="list-toolbar stock-toolbar">
+    <label class="stock-filter-check">
+        <input type="checkbox"
+               name="stockBasOnly"
+               value="true"
+               @(Model.StockBasOnly ? "checked" : null) />
+        <span>Stock bas uniquement</span>
+    </label>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher par réf., désignation ou code-barres…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>Réf.</span>
+        <span>Désignation</span>
+        <span>Variété</span>
+        <span>Unité</span>
+        <span class="cell-bold">Stock actuel</span>
+        <span>Stock min.</span>
+        <span>Statut</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_ListEmpty" model="emptyMessage" />
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                <div class="list-row" style="grid-template-columns:@cols">
+                    <span data-label="Réf.">
+                        <a asp-action="Detail" asp-route-id="@item.Id" class="list-link">@item.Reference</a>
+                    </span>
+                    <span data-label="Désignation">@item.Designation</span>
+                    <span data-label="Variété">@(item.VarieteNom ?? "—")</span>
+                    <span data-label="Unité">@item.Unite</span>
+                    <span data-label="Stock actuel" class="cell-bold">
+                        @item.StockActuel.ToString("N0")
+                    </span>
+                    <span data-label="Stock min.">@item.StockMinimum.ToString("N0")</span>
+                    <span data-label="Statut">
+                        @if (item.Rupture)
+                        {
+                            <span class="badge badge-stock-rupture">Rupture</span>
+                        }
+                        else if (item.StockBas)
+                        {
+                            <span class="badge badge-warn">Stock bas</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-ok">OK</span>
+                        }
+                    </span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Detail"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm"
+                           title="Historique des mouvements">
+                            Historique
+                        </a>
+                    </span>
+                </div>
+            }
+        }
+    </div>
 </div>
+
+@if (Model.TotalPages > 1)
+{
+    <div class="list-pagination">
+        <div class="list-pagination-inner">
+            <div class="pagination-nav">
+                @if (Model.HasPrevious)
+                {
+                    <a asp-action="Index"
+                       asp-route-search="@Model.Search"
+                       asp-route-stockBasOnly="@Model.StockBasOnly"
+                       asp-route-page="1"
+                       class="pagination-link"
+                       title="Première page">⏮</a>
+                    <a asp-action="Index"
+                       asp-route-search="@Model.Search"
+                       asp-route-stockBasOnly="@Model.StockBasOnly"
+                       asp-route-page="@(Model.Page - 1)"
+                       class="pagination-link"
+                       title="Page précédente">‹</a>
+                }
+                else
+                {
+                    <span class="pagination-link disabled">⏮</span>
+                    <span class="pagination-link disabled">‹</span>
+                }
+
+                <span class="page-indicator"><b>@Model.Page</b> / @Model.TotalPages</span>
+
+                @if (Model.HasNext)
+                {
+                    <a asp-action="Index"
+                       asp-route-search="@Model.Search"
+                       asp-route-stockBasOnly="@Model.StockBasOnly"
+                       asp-route-page="@(Model.Page + 1)"
+                       class="pagination-link"
+                       title="Page suivante">›</a>
+                    <a asp-action="Index"
+                       asp-route-search="@Model.Search"
+                       asp-route-stockBasOnly="@Model.StockBasOnly"
+                       asp-route-page="@Model.TotalPages"
+                       class="pagination-link"
+                       title="Dernière page">⏭</a>
+                }
+                else
+                {
+                    <span class="pagination-link disabled">›</span>
+                    <span class="pagination-link disabled">⏭</span>
+                }
+            </div>
+        </div>
+    </div>
+}
