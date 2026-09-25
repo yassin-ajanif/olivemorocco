@@ -100,3 +100,19 @@
 
 @media (max-width:900px){.tree-demo-layout{grid-template-columns:1fr;}.tree-id-card{position:static;}}
 @media (max-width:700px){.ops-grid-2{grid-template-columns:1fr;}}
+
+/* Interventions — linked charges panel on edit */
+.ops-linked-charges{margin-top:var(--space-lg);}
+.ops-linked-charges-head{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);margin-bottom:var(--space-md);flex-wrap:wrap;
+}
+.ops-linked-charges-title{
+  font-family:'Fraunces',serif;font-size:var(--text-lg);font-weight:500;color:var(--pine);margin:0;
+}
+.ops-linked-charges-empty{margin:0;font-size:var(--text-base-sm);color:var(--muted);}
+.ops-linked-charges-list{margin-bottom:var(--space-md);}
+.ops-linked-charges-total{
+  margin:0;text-align:right;font-size:var(--text-base-sm);color:var(--ink);
+}
+.ops-linked-charges-total strong{font-family:'Fraunces',serif;color:var(--pine);}
+.form-field-hint{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);}

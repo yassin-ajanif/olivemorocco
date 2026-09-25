@@ -19,6 +19,7 @@ public static class DashboardNav
         ["FacturesFournisseurs"] = new("achat", "factures-fournisseurs", "Factures fournisseur", "facture fournisseur"),
         ["AvoirFournisseur"] = new("achat", "avoir-fournisseur", "Avoir fournisseur", "avoir fournisseur"),
         ["Charges"] = new("achat", "charges", "Charges", "charge"),
+        ["Interventions"] = new("operationnel", "interventions", "Interventions", "intervention"),
     };
 
     public static Module? Resolve(HttpContext http)
@@ -55,7 +56,8 @@ public static class DashboardNav
         foreach (var (controller, module) in ByController)
         {
             if (path.Contains($"/{AppSections.Vente}/{controller}", StringComparison.OrdinalIgnoreCase)
-                || path.Contains($"/{AppSections.Achat}/{controller}", StringComparison.OrdinalIgnoreCase))
+                || path.Contains($"/{AppSections.Achat}/{controller}", StringComparison.OrdinalIgnoreCase)
+                || path.Contains($"/{AppSections.Operationnel}/{controller}", StringComparison.OrdinalIgnoreCase))
             {
                 return module;
             }

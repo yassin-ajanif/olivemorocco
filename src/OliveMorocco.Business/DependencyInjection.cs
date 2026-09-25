@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OliveMorocco.Business.Mapping;
 using OliveMorocco.Business.Services;
 using OliveMorocco.Business.Services.Achat;
+using OliveMorocco.Business.Services.Operationnel;
 using OliveMorocco.Business.Services.Vente;
 using OliveMorocco.DataAccess;
 
@@ -25,7 +26,7 @@ public static class DependencyInjection
             var licenseKey = Environment.GetEnvironmentVariable("AUTOMAPPER_LICENSE_KEY");
             if (!string.IsNullOrWhiteSpace(licenseKey))
                 cfg.LicenseKey = licenseKey;
-        }, typeof(VenteProfile), typeof(AchatProfile));
+        }, typeof(VenteProfile), typeof(AchatProfile), typeof(OperationnelProfile));
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         services.AddScoped<ITiersUsageService, TiersUsageService>();
@@ -43,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IFactureClientService, FactureClientService>();
         services.AddScoped<IAvoirClientService, AvoirClientService>();
         services.AddScoped<IArticleSuggestionService, ArticleSuggestionService>();
+        services.AddScoped<IInterventionService, InterventionService>();
 
         return services;
     }

@@ -17,6 +17,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         await db.Database.MigrateAsync(cancellationToken);
         await SeedDemoProduitsAsync(db, cancellationToken);
         await SeedDemoIntrantsAsync(db, cancellationToken);
+        await SeedDemoSecteursAsync(db, cancellationToken);
         await SeedDemoFournisseursAsync(db, cancellationToken);
         await SeedDemoTypesChargesAsync(db, cancellationToken);
     }
@@ -106,6 +107,41 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Nom = "Irrigation — tuyaux PE",
                 Unite = "m",
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoSecteursAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Secteurs.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Secteurs.AddRange(
+            new Secteur
+            {
+                Nom = "Secteur Nord",
+                Code = "SN",
+                SuperficieHectares = 15,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Secteur
+            {
+                Nom = "Secteur Est",
+                Code = "SE",
+                SuperficieHectares = 8,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Secteur
+            {
+                Nom = "Parcelle Sud",
+                Code = "PS",
+                SuperficieHectares = 5.5m,
                 CreatedAt = now,
                 UpdatedAt = now,
             });

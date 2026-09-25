@@ -77,10 +77,13 @@
 
                 <div class="dash-section-spacer"></div>
 
-                <div class="dash-section" data-section="operationnel">
-                    <button type="button" class="dash-section-toggle" aria-expanded="false">
-                        <span class="arrow">▶</span> Opérationnel
+                <div class="@SectionClass("operationnel")" data-section="operationnel">
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("operationnel")">
+                        <span class="arrow">@SectionArrow("operationnel")</span> Opérationnel
                     </button>
+                    <div class="dash-section-items">
+                        <a href="/@AppSections.Operationnel/Interventions" class="@NavClass("interventions")">Interventions</a>
+                    </div>
                 </div>
             </nav>
         </div>

@@ -1,0 +1,78 @@
+@model InterventionFormViewModel
+@using System.Globalization
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid"
+      id="intervention-form">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label asp-for="SecteurId">Secteur</label>
+        <select asp-for="SecteurId" id="secteur-id">
+            <option value="">— Sélectionner —</option>
+            @foreach (var secteur in Model.Secteurs)
+            {
+                <option value="@secteur.Id">@secteur.Nom</option>
+            }
+        </select>
+        <span asp-validation-for="SecteurId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="Date">Date</label>
+        <input asp-for="Date" type="date" />
+        <span asp-validation-for="Date" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="IntrantId">Intrant (optionnel)</label>
+        <select asp-for="IntrantId" id="intrant-id">
+            <option value="">— Aucun —</option>
+            @foreach (var intrant in Model.Intrants)
+            {
+                <option value="@intrant.Id" data-unite="@intrant.Unite">@intrant.Nom</option>
+            }
+        </select>
+        <span asp-validation-for="IntrantId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="QuantiteIntrant">
+            Quantité intrant
+            <span class="form-field-hint" id="intrant-unite-hint">
+                @(Model.SelectedIntrantUnite is not null ? $"({Model.SelectedIntrantUnite})" : "")
+            </span>
+        </label>
+        <input asp-for="QuantiteIntrant"
+               type="number"
+               step="1"
+               min="0"
+               id="quantite-intrant"
+               value="@(Model.QuantiteIntrant?.ToString(CultureInfo.InvariantCulture) ?? "")" />
+        <span asp-validation-for="QuantiteIntrant" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="QuantiteEau">Eau consommée (m³)</label>
+        <input asp-for="QuantiteEau"
+               type="number"
+               step="0.1"
+               min="0"
+               value="@(Model.QuantiteEau?.ToString(CultureInfo.InvariantCulture) ?? "")" />
+        <span asp-validation-for="QuantiteEau" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="Note">Note</label>
+        <textarea asp-for="Note" rows="4"></textarea>
+        <span asp-validation-for="Note" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+    </div>
+</form>

@@ -1,0 +1,31 @@
+@model InterventionFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Opérationnel · Interventions</p>
+    <h1>@(Model.SecteurNom ?? "Intervention") — @Model.Date.ToString("dd/MM/yyyy")</h1>
+    <p class="form-ref">Réf. intervention <strong>#@Model.Id</strong></p>
+</div>
+
+<div class="form-panel">
+    <partial name="_InterventionForm" model="Model" />
+</div>
+
+@if (Model.IsEdit)
+{
+    <partial name="_LinkedCharges" model="Model" />
+}
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-delete"
+      onsubmit="return confirm('Supprimer cette intervention ?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>
+
+@section Scripts {
+    <script src="~/js/intervention-form.js" asp-append-version="true"></script>
+}
