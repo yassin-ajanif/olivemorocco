@@ -10,8 +10,6 @@ public sealed class AvoirFournisseurFormViewModel
 
     public string FournisseurNom { get; set; } = string.Empty;
 
-    public int? FactureId { get; set; }
-
     public DateTime Date { get; set; } = DateTime.Today;
 
     public string Motif { get; set; } = string.Empty;

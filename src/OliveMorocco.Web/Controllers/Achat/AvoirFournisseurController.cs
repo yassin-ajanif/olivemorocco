@@ -160,7 +160,6 @@ public sealed class AvoirFournisseurController(
             Numero = dto.Numero,
             FournisseurId = dto.FournisseurId,
             FournisseurNom = client?.Nom ?? string.Empty,
-            FactureId = dto.FactureFournisseurId,
             Date = dto.Date.Date,
             Motif = dto.Motif,
             RetourMarchandise = dto.RetourMarchandise,
@@ -182,7 +181,6 @@ public sealed class AvoirFournisseurController(
         new(
             model.Numero.Trim(),
             model.FournisseurId,
-            NormalizeFactureId(model.FactureId),
             model.Date.Date,
             Normalize(model.Motif) ?? string.Empty,
             model.RetourMarchandise,
@@ -191,7 +189,6 @@ public sealed class AvoirFournisseurController(
     private static UpdateAvoirFournisseurDto ToUpdateDto(AvoirFournisseurFormViewModel model) =>
         new(
             model.FournisseurId,
-            NormalizeFactureId(model.FactureId),
             model.Date.Date,
             Normalize(model.Motif) ?? string.Empty,
             model.RetourMarchandise,
@@ -247,7 +244,4 @@ public sealed class AvoirFournisseurController(
 
     private static string? Normalize(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-
-    private static int? NormalizeFactureId(int? factureId) =>
-        factureId is > 0 ? factureId : null;
 }

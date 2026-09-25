@@ -25,7 +25,6 @@ public record AvoirFournisseurDto(
     int Id,
     string Numero,
     int FournisseurId,
-    int? FactureFournisseurId,
     DateTime Date,
     string Motif,
     bool RetourMarchandise,
@@ -35,7 +34,6 @@ public record AvoirFournisseurDto(
 public record CreateAvoirFournisseurDto(
     string Numero,
     int FournisseurId,
-    int? FactureFournisseurId,
     DateTime Date,
     string Motif,
     bool RetourMarchandise,
@@ -43,7 +41,6 @@ public record CreateAvoirFournisseurDto(
 
 public record UpdateAvoirFournisseurDto(
     int FournisseurId,
-    int? FactureFournisseurId,
     DateTime Date,
     string Motif,
     bool RetourMarchandise,

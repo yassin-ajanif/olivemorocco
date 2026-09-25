@@ -126,7 +126,6 @@ public sealed class AvoirFournisseurService
             entity.Id,
             entity.Numero,
             entity.FournisseurId,
-            null,
             entity.Date,
             entity.Motif,
             entity.RetourMarchandise,
