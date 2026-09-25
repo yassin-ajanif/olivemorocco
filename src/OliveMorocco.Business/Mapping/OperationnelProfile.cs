@@ -59,5 +59,23 @@ public class OperationnelProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore());
+
+        CreateMap<CreateIntrantDto, Intrant>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Nom, o => o.MapFrom(s => s.Nom.Trim()))
+            .ForMember(d => d.Unite, o => o.MapFrom(s => s.Unite.Trim()))
+            .ForMember(d => d.InterventionLignes, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore());
+
+        CreateMap<UpdateIntrantDto, Intrant>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Nom, o => o.MapFrom(s => s.Nom.Trim()))
+            .ForMember(d => d.Unite, o => o.MapFrom(s => s.Unite.Trim()))
+            .ForMember(d => d.InterventionLignes, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore());
     }
 }

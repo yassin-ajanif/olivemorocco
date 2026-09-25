@@ -1,0 +1,26 @@
+@model IntrantFormViewModel
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label for="Nom">Nom</label>
+        <input asp-for="Nom" autocomplete="off" maxlength="128" />
+        <span asp-validation-for="Nom" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Unite">Unité</label>
+        <input asp-for="Unite" autocomplete="off" maxlength="16" placeholder="kg, L, tonne, sac 25 kg…" />
+        <span asp-validation-for="Unite" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+    </div>
+</form>
