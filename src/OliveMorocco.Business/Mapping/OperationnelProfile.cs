@@ -46,5 +46,18 @@ public class OperationnelProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore());
+
+        CreateMap<CreateVarieteDto, Variete>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Nom, o => o.MapFrom(s => s.Nom.Trim()))
+            .ForMember(d => d.Code, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.Code) ? null : s.Code.Trim()))
+            .ForMember(d => d.RegionOrigine, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.RegionOrigine) ? null : s.RegionOrigine.Trim()))
+            .ForMember(d => d.SecteurVarietes, o => o.Ignore())
+            .ForMember(d => d.Produits, o => o.Ignore())
+            .ForMember(d => d.Recoltes, o => o.Ignore())
+            .ForMember(d => d.Pressages, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore());
     }
 }

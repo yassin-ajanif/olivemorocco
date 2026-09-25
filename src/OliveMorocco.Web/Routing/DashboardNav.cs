@@ -7,7 +7,7 @@ public static class DashboardNav
 
     private static readonly Dictionary<string, Module> ByController = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Produits"] = new("stockage", "produits", "Produits", "produit"),
+        ["Produits"] = new("stockage", "produits", "Produits & variétés", "produit"),
         ["Intrants"] = new("stockage", "intrants", "Intrants", "intrant"),
         ["Secteurs"] = new("stockage", "secteurs", "Secteurs", "secteur"),
         ["Stock"] = new("stockage", "stock", "État du stock", "stock"),

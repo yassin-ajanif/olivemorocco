@@ -1,0 +1,62 @@
+/* Stockage · Produits — two-column create/edit form */
+
+.form-panel-produit{
+  max-width:960px;
+}
+
+.produit-form-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(220px,280px);
+  gap:var(--space-xl);
+  align-items:start;
+}
+
+.produit-form-main{
+  min-width:0;
+}
+
+.produit-form-hint{
+  margin-top:var(--space-xs);
+  font-size:var(--text-sm);
+  color:var(--muted);
+}
+
+.produit-form-variete{
+  padding:var(--space-lg);
+  border:1px solid var(--line);
+  background:color-mix(in srgb, var(--slot-bg) 40%, transparent);
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-md);
+}
+
+.produit-form-variete-title{
+  margin:0;
+  font-family:'Fraunces',serif;
+  font-size:var(--text-lg);
+  font-weight:600;
+  color:var(--pine);
+}
+
+.btn-block{
+  width:100%;
+  justify-content:center;
+}
+
+.variete-add-panel{
+  padding-top:var(--space-sm);
+  border-top:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-md);
+}
+
+@media (max-width:768px){
+  .produit-form-layout{
+    grid-template-columns:1fr;
+  }
+
+  .produit-form-variete{
+    order:-1;
+  }
+}

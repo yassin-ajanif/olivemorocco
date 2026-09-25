@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.Services.Operationnel;
 using OliveMorocco.Business.Services.Vente;
 using OliveMorocco.Web.Models.Stockage.Produits;
 using OliveMorocco.Web.Routing;
@@ -8,7 +10,9 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Stockage;
 
 [Route(AppSections.Stockage + "/[controller]")]
-public sealed class ProduitsController(IProduitService produits) : Controller
+public sealed class ProduitsController(
+    IProduitService produits,
+    IVarieteService varietes) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
@@ -119,6 +123,33 @@ public sealed class ProduitsController(IProduitService produits) : Controller
             TempData["ErrorTitle"] = "Suppression impossible";
             TempData["Error"] = exception.Errors.FirstOrDefault()?.ErrorMessage ?? exception.Message;
             return RedirectToAction(nameof(Edit), new { id });
+        }
+    }
+
+    [HttpPost("Varietes")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateVariete(
+        [FromForm] string nom,
+        [FromForm] string? code,
+        [FromForm] string? regionOrigine,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var dto = new CreateVarieteDto(
+                nom?.Trim() ?? string.Empty,
+                NormalizeOptional(code),
+                NormalizeOptional(regionOrigine));
+
+            var created = await varietes.CreateVarieteAsync(dto, cancellationToken);
+            return Json(new { id = created.Id, nom = created.Nom });
+        }
+        catch (ValidationException exception)
+        {
+            return BadRequest(new
+            {
+                error = exception.Errors.FirstOrDefault()?.ErrorMessage ?? "Données invalides.",
+            });
         }
     }
 

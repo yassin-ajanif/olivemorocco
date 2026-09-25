@@ -3,10 +3,14 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · Produits</p>
+    <p class="eyebrow">Stockage · Produits &amp; variétés</p>
     <h1>Nouveau produit</h1>
 </div>
 
-<div class="form-panel">
+<div class="form-panel form-panel-produit">
     <partial name="_ProduitForm" model="Model" />
 </div>
+
+@section Scripts {
+    <script src="~/js/produit-form.js" asp-append-version="true"></script>
+}

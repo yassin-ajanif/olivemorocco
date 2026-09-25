@@ -3,12 +3,12 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · Produits</p>
+    <p class="eyebrow">Stockage · Produits &amp; variétés</p>
     <h1>@Model.Designation</h1>
     <p class="form-ref">Réf. <strong>@Model.Reference</strong></p>
 </div>
 
-<div class="form-panel">
+<div class="form-panel form-panel-produit">
     <partial name="_ProduitForm" model="Model" />
 </div>
 
@@ -20,3 +20,7 @@
     @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-danger">Supprimer</button>
 </form>
+
+@section Scripts {
+    <script src="~/js/produit-form.js" asp-append-version="true"></script>
+}
