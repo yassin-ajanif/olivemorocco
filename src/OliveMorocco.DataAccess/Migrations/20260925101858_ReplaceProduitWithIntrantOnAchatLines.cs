@@ -74,6 +74,12 @@ namespace OliveMorocco.DataAccess.Migrations
                 table: "AvoirFournisseurLignes",
                 newName: "IX_AvoirFournisseurLignes_IntrantId");
 
+            // Former ProduitId values don't map to Intrants — clear achat lines before adding the new FK.
+            migrationBuilder.Sql("""DELETE FROM "AvoirFournisseurLignes";""");
+            migrationBuilder.Sql("""DELETE FROM "BonReceptionLignes";""");
+            migrationBuilder.Sql("""DELETE FROM "FactureFournisseurLignes";""");
+            migrationBuilder.Sql("""DELETE FROM "BonCommandeLignes";""");
+
             migrationBuilder.AddCheckConstraint(
                 name: "CK_FactureFournisseurLignes_IntrantOrService",
                 table: "FactureFournisseurLignes",
