@@ -8,8 +8,6 @@ public sealed class BonReceptionLigneViewModel
 
     public string Designation { get; set; } = string.Empty;
 
-    public decimal QuantiteCommandee { get; set; } = 1;
-
     public decimal QuantiteRecue { get; set; } = 1;
 
     public decimal PrixUnitaireHT { get; set; }

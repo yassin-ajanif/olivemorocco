@@ -169,7 +169,6 @@ public sealed class BonsReceptionController(
                 ProduitId = l.ProduitId,
                 Reference = l.Reference,
                 Designation = l.Designation,
-                QuantiteCommandee = l.QuantiteRecue,
                 QuantiteRecue = l.QuantiteRecue,
                 PrixUnitaireHT = l.PrixUnitaireHT,
                 Remise = 0,
@@ -221,11 +220,8 @@ public sealed class BonsReceptionController(
             if (line.ProduitId <= 0)
                 ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
 
-            if (line.QuantiteCommandee <= 0)
-                ModelState.AddModelError($"{prefix}.QuantiteCommandee", "La quantité commandée doit être positive.");
-
             if (line.QuantiteRecue <= 0)
-                ModelState.AddModelError($"{prefix}.QuantiteRecue", "La quantité livrée doit être positive.");
+                ModelState.AddModelError($"{prefix}.QuantiteRecue", "La quantité reçue doit être positive.");
 
             if (line.PrixUnitaireHT < 0)
                 ModelState.AddModelError($"{prefix}.PrixUnitaireHT", "Le prix unitaire doit être positif ou nul.");
