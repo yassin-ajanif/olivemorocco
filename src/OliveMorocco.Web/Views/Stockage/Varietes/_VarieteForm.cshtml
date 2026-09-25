@@ -1,0 +1,32 @@
+@model VarieteFormViewModel
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label for="Nom">Nom</label>
+        <input asp-for="Nom" autocomplete="off" maxlength="128" />
+        <span asp-validation-for="Nom" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Code">Code</label>
+        <input asp-for="Code" autocomplete="off" maxlength="32" />
+        <span asp-validation-for="Code" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="RegionOrigine">Région d'origine</label>
+        <input asp-for="RegionOrigine" autocomplete="off" maxlength="128" />
+        <span asp-validation-for="RegionOrigine" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+    </div>
+</form>

@@ -19,3 +19,9 @@ public record VarieteDto(
 public record VarieteCreatedDto(
     int Id,
     string Nom);
+
+public record VarieteListItemDto(
+    int Id,
+    string Nom,
+    string? Code,
+    string? RegionOrigine);

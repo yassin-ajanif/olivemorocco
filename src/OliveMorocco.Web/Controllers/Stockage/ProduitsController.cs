@@ -8,9 +8,7 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Stockage;
 
 [Route(AppSections.Stockage + "/[controller]")]
-public sealed class ProduitsController(
-    IProduitService produits,
-    IVarieteService varietes) : Controller
+public sealed class ProduitsController(IProduitService produits) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
@@ -121,109 +119,6 @@ public sealed class ProduitsController(
             TempData["ErrorTitle"] = "Suppression impossible";
             TempData["Error"] = exception.Errors.FirstOrDefault()?.ErrorMessage ?? exception.Message;
             return RedirectToAction(nameof(Edit), new { id });
-        }
-    }
-
-    [HttpGet("Varietes/{id:int}")]
-    public async Task<IActionResult> GetVariete(int id, CancellationToken cancellationToken = default)
-    {
-        var variete = await varietes.GetVarieteByIdAsync(id, cancellationToken);
-        if (variete is null)
-            return NotFound();
-
-        return Json(new
-        {
-            id = variete.Id,
-            nom = variete.Nom,
-            code = variete.Code,
-            regionOrigine = variete.RegionOrigine,
-        });
-    }
-
-    [HttpPost("Varietes")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateVariete(
-        [FromForm] string nom,
-        [FromForm] string? code,
-        [FromForm] string? regionOrigine,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var dto = new CreateVarieteDto(
-                nom?.Trim() ?? string.Empty,
-                NormalizeOptional(code),
-                NormalizeOptional(regionOrigine));
-
-            var created = await varietes.CreateVarieteAsync(dto, cancellationToken);
-            return Json(new { id = created.Id, nom = created.Nom });
-        }
-        catch (ValidationException exception)
-        {
-            return BadRequest(new
-            {
-                error = exception.Errors.FirstOrDefault()?.ErrorMessage ?? "Données invalides.",
-            });
-        }
-    }
-
-    [HttpPost("Varietes/{id:int}")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateVariete(
-        int id,
-        [FromForm] string nom,
-        [FromForm] string? code,
-        [FromForm] string? regionOrigine,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var dto = new UpdateVarieteDto(
-                nom?.Trim() ?? string.Empty,
-                NormalizeOptional(code),
-                NormalizeOptional(regionOrigine));
-
-            var updated = await varietes.UpdateVarieteAsync(id, dto, cancellationToken);
-            return Json(new
-            {
-                id = updated.Id,
-                nom = updated.Nom,
-                code = updated.Code,
-                regionOrigine = updated.RegionOrigine,
-            });
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
-        catch (ValidationException exception)
-        {
-            return BadRequest(new
-            {
-                error = exception.Errors.FirstOrDefault()?.ErrorMessage ?? "Données invalides.",
-            });
-        }
-    }
-
-    [HttpPost("Varietes/Delete/{id:int}")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteVariete(int id, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await varietes.DeleteVarieteAsync(id, cancellationToken);
-            return Json(new { ok = true });
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
-        catch (ValidationException exception)
-        {
-            return BadRequest(new
-            {
-                error = exception.Errors.FirstOrDefault()?.ErrorMessage ?? "Suppression impossible.",
-            });
         }
     }
 

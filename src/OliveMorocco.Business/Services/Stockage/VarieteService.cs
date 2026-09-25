@@ -1,6 +1,8 @@
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
+using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
@@ -37,6 +39,32 @@ public sealed class VarieteService : IVarieteService
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
+    }
+
+    public async Task<PagedResult<VarieteListItemDto>> GetVarietesAsync(
+        string? search = null,
+        int page = 1,
+        int pageSize = 15,
+        CancellationToken cancellationToken = default)
+    {
+        page = Math.Max(1, page);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var q = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
+        var pattern = q is null ? null : $"%{q}%";
+
+        var (items, totalCount) = await _varietes.QueryPagedAsync(
+            v => pattern == null
+                 || EF.Functions.ILike(v.Nom, pattern)
+                 || (v.Code != null && EF.Functions.ILike(v.Code, pattern))
+                 || (v.RegionOrigine != null && EF.Functions.ILike(v.RegionOrigine, pattern)),
+            query => query.OrderBy(v => v.Nom),
+            v => new VarieteListItemDto(v.Id, v.Nom, v.Code, v.RegionOrigine),
+            page,
+            pageSize,
+            cancellationToken);
+
+        return new PagedResult<VarieteListItemDto>(items, totalCount);
     }
 
     public async Task<VarieteDto?> GetVarieteByIdAsync(int id, CancellationToken cancellationToken = default)
