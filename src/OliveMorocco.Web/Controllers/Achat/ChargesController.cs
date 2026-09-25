@@ -67,6 +67,9 @@ public sealed class ChargesController(IChargeService charges) : Controller
         if (charge is null)
             return NotFound();
 
+        if (charge.InterventionId.HasValue)
+            return RedirectToAction(nameof(Index));
+
         return View(await BuildFormAsync(ToFormViewModel(charge), cancellationToken));
     }
 
@@ -89,6 +92,10 @@ public sealed class ChargesController(IChargeService charges) : Controller
         catch (KeyNotFoundException)
         {
             return NotFound();
+        }
+        catch (InvalidOperationException)
+        {
+            return RedirectToAction(nameof(Index));
         }
         catch (ValidationException exception)
         {
@@ -113,6 +120,10 @@ public sealed class ChargesController(IChargeService charges) : Controller
         catch (KeyNotFoundException)
         {
             return NotFound();
+        }
+        catch (InvalidOperationException)
+        {
+            return RedirectToAction(nameof(Index));
         }
     }
 

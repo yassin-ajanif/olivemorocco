@@ -90,6 +90,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;}
   padding:0;flex-shrink:0;align-self:center;
 }
 .btn.btn-icon:hover{color:var(--pine);}
+.btn.btn-icon:disabled{opacity:.35;cursor:default;pointer-events:none;}
 .icon{display:block;width:1rem;height:1rem;flex-shrink:0;}
 .page-indicator{padding:0.3125rem var(--space-md);border:1px solid var(--line);background:var(--surface);font-size:var(--text-base);margin:0 var(--space-xs);}
 .page-indicator b{font-weight:600;}

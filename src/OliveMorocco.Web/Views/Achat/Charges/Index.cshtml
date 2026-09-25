@@ -47,21 +47,42 @@
         {
             foreach (var charge in Model.Items)
             {
+                var linkedToIntervention = charge.InterventionId.HasValue;
+
                 <div class="list-row" style="grid-template-columns:@cols">
                     <span data-label="Type">@charge.TypeChargeNom</span>
                     <span data-label="Libellé">
-                        <a asp-action="Edit" asp-route-id="@charge.Id" class="list-link">@charge.Libelle</a>
+                        @if (linkedToIntervention)
+                        {
+                            @charge.Libelle
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@charge.Id" class="list-link">@charge.Libelle</a>
+                        }
                     </span>
                     <span data-label="Date">@charge.Date.ToString("dd/MM/yyyy")</span>
                     <span data-label="Montant TTC" class="cell-bold">@charge.MontantTtc.ToString("N2") DH</span>
                     <span class="list-row-actions" data-label="Actions">
-                        <a asp-action="Edit"
-                           asp-route-id="@charge.Id"
-                           class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
-                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
-                        </a>
+                        @if (linkedToIntervention)
+                        {
+                            <button type="button"
+                                    class="btn btn-icon"
+                                    disabled
+                                    aria-label="Modifier">
+                                <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit"
+                               asp-route-id="@charge.Id"
+                               class="btn btn-icon"
+                               title="Modifier"
+                               aria-label="Modifier">
+                                <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                            </a>
+                        }
                     </span>
                 </div>
             }

@@ -55,7 +55,8 @@ public sealed class ChargeService : IChargeService
                 c.TypeCharge.Nom,
                 c.Libelle,
                 c.Date,
-                c.MontantTtc),
+                c.MontantTtc,
+                c.InterventionId),
             page,
             pageSize,
             cancellationToken);
@@ -98,14 +99,22 @@ public sealed class ChargeService : IChargeService
         var entity = await _charges.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Charge {id} introuvable.");
 
+        EnsureNotLinkedToIntervention(entity);
+
         _mapper.Map(dto, entity);
         entity.Note = dto.Note ?? string.Empty;
 
         await _charges.UpdateAsync(entity, cancellationToken);
     }
 
-    public Task DeleteChargeAsync(int id, CancellationToken cancellationToken = default)
-        => _charges.DeleteAsync(id, cancellationToken);
+    public async Task DeleteChargeAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _charges.GetByIdAsync(id, cancellationToken)
+            ?? throw new KeyNotFoundException($"Charge {id} introuvable.");
+
+        EnsureNotLinkedToIntervention(entity);
+        await _charges.DeleteAsync(id, cancellationToken);
+    }
 
     public async Task<IReadOnlyList<TypeChargeSelectItemDto>> GetActiveTypesAsync(
         CancellationToken cancellationToken = default)
@@ -162,6 +171,12 @@ public sealed class ChargeService : IChargeService
             entity.Date,
             entity.MontantTtc,
             entity.Note);
+
+    private static void EnsureNotLinkedToIntervention(Charge entity)
+    {
+        if (entity.InterventionId is not null)
+            throw new InvalidOperationException();
+    }
 
     private async Task EnsureTypeExistsAsync(int typeChargeId, CancellationToken cancellationToken)
     {

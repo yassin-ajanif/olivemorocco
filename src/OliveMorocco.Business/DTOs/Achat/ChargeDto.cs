@@ -29,7 +29,8 @@ public record ChargeListItemDto(
     string TypeChargeNom,
     string Libelle,
     DateTime Date,
-    decimal MontantTtc);
+    decimal MontantTtc,
+    int? InterventionId);
 
 public record TypeChargeSelectItemDto(
     int Id,
