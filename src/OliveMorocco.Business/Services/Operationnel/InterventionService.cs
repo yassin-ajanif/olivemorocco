@@ -4,6 +4,8 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.Services.Achat;
+using OliveMorocco.DataAccess;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Operationnel;
@@ -12,27 +14,33 @@ namespace OliveMorocco.Business.Services.Operationnel;
 
 public sealed class InterventionService : IInterventionService
 {
+    private readonly AppDbContext _db;
     private readonly IRepository<Intervention> _interventions;
     private readonly IRepository<Secteur> _secteurs;
     private readonly IRepository<Intrant> _intrants;
     private readonly IRepository<Charge> _charges;
+    private readonly IChargeService _chargeService;
     private readonly IMapper _mapper;
     private readonly IValidator<CreateInterventionDto>? _createValidator;
     private readonly IValidator<UpdateInterventionDto>? _updateValidator;
 
     public InterventionService(
+        AppDbContext db,
         IRepository<Intervention> interventions,
         IRepository<Secteur> secteurs,
         IRepository<Intrant> intrants,
         IRepository<Charge> charges,
+        IChargeService chargeService,
         IMapper mapper,
         IEnumerable<IValidator<CreateInterventionDto>> createValidators,
         IEnumerable<IValidator<UpdateInterventionDto>> updateValidators)
     {
+        _db = db;
         _interventions = interventions;
         _secteurs = secteurs;
         _intrants = intrants;
         _charges = charges;
+        _chargeService = chargeService;
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -53,7 +61,7 @@ public sealed class InterventionService : IInterventionService
         var (items, totalCount) = await _interventions.QueryPagedAsync(
             i => pattern == null
                  || EF.Functions.ILike(i.Secteur.Nom, pattern)
-                 || (i.Intrant != null && EF.Functions.ILike(i.Intrant.Nom, pattern))
+                 || i.Lignes.Any(l => EF.Functions.ILike(l.Intrant.Nom, pattern))
                  || (i.Note != null && EF.Functions.ILike(i.Note, pattern)),
             query => query.OrderByDescending(i => i.Date).ThenByDescending(i => i.Id),
             i => new InterventionListItemDto(
@@ -61,9 +69,11 @@ public sealed class InterventionService : IInterventionService
                 i.SecteurId,
                 i.Secteur.Nom,
                 i.Date,
-                i.Intrant != null ? i.Intrant.Nom : null,
-                i.Intrant != null ? i.Intrant.Unite : null,
-                i.QuantiteIntrant,
+                !i.Lignes.Any()
+                    ? "—"
+                    : string.Join("; ", i.Lignes
+                        .OrderBy(l => l.Intrant.Nom)
+                        .Select(l => l.Intrant.Nom + " " + l.Quantite + " " + l.Intrant.Unite)),
                 i.QuantiteEau,
                 i.Charges.Sum(c => c.MontantTtc),
                 i.Note),
@@ -80,18 +90,24 @@ public sealed class InterventionService : IInterventionService
     {
         var entity = await _interventions.GetByIdWithNavigationsAsync(
             id,
-            [i => i.Secteur, i => i.Intrant!],
+            [i => i.Secteur, i => i.Lignes],
             cancellationToken);
 
         if (entity is null)
             return null;
+
+        var intrantIds = entity.Lignes.Select(l => l.IntrantId).Distinct().ToList();
+        var intrants = intrantIds.Count == 0
+            ? []
+            : await _intrants.FindAsync(i => intrantIds.Contains(i.Id), cancellationToken);
+        var intrantMap = intrants.ToDictionary(i => i.Id);
 
         var linkedCharges = await _charges.FindWithIncludesAsync(
             c => c.InterventionId == id,
             [c => c.TypeCharge],
             cancellationToken);
 
-        return ToDto(entity, linkedCharges);
+        return ToDto(entity, intrantMap, linkedCharges);
     }
 
     public async Task<InterventionDto> CreateInterventionAsync(
@@ -100,13 +116,29 @@ public sealed class InterventionService : IInterventionService
     {
         await ValidateAsync(_createValidator, dto, cancellationToken);
         await EnsureSecteurExistsAsync(dto.SecteurId, cancellationToken);
-        await EnsureIntrantExistsAsync(dto.IntrantId, cancellationToken);
+        await EnsureIntrantsExistAsync(dto.Lignes, cancellationToken);
 
-        var entity = _mapper.Map<Intervention>(dto);
-        NormalizeOptionalFields(entity);
+        await using var transaction =
+            await _db.Database.BeginTransactionAsync(cancellationToken);
 
-        await _interventions.AddAsync(entity, cancellationToken);
-        return (await GetInterventionByIdAsync(entity.Id, cancellationToken))!;
+        try
+        {
+            var interventionId = await AddInterventionCoreAsync(dto, cancellationToken);
+
+            await _chargeService.AddChargesForInterventionAsync(
+                interventionId,
+                dto.Charges,
+                cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return (await GetInterventionByIdAsync(interventionId, cancellationToken))!;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task UpdateInterventionAsync(
@@ -116,15 +148,30 @@ public sealed class InterventionService : IInterventionService
     {
         await ValidateAsync(_updateValidator, dto, cancellationToken);
         await EnsureSecteurExistsAsync(dto.SecteurId, cancellationToken);
-        await EnsureIntrantExistsAsync(dto.IntrantId, cancellationToken);
+        await EnsureIntrantsExistAsync(dto.Lignes, cancellationToken);
 
-        var entity = await _interventions.GetByIdAsync(id, cancellationToken)
+        _ = await _interventions.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Intervention {id} introuvable.");
 
-        _mapper.Map(dto, entity);
-        NormalizeOptionalFields(entity);
+        await using var transaction =
+            await _db.Database.BeginTransactionAsync(cancellationToken);
 
-        await _interventions.UpdateAsync(entity, cancellationToken);
+        try
+        {
+            await UpdateInterventionCoreAsync(id, dto, cancellationToken);
+
+            await _chargeService.ReplaceChargesForInterventionAsync(
+                id,
+                dto.Charges,
+                cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public Task DeleteInterventionAsync(int id, CancellationToken cancellationToken = default)
@@ -150,17 +197,66 @@ public sealed class InterventionService : IInterventionService
             .ToList();
     }
 
-    private static InterventionDto ToDto(Intervention entity, IReadOnlyList<Charge> linkedCharges)
+    private async Task<int> AddInterventionCoreAsync(
+        CreateInterventionDto dto,
+        CancellationToken cancellationToken)
     {
+        var entity = _mapper.Map<Intervention>(dto);
+        NormalizeOptionalFields(entity);
+
+        await _interventions.AddAsync(entity, cancellationToken);
+        return entity.Id;
+    }
+
+    private async Task UpdateInterventionCoreAsync(
+        int id,
+        UpdateInterventionDto dto,
+        CancellationToken cancellationToken)
+    {
+        var entity = await _interventions.GetByIdWithNavigationsAsync(id, [i => i.Lignes], cancellationToken)
+            ?? throw new KeyNotFoundException($"Intervention {id} introuvable.");
+
+        entity.Lignes.Clear();
+        _mapper.Map(dto, entity);
+        NormalizeOptionalFields(entity);
+
+        foreach (var line in entity.Lignes)
+        {
+            line.Id = 0;
+            line.InterventionId = entity.Id;
+        }
+
+        await _interventions.UpdateAsync(entity, cancellationToken);
+    }
+
+    private static InterventionDto ToDto(
+        Intervention entity,
+        IReadOnlyDictionary<int, Intrant> intrantMap,
+        IReadOnlyList<Charge> linkedCharges)
+    {
+        var lignes = entity.Lignes
+            .OrderBy(l => intrantMap[l.IntrantId].Nom)
+            .ThenBy(l => l.Id)
+            .Select(l => new InterventionLigneDto(
+                l.Id,
+                l.InterventionId,
+                l.IntrantId,
+                intrantMap[l.IntrantId].Nom,
+                intrantMap[l.IntrantId].Unite,
+                l.Quantite))
+            .ToList();
+
         var charges = linkedCharges
             .OrderByDescending(c => c.Date)
             .ThenByDescending(c => c.Id)
             .Select(c => new InterventionChargeListItemDto(
                 c.Id,
+                c.TypeChargeId,
                 c.TypeCharge.Nom,
                 c.Libelle,
                 c.Date,
-                c.MontantTtc))
+                c.MontantTtc,
+                string.IsNullOrEmpty(c.Note) ? null : c.Note))
             .ToList();
 
         return new InterventionDto(
@@ -168,24 +264,15 @@ public sealed class InterventionService : IInterventionService
             entity.SecteurId,
             entity.Secteur.Nom,
             entity.Date,
-            entity.IntrantId,
-            entity.Intrant?.Nom,
-            entity.Intrant?.Unite,
-            entity.QuantiteIntrant,
             entity.QuantiteEau,
             entity.Note,
             charges.Sum(c => c.MontantTtc),
+            lignes,
             charges);
     }
 
     private static void NormalizeOptionalFields(Intervention entity)
     {
-        if (!entity.IntrantId.HasValue)
-        {
-            entity.IntrantId = null;
-            entity.QuantiteIntrant = null;
-        }
-
         entity.Note = string.IsNullOrWhiteSpace(entity.Note) ? null : entity.Note.Trim();
     }
 
@@ -200,17 +287,19 @@ public sealed class InterventionService : IInterventionService
         }
     }
 
-    private async Task EnsureIntrantExistsAsync(int? intrantId, CancellationToken cancellationToken)
+    private async Task EnsureIntrantsExistAsync(
+        IReadOnlyList<CreateInterventionLigneDto> lignes,
+        CancellationToken cancellationToken)
     {
-        if (!intrantId.HasValue)
-            return;
-
-        if (!await _intrants.AnyAsync(i => i.Id == intrantId.Value, cancellationToken))
+        foreach (var ligne in lignes)
         {
-            throw new ValidationException([
-                new ValidationFailure(nameof(CreateInterventionDto.IntrantId),
-                    "L'intrant sélectionné est invalide."),
-            ]);
+            if (!await _intrants.AnyAsync(i => i.Id == ligne.IntrantId, cancellationToken))
+            {
+                throw new ValidationException([
+                    new ValidationFailure(nameof(CreateInterventionLigneDto.IntrantId),
+                        "Un intrant sélectionné est invalide."),
+                ]);
+            }
         }
     }
 

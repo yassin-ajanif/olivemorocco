@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<Variete> Varietes => Set<Variete>();
     public DbSet<Intrant> Intrants => Set<Intrant>();
     public DbSet<Intervention> Interventions => Set<Intervention>();
+    public DbSet<InterventionLigne> InterventionLignes => Set<InterventionLigne>();
     public DbSet<Recolte> Recoltes => Set<Recolte>();
     public DbSet<Pressage> Pressages => Set<Pressage>();
 

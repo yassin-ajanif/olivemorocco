@@ -101,18 +101,39 @@
 @media (max-width:900px){.tree-demo-layout{grid-template-columns:1fr;}.tree-id-card{position:static;}}
 @media (max-width:700px){.ops-grid-2{grid-template-columns:1fr;}}
 
-/* Interventions — linked charges panel on edit */
-.ops-linked-charges{margin-top:var(--space-lg);}
-.ops-linked-charges-head{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);margin-bottom:var(--space-md);flex-wrap:wrap;
+.form-field-hint{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:var(--text-sm);margin:var(--space-xs) 0 0;}
+
+/* Interventions — water calculator */
+.ops-water-calc label:first-child{font-weight:600;margin-bottom:var(--space-sm);}
+.ops-water-calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-md);}
+@media (max-width:700px){.ops-water-calc-grid{grid-template-columns:1fr;}}
+
+/* Interventions — charge lines footer total */
+.ops-charges-table tfoot td{border-bottom:none;background:var(--slot-bg);}
+.ops-charges-total{text-align:right;font-size:var(--text-base-sm);color:var(--ink);padding:var(--space-md) !important;}
+.ops-charges-total strong{font-family:'Fraunces',serif;color:var(--pine);}
+
+/* Interventions — intrant lines on form */
+.form-field-full{grid-column:1/-1;}
+.ops-lines-toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);margin-bottom:var(--space-sm);flex-wrap:wrap;}
+.ops-lines-toolbar label{margin:0;font-weight:600;}
+.ops-lines-wrap{border:1px solid var(--line);background:var(--surface);}
+.ops-lines-table{width:100%;border-collapse:collapse;font-size:var(--text-base-sm);}
+.ops-lines-table th{
+  background:var(--slot-bg);border-bottom:1px solid var(--line);padding:var(--space-2_5) var(--space-md);
+  font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);text-align:left;
 }
-.ops-linked-charges-title{
-  font-family:'Fraunces',serif;font-size:var(--text-lg);font-weight:500;color:var(--pine);margin:0;
+.ops-lines-table td{padding:var(--space-2_5) var(--space-md);border-bottom:1px solid var(--line);vertical-align:middle;}
+.ops-lines-table tr:last-child td{border-bottom:none;}
+.ops-lines-table select,.ops-lines-table input[type="number"]{width:100%;max-width:100%;}
+.ops-qty-field{display:flex;align-items:center;gap:var(--space-sm);}
+.ops-qty-field .line-quantite{max-width:8rem;}
+.line-unite-hint{font-size:var(--text-sm);color:var(--muted);white-space:nowrap;}
+.ops-lines-wrap .list-empty{padding:var(--space-md);margin:0;}
+@media (max-width:700px){
+  .ops-lines-table thead{display:none;}
+  .ops-lines-table tr{display:block;border-bottom:1px solid var(--line);padding:var(--space-sm) 0;}
+  .ops-lines-table td{display:flex;justify-content:space-between;gap:var(--space-md);border:none;padding:var(--space-1_5) var(--space-md);}
+  .ops-lines-table td::before{content:attr(data-label);font-size:var(--text-xs);font-weight:600;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
+  .ops-lines-table .col-actions{justify-content:flex-end;}
 }
-.ops-linked-charges-empty{margin:0;font-size:var(--text-base-sm);color:var(--muted);}
-.ops-linked-charges-list{margin-bottom:var(--space-md);}
-.ops-linked-charges-total{
-  margin:0;text-align:right;font-size:var(--text-base-sm);color:var(--ink);
-}
-.ops-linked-charges-total strong{font-family:'Fraunces',serif;color:var(--pine);}
-.form-field-hint{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);}

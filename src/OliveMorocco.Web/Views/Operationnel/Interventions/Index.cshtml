@@ -1,6 +1,6 @@
 @model InterventionListViewModel
 @{
-    const string cols = "1fr 1.2fr 1.2fr 1fr 0.8fr 1fr auto";
+    const string cols = "1fr 1.2fr 2fr 0.8fr 1fr auto";
     const string emptyMessage = "Aucune intervention — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -34,8 +34,7 @@
     <div class="list-header" style="grid-template-columns:@cols">
         <span>Date</span>
         <span>Secteur</span>
-        <span>Intrant</span>
-        <span>Qté intrant</span>
+        <span>Intrants</span>
         <span>Eau (m³)</span>
         <span class="cell-bold">Coûts</span>
         <span>Actions</span>
@@ -49,11 +48,6 @@
         {
             foreach (var item in Model.Items)
             {
-                var qtyLabel = item.QuantiteIntrant.HasValue && !string.IsNullOrEmpty(item.IntrantUnite)
-                    ? $"{item.QuantiteIntrant.Value:N2} {item.IntrantUnite}"
-                    : item.QuantiteIntrant.HasValue
-                        ? item.QuantiteIntrant.Value.ToString("N2")
-                        : "—";
                 var eauLabel = item.QuantiteEau.HasValue ? item.QuantiteEau.Value.ToString("N2") : "—";
 
                 <div class="list-row" style="grid-template-columns:@cols">
@@ -61,8 +55,7 @@
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Date.ToString("dd/MM/yyyy")</a>
                     </span>
                     <span data-label="Secteur">@item.SecteurNom</span>
-                    <span data-label="Intrant">@(item.IntrantNom ?? "—")</span>
-                    <span data-label="Qté intrant">@qtyLabel</span>
+                    <span data-label="Intrants">@item.IntrantSummary</span>
                     <span data-label="Eau (m³)">@eauLabel</span>
                     <span data-label="Coûts" class="cell-bold">@item.TotalCharges.ToString("N2") DH</span>
                     <span class="list-row-actions" data-label="Actions">

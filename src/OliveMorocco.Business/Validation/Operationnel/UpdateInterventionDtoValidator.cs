@@ -10,13 +10,14 @@ public class UpdateInterventionDtoValidator : AbstractValidator<UpdateInterventi
         RuleFor(x => x.SecteurId)
             .GreaterThan(0).WithMessage("Sélectionnez un secteur.");
 
-        RuleFor(x => x.IntrantId)
-            .GreaterThan(0).When(x => x.QuantiteIntrant.HasValue)
-            .WithMessage("Sélectionnez un intrant lorsque la quantité est renseignée.");
+        RuleForEach(x => x.Lignes).SetValidator(new CreateInterventionLigneDtoValidator());
 
-        RuleFor(x => x.QuantiteIntrant)
-            .GreaterThan(0).When(x => x.IntrantId.HasValue)
-            .WithMessage("Indiquez la quantité d'intrant utilisée.");
+        RuleForEach(x => x.Charges).SetValidator(new CreateInterventionChargeDtoValidator());
+
+        RuleFor(x => x.Lignes)
+            .Must(lignes => lignes.Select(l => l.IntrantId).Distinct().Count() == lignes.Count)
+            .When(x => x.Lignes.Count > 0)
+            .WithMessage("Chaque intrant ne peut apparaître qu'une seule fois par intervention.");
 
         RuleFor(x => x.QuantiteEau)
             .GreaterThanOrEqualTo(0).When(x => x.QuantiteEau.HasValue)

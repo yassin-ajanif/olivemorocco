@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.Services.Achat;
 using OliveMorocco.Business.Services.Operationnel;
 using OliveMorocco.Web.Models.Operationnel.Interventions;
 using OliveMorocco.Web.Routing;
@@ -8,7 +9,9 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Operationnel;
 
 [Route(AppSections.Operationnel + "/[controller]")]
-public sealed class InterventionsController(IInterventionService interventions) : Controller
+public sealed class InterventionsController(
+    IInterventionService interventions,
+    IChargeService charges) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
@@ -119,6 +122,7 @@ public sealed class InterventionsController(IInterventionService interventions) 
     {
         var secteurs = await interventions.GetSecteursForSelectAsync(cancellationToken);
         var intrants = await interventions.GetIntrantsForSelectAsync(cancellationToken);
+        var typeCharges = await charges.GetActiveTypesAsync(cancellationToken);
 
         if (model is null)
         {
@@ -127,11 +131,13 @@ public sealed class InterventionsController(IInterventionService interventions) 
                 Date = DateTime.Today,
                 Secteurs = secteurs,
                 Intrants = intrants,
+                TypeCharges = typeCharges,
             };
         }
 
         model.Secteurs = secteurs;
         model.Intrants = intrants;
+        model.TypeCharges = typeCharges;
         return model;
     }
 
@@ -148,34 +154,63 @@ public sealed class InterventionsController(IInterventionService interventions) 
             SecteurId = intervention.SecteurId,
             SecteurNom = intervention.SecteurNom,
             Date = intervention.Date,
-            IntrantId = intervention.IntrantId,
-            QuantiteIntrant = intervention.QuantiteIntrant,
             QuantiteEau = intervention.QuantiteEau,
             Note = intervention.Note,
-            TotalCharges = intervention.TotalCharges,
-            LinkedCharges = intervention.Charges,
+            Lignes = intervention.Lignes
+                .Select(l => new InterventionLigneViewModel
+                {
+                    IntrantId = l.IntrantId,
+                    Quantite = l.Quantite,
+                })
+                .ToList(),
+            Charges = intervention.Charges
+                .Select(c => new InterventionChargeViewModel
+                {
+                    TypeChargeId = c.TypeChargeId,
+                    Libelle = c.Libelle,
+                    Date = c.Date,
+                    MontantTtc = c.MontantTtc,
+                    Note = c.Note,
+                })
+                .ToList(),
         };
 
     private static CreateInterventionDto ToCreateDto(InterventionFormViewModel model) =>
         new(
             model.SecteurId,
             model.Date,
-            NormalizeIntrantId(model.IntrantId),
-            model.QuantiteIntrant,
             model.QuantiteEau,
-            TrimOrNull(model.Note));
+            TrimOrNull(model.Note),
+            NormalizeLignes(model.Lignes),
+            NormalizeCharges(model.Charges));
 
     private static UpdateInterventionDto ToUpdateDto(InterventionFormViewModel model) =>
         new(
             model.SecteurId,
             model.Date,
-            NormalizeIntrantId(model.IntrantId),
-            model.QuantiteIntrant,
             model.QuantiteEau,
-            TrimOrNull(model.Note));
+            TrimOrNull(model.Note),
+            NormalizeLignes(model.Lignes),
+            NormalizeCharges(model.Charges));
 
-    private static int? NormalizeIntrantId(int? intrantId) =>
-        intrantId is null or 0 ? null : intrantId;
+    private static IReadOnlyList<CreateInterventionLigneDto> NormalizeLignes(
+        IEnumerable<InterventionLigneViewModel> lignes) =>
+        lignes
+            .Where(l => l.IntrantId > 0)
+            .Select(l => new CreateInterventionLigneDto(l.IntrantId, l.Quantite))
+            .ToList();
+
+    private static IReadOnlyList<CreateInterventionChargeDto> NormalizeCharges(
+        IEnumerable<InterventionChargeViewModel> charges) =>
+        charges
+            .Where(c => c.TypeChargeId > 0)
+            .Select(c => new CreateInterventionChargeDto(
+                c.TypeChargeId,
+                c.Libelle.Trim(),
+                c.Date,
+                c.MontantTtc,
+                TrimOrNull(c.Note)))
+            .ToList();
 
     private static string? TrimOrNull(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

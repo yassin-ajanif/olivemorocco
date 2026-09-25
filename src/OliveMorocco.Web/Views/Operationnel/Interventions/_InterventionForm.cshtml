@@ -27,42 +27,166 @@
         <span asp-validation-for="Date" class="field-validation-error"></span>
     </div>
 
-    <div class="form-field">
-        <label asp-for="IntrantId">Intrant (optionnel)</label>
-        <select asp-for="IntrantId" id="intrant-id">
-            <option value="">— Aucun —</option>
-            @foreach (var intrant in Model.Intrants)
-            {
-                <option value="@intrant.Id" data-unite="@intrant.Unite">@intrant.Nom</option>
-            }
-        </select>
-        <span asp-validation-for="IntrantId" class="field-validation-error"></span>
+    <div class="form-field form-field-full">
+        <div class="ops-lines-toolbar">
+            <label>Intrants utilisés</label>
+            <button type="button" id="add-intrant-line" class="btn btn-sm">Ajouter une ligne</button>
+        </div>
+        <div class="ops-lines-wrap">
+            <table class="ops-lines-table" id="intervention-lignes-table">
+                <thead>
+                    <tr>
+                        <th>Intrant</th>
+                        <th>Quantité</th>
+                        <th class="col-actions"></th>
+                    </tr>
+                </thead>
+                <tbody id="intervention-lignes-body">
+                    @for (var i = 0; i < Model.Lignes.Count; i++)
+                    {
+                        var line = Model.Lignes[i];
+                        var selectedUnite = Model.Intrants.FirstOrDefault(x => x.Id == line.IntrantId)?.Unite;
+                        <tr class="intervention-line">
+                            <td data-label="Intrant">
+                                <select name="Lignes[@i].IntrantId" class="line-intrant-id">
+                                    <option value="">— Sélectionner —</option>
+                                    @foreach (var intrant in Model.Intrants)
+                                    {
+                                        if (line.IntrantId == intrant.Id)
+                                        {
+                                            <option value="@intrant.Id" data-unite="@intrant.Unite" selected>@intrant.Nom</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@intrant.Id" data-unite="@intrant.Unite">@intrant.Nom</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td data-label="Quantité">
+                                <div class="ops-qty-field">
+                                    <input name="Lignes[@i].Quantite"
+                                           value="@(line.Quantite > 0 ? line.Quantite.ToString(CultureInfo.InvariantCulture) : "")"
+                                           type="number"
+                                           step="1"
+                                           min="0"
+                                           class="line-quantite" />
+                                    <span class="line-unite-hint">@(selectedUnite is not null ? selectedUnite : "")</span>
+                                </div>
+                            </td>
+                            <td class="col-actions" data-label="">
+                                <button type="button" class="btn btn-sm remove-intrant-line" aria-label="Supprimer la ligne">Supprimer</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p id="intervention-lines-empty" class="list-empty @(Model.Lignes.Count > 0 ? "hidden" : "")">
+                Aucun intrant — ajoutez une ligne ou laissez vide pour une intervention irrigation seule.
+            </p>
+        </div>
     </div>
 
-    <div class="form-field">
-        <label asp-for="QuantiteIntrant">
-            Quantité intrant
-            <span class="form-field-hint" id="intrant-unite-hint">
-                @(Model.SelectedIntrantUnite is not null ? $"({Model.SelectedIntrantUnite})" : "")
-            </span>
-        </label>
-        <input asp-for="QuantiteIntrant"
-               type="number"
-               step="1"
-               min="0"
-               id="quantite-intrant"
-               value="@(Model.QuantiteIntrant?.ToString(CultureInfo.InvariantCulture) ?? "")" />
-        <span asp-validation-for="QuantiteIntrant" class="field-validation-error"></span>
+    <div class="form-field form-field-full ops-water-calc">
+        <label>Irrigation</label>
+        <div class="ops-water-calc-grid">
+            <div class="form-field">
+                <label for="debit-eau">Débit (m³/h)</label>
+                <input id="debit-eau" type="number" step="0.1" min="0" />
+            </div>
+            <div class="form-field">
+                <label for="duree-eau">Durée (h)</label>
+                <input id="duree-eau" type="number" step="0.1" min="0" />
+            </div>
+            <div class="form-field">
+                <label asp-for="QuantiteEau">Eau consommée (m³)</label>
+                <input asp-for="QuantiteEau"
+                       id="quantite-eau"
+                       type="number"
+                       step="0.1"
+                       min="0"
+                       value="@(Model.QuantiteEau?.ToString(CultureInfo.InvariantCulture) ?? "")" />
+                <span asp-validation-for="QuantiteEau" class="field-validation-error"></span>
+            </div>
+        </div>
+        <p class="form-field-hint">Débit × durée remplit l'eau consommée ; vous pouvez aussi saisir la valeur manuellement.</p>
     </div>
 
-    <div class="form-field">
-        <label asp-for="QuantiteEau">Eau consommée (m³)</label>
-        <input asp-for="QuantiteEau"
-               type="number"
-               step="0.1"
-               min="0"
-               value="@(Model.QuantiteEau?.ToString(CultureInfo.InvariantCulture) ?? "")" />
-        <span asp-validation-for="QuantiteEau" class="field-validation-error"></span>
+    <div class="form-field form-field-full">
+        <div class="ops-lines-toolbar">
+            <label>Charges liées</label>
+            <button type="button" id="add-charge-line" class="btn btn-sm">Ajouter une charge</button>
+        </div>
+        <div class="ops-lines-wrap">
+            <table class="ops-lines-table ops-charges-table" id="intervention-charges-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Libellé</th>
+                        <th>Date</th>
+                        <th>Montant TTC</th>
+                        <th class="col-actions"></th>
+                    </tr>
+                </thead>
+                <tbody id="intervention-charges-body">
+                    @for (var j = 0; j < Model.Charges.Count; j++)
+                    {
+                        var charge = Model.Charges[j];
+                        <tr class="intervention-charge-line">
+                            <td data-label="Type">
+                                <select name="Charges[@j].TypeChargeId" class="line-charge-type">
+                                    <option value="">— Sélectionner —</option>
+                                    @foreach (var type in Model.TypeCharges)
+                                    {
+                                        if (charge.TypeChargeId == type.Id)
+                                        {
+                                            <option value="@type.Id" selected>@type.Nom</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@type.Id">@type.Nom</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td data-label="Libellé">
+                                <input name="Charges[@j].Libelle"
+                                       value="@charge.Libelle"
+                                       type="text"
+                                       class="line-charge-libelle" />
+                            </td>
+                            <td data-label="Date">
+                                <input name="Charges[@j].Date"
+                                       value="@charge.Date.ToString("yyyy-MM-dd")"
+                                       type="date"
+                                       class="line-charge-date" />
+                            </td>
+                            <td data-label="Montant TTC">
+                                <input name="Charges[@j].MontantTtc"
+                                       value="@(charge.MontantTtc > 0 ? charge.MontantTtc.ToString(CultureInfo.InvariantCulture) : "")"
+                                       type="number"
+                                       step="1"
+                                       min="0"
+                                       class="line-charge-montant" />
+                            </td>
+                            <td class="col-actions" data-label="">
+                                <button type="button" class="btn btn-sm remove-charge-line" aria-label="Supprimer la charge">Supprimer</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="ops-charges-total">
+                            Total charges : <strong id="charges-total">0,00 DH</strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p id="intervention-charges-empty" class="list-empty @(Model.Charges.Count > 0 ? "hidden" : "")">
+                Aucune charge — ajoutez une ligne si nécessaire.
+            </p>
+        </div>
     </div>
 
     <div class="form-field">
@@ -76,3 +200,65 @@
         <a asp-action="Index" class="btn">Annuler</a>
     </div>
 </form>
+
+<template id="intervention-line-template">
+    <tr class="intervention-line">
+        <td data-label="Intrant">
+            <select name="Lignes[__index__].IntrantId" class="line-intrant-id">
+                <option value="">— Sélectionner —</option>
+                @foreach (var intrant in Model.Intrants)
+                {
+                    <option value="@intrant.Id" data-unite="@intrant.Unite">@intrant.Nom</option>
+                }
+            </select>
+        </td>
+        <td data-label="Quantité">
+            <div class="ops-qty-field">
+                <input name="Lignes[__index__].Quantite"
+                       type="number"
+                       step="1"
+                       min="0"
+                       class="line-quantite" />
+                <span class="line-unite-hint"></span>
+            </div>
+        </td>
+        <td class="col-actions" data-label="">
+            <button type="button" class="btn btn-sm remove-intrant-line" aria-label="Supprimer la ligne">Supprimer</button>
+        </td>
+    </tr>
+</template>
+
+<template id="intervention-charge-template">
+    <tr class="intervention-charge-line">
+        <td data-label="Type">
+            <select name="Charges[__index__].TypeChargeId" class="line-charge-type">
+                <option value="">— Sélectionner —</option>
+                @foreach (var type in Model.TypeCharges)
+                {
+                    <option value="@type.Id">@type.Nom</option>
+                }
+            </select>
+        </td>
+        <td data-label="Libellé">
+            <input name="Charges[__index__].Libelle"
+                   type="text"
+                   class="line-charge-libelle" />
+        </td>
+        <td data-label="Date">
+            <input name="Charges[__index__].Date"
+                   type="date"
+                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="line-charge-date" />
+        </td>
+        <td data-label="Montant TTC">
+            <input name="Charges[__index__].MontantTtc"
+                   type="number"
+                   step="1"
+                   min="0"
+                   class="line-charge-montant" />
+        </td>
+        <td class="col-actions" data-label="">
+            <button type="button" class="btn btn-sm remove-charge-line" aria-label="Supprimer la charge">Supprimer</button>
+        </td>
+    </tr>
+</template>

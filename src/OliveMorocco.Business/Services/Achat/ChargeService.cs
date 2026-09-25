@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Achat;
+using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 
@@ -114,6 +115,41 @@ public sealed class ChargeService : IChargeService
             .OrderBy(t => t.Nom)
             .Select(t => new TypeChargeSelectItemDto(t.Id, t.Nom))
             .ToList();
+    }
+
+    public async Task AddChargesForInterventionAsync(
+        int interventionId,
+        IReadOnlyList<CreateInterventionChargeDto> charges,
+        CancellationToken cancellationToken = default)
+    {
+        if (charges.Count == 0)
+            return;
+
+        foreach (var dto in charges)
+        {
+            await EnsureTypeExistsAsync(dto.TypeChargeId, cancellationToken);
+
+            var entity = _mapper.Map<Charge>(dto);
+            entity.InterventionId = interventionId;
+            entity.Note = dto.Note ?? string.Empty;
+
+            await _charges.AddAsync(entity, cancellationToken);
+        }
+    }
+
+    public async Task ReplaceChargesForInterventionAsync(
+        int interventionId,
+        IReadOnlyList<CreateInterventionChargeDto> charges,
+        CancellationToken cancellationToken = default)
+    {
+        var existing = await _charges.FindAsync(
+            c => c.InterventionId == interventionId,
+            cancellationToken);
+
+        foreach (var old in existing)
+            await _charges.DeleteAsync(old.Id, cancellationToken);
+
+        await AddChargesForInterventionAsync(interventionId, charges, cancellationToken);
     }
 
     private static ChargeDto ToDto(Charge entity) =>

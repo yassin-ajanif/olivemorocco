@@ -12,11 +12,6 @@
     <partial name="_InterventionForm" model="Model" />
 </div>
 
-@if (Model.IsEdit)
-{
-    <partial name="_LinkedCharges" model="Model" />
-}
-
 <form asp-action="Delete"
       asp-route-id="@Model.Id"
       method="post"

@@ -94,7 +94,8 @@ erDiagram
     Variete ||--|{ SecteurVariete : "allocations"
 
     Secteur ||--o{ Intervention : "has"
-    Intrant ||--o{ Intervention : "optional"
+    Intervention ||--|{ InterventionLigne : "lines"
+    Intrant ||--o{ InterventionLigne : "used as"
     Intervention ||--o{ Charge : "costs"
 
     Secteur ||--o{ Recolte : "has"
@@ -225,28 +226,42 @@ Catalog of agricultural inputs applied to the land: fertilizers (*engrais*), soi
 
 #### `Interventions`
 
-Field operation on **one sector**: records intrant used, water consumed, and links to related costs via `Charges`.
+Field operation on **one sector**: header for date, secteur, water, note. Intrants applied are stored on `InterventionLignes`. Costs link via `Charges.InterventionId`.
 
 | Column | Type | Null | Default | Notes |
 |--------|------|------|---------|-------|
 | Id | INT | NO | identity | PK |
 | SecteurId | INT | NO | | FK → `Secteurs.Id` (Restrict on delete) |
 | Date | DATETIME | NO | | Date of the intervention |
-| IntrantId | INT | YES | | FK → `Intrants.Id` (Restrict on delete). Null if no input (e.g. irrigation only) |
-| QuantiteIntrant | DECIMAL(12,4) | YES | | Quantity used (in the intrant's `Unite`) |
 | QuantiteEau | DECIMAL(12,4) | YES | | Water consumed in **m³** |
 | Note | NVARCHAR | YES | | Optional details |
 | CreatedAt | DATETIME | NO | | |
 | UpdatedAt | DATETIME | NO | | |
 | CreatedByUserId | INT | YES | | |
 
-**Indexes:** `SecteurId`, `Date`, `IntrantId`.
+**Indexes:** `SecteurId`, `Date`.
+
+#### `InterventionLignes`
+
+One row per intrant applied on an intervention (many-to-many between `Interventions` and `Intrants` with quantity).
+
+| Column | Type | Null | Default | Notes |
+|--------|------|------|---------|-------|
+| Id | INT | NO | identity | PK |
+| InterventionId | INT | NO | | FK → `Interventions.Id` (Cascade on delete) |
+| IntrantId | INT | NO | | FK → `Intrants.Id` (Restrict on delete) |
+| Quantite | DECIMAL(12,4) | NO | | Quantity used (in the intrant's `Unite`) |
+| CreatedAt | DATETIME | NO | | |
+| UpdatedAt | DATETIME | NO | | |
+| CreatedByUserId | INT | YES | | |
+
+**Indexes:** `InterventionId`, `IntrantId`, unique on `(InterventionId, IntrantId)`.
 
 **Example:**
 
-| Secteur | Date | Intrant | Quantite intrant | Eau (m³) |
-|---------|------|---------|------------------|----------|
-| Secteur Nord | 2026-03-15 | NPK 15-15-15 | 500 kg | 12 |
+| Secteur | Date | Intrants (lines) | Eau (m³) |
+|---------|------|------------------|----------|
+| Secteur Nord | 2026-03-15 | NPK 15-15-15 500 kg; Compost organique 2 t | 12 |
 
 **Linked charges** (via `Charges.InterventionId`):
 
@@ -899,7 +914,7 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 
 ---
 
-## Table Inventory (34 tables)
+## Table Inventory (35 tables)
 
 | # | Table | Domain |
 |---|-------|--------|
@@ -908,6 +923,7 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 | 3 | SecteurVarietes | Estate |
 | 4 | Intrants | Estate |
 | 5 | Interventions | Estate |
+| 5b | InterventionLignes | Estate |
 | 6 | Recoltes | Estate |
 | 7 | Pressages | Estate |
 | 8 | Varietes | Stock |
@@ -949,7 +965,7 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 5. **Varietes:** Replaces the source app's generic `Categories` table. `Produit.VarieteId` is optional — products without a variety (accessories, blends labeled as their own SKU, etc.) can leave it null.
 6. **SecteurVarietes:** Many-to-many link between land (`Secteurs`) and tree types (`Varietes`). Use `SuperficieHectares` on the junction row to record how much of a mixed sector each variety occupies.
 7. **Intrants:** Catalog of agricultural input types (engrais, compost, etc.).
-8. **Interventions:** One row per field operation on a single `Secteur`. Optional `IntrantId` + `QuantiteIntrant`, water in m³. Labor and material costs attach via `Charges.InterventionId`.
+8. **Interventions:** One row per field operation on a single `Secteur`. Optional intrants via `InterventionLignes` (`IntrantId` + `Quantite` in the intrant's unit). Water in m³ on the header. Labor and material costs attach via `Charges.InterventionId`. Zero lines allowed (irrigation-only).
 9. **Recoltes:** One row per harvest on a single `Secteur` and single `Variete`. Quantity in kg. Validate that the variety exists on that sector via `SecteurVarietes`.
 10. **Services:** Purchasable services catalog (pressage, transport, etc.). Not stocked. Document lines use `ServiceId` instead of `ProduitId`.
 11. **Intrant vs service lines:** On `BonCommandeLignes` and `FactureFournisseurLignes`, enforce exactly one of `IntrantId` or `ServiceId` (check constraint or validation). `BonReceptionLignes` and `AvoirFournisseurLignes` are intrant-only (purchased inputs, not finished products).

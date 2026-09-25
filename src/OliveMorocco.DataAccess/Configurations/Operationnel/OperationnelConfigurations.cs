@@ -80,9 +80,7 @@ public class InterventionConfiguration : IEntityTypeConfiguration<Intervention>
 
         builder.HasIndex(i => i.SecteurId);
         builder.HasIndex(i => i.Date);
-        builder.HasIndex(i => i.IntrantId);
 
-        builder.Property(i => i.QuantiteIntrant).HasPrecision(12, 4);
         builder.Property(i => i.QuantiteEau).HasPrecision(12, 4);
 
         builder.HasOne(i => i.Secteur)
@@ -90,15 +88,34 @@ public class InterventionConfiguration : IEntityTypeConfiguration<Intervention>
             .HasForeignKey(i => i.SecteurId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(i => i.Intrant)
-            .WithMany(intr => intr.Interventions)
-            .HasForeignKey(i => i.IntrantId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(i => i.Lignes)
+            .WithOne(l => l.Intervention)
+            .HasForeignKey(l => l.InterventionId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(i => i.Charges)
             .WithOne(c => c.Intervention)
             .HasForeignKey(c => c.InterventionId)
             .OnDelete(DeleteBehavior.SetNull);
+    }
+}
+
+public class InterventionLigneConfiguration : IEntityTypeConfiguration<InterventionLigne>
+{
+    public void Configure(EntityTypeBuilder<InterventionLigne> builder)
+    {
+        builder.ToTable("InterventionLignes");
+
+        builder.HasIndex(l => l.InterventionId);
+        builder.HasIndex(l => l.IntrantId);
+        builder.HasIndex(l => new { l.InterventionId, l.IntrantId }).IsUnique();
+
+        builder.Property(l => l.Quantite).HasPrecision(12, 4);
+
+        builder.HasOne(l => l.Intrant)
+            .WithMany(i => i.InterventionLignes)
+            .HasForeignKey(l => l.IntrantId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

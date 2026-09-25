@@ -1,5 +1,6 @@
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Achat;
+using OliveMorocco.Business.DTOs.Operationnel;
 
 namespace OliveMorocco.Business.Services.Achat;
 
@@ -25,5 +26,15 @@ public interface IChargeService
     Task DeleteChargeAsync(int id, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<TypeChargeSelectItemDto>> GetActiveTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task AddChargesForInterventionAsync(
+        int interventionId,
+        IReadOnlyList<CreateInterventionChargeDto> charges,
+        CancellationToken cancellationToken = default);
+
+    Task ReplaceChargesForInterventionAsync(
+        int interventionId,
+        IReadOnlyList<CreateInterventionChargeDto> charges,
         CancellationToken cancellationToken = default);
 }
