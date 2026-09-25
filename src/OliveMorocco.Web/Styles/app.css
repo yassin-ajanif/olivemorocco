@@ -4,6 +4,8 @@
 /* Page CSS — mirror Views/ (dashboard modules via _DashboardLayout.css barrel) */
 @import "./Shared/_DashboardLayout.css";
 @import "./Home/Index.css";
+@import "./Achat/Fournisseurs.css";
+@import "./Achat/Documents.css";
 
 @source "../Views/**/*.cshtml";
 @source "../wwwroot/js/**/*.js";

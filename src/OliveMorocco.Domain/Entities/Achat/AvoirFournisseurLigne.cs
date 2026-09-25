@@ -1,12 +1,12 @@
 using OliveMorocco.Domain.Common;
-using OliveMorocco.Domain.Entities.Vente;
+using OliveMorocco.Domain.Entities.Operationnel;
 
 namespace OliveMorocco.Domain.Entities.Achat;
 
 public class AvoirFournisseurLigne : BaseEntity
 {
     public int AvoirFournisseurId { get; set; }
-    public int ProduitId { get; set; }
+    public int IntrantId { get; set; }
     public string Designation { get; set; } = string.Empty;
     public string Conditionnement { get; set; } = string.Empty;
     public decimal Quantite { get; set; }
@@ -15,5 +15,5 @@ public class AvoirFournisseurLigne : BaseEntity
     public decimal TauxTVA { get; set; }
 
     public AvoirFournisseur AvoirFournisseur { get; set; } = null!;
-    public Produit Produit { get; set; } = null!;
+    public Intrant Intrant { get; set; } = null!;
 }

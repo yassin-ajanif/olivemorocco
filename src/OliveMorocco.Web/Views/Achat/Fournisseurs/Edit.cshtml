@@ -1,0 +1,22 @@
+@model FournisseurFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Achat · Fournisseurs</p>
+    <h1>@Model.Nom</h1>
+    <p class="form-ref">Réf. fournisseur <strong>#@Model.Id</strong></p>
+</div>
+
+<div class="form-panel">
+    <partial name="_FournisseurForm" model="Model" />
+</div>
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-delete"
+      onsubmit="return confirm('Supprimer ce fournisseur ?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>

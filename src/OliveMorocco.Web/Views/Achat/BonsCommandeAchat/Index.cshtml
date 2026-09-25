@@ -1,0 +1,72 @@
+@model BonCommandeFournisseurListViewModel
+@{
+    const string cols = "1.2fr 1.5fr 1fr 1fr auto";
+    const string emptyMessage = "Aucun bon de commande — cliquez sur Nouveau pour commencer.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search
+    };
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Achat</p>
+    <h1>Bons de commande</h1>
+    <p class="module-section">Commandes fournisseurs</p>
+</div>
+
+<form method="get" asp-action="Index" class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher par n° ou fournisseur…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>N°</span>
+        <span>Fournisseur</span>
+        <span>Date</span>
+        <span class="cell-bold">Total TTC</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_ListEmpty" model="emptyMessage" />
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                <div class="list-row" style="grid-template-columns:@cols">
+                    <span data-label="N°">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
+                    </span>
+                    <span data-label="Fournisseur">@item.FournisseurNom</span>
+                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Total TTC" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
+                    </span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<partial name="_ListPagination" model="pagination" />

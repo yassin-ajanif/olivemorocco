@@ -1,0 +1,47 @@
+@model BonCommandeFournisseurFormViewModel
+@{
+    var title = Model.IsEdit ? "Modifier le bon de commande" : "Nouveau bon de commande";
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Achat</p>
+    <h1>@title</h1>
+    <p class="form-ref">Référence <strong>@Model.Numero</strong></p>
+</div>
+
+<div class="form-toolbar">
+    <a asp-action="Index" class="btn">&larr; Retour</a>
+    <button type="submit" form="bon-commande-achat-form" class="btn btn-primary">Enregistrer</button>
+</div>
+
+@if (Model.IsEdit)
+{
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="bon-commande-achat-form">
+        @Html.AntiForgeryToken()
+        <partial name="_FormBody" model="Model" />
+    </form>
+
+    <form asp-action="Delete"
+          asp-route-id="@Model.Id"
+          method="post"
+          class="form-delete"
+          onsubmit="return confirm('Supprimer ce bon de commande ?');">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+}
+else
+{
+    <form asp-action="Create" method="post" id="bon-commande-achat-form">
+        @Html.AntiForgeryToken()
+        <partial name="_FormBody" model="Model" />
+    </form>
+}
+
+@section Scripts {
+    <script src="~/js/document-totals.js" asp-append-version="true"></script>
+    <script src="~/js/achat-document-form.js" asp-append-version="true"></script>
+    <script src="~/js/bon-commande-achat-form.js" asp-append-version="true"></script>
+}

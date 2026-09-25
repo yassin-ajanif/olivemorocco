@@ -1,0 +1,22 @@
+@model ChargeFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Achat · Charges</p>
+    <h1>@Model.Libelle</h1>
+    <p class="form-ref">Réf. charge <strong>#@Model.Id</strong></p>
+</div>
+
+<div class="form-panel">
+    <partial name="_ChargeForm" model="Model" />
+</div>
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-delete"
+      onsubmit="return confirm('Supprimer cette charge ?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>

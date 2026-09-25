@@ -1,12 +1,12 @@
 using OliveMorocco.Domain.Common;
-using OliveMorocco.Domain.Entities.Vente;
+using OliveMorocco.Domain.Entities.Operationnel;
 
 namespace OliveMorocco.Domain.Entities.Achat;
 
 public class BonCommandeFournisseurLigne : BaseEntity
 {
     public int BonCommandeFournisseurId { get; set; }
-    public int? ProduitId { get; set; }
+    public int? IntrantId { get; set; }
     public int? ServiceId { get; set; }
     public string Designation { get; set; } = string.Empty;
     public string Conditionnement { get; set; } = string.Empty;
@@ -16,6 +16,6 @@ public class BonCommandeFournisseurLigne : BaseEntity
     public decimal TauxTVA { get; set; }
 
     public BonCommandeFournisseur BonCommandeFournisseur { get; set; } = null!;
-    public Produit? Produit { get; set; }
+    public Intrant? Intrant { get; set; }
     public Service? Service { get; set; }
 }

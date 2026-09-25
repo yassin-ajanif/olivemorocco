@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OliveMorocco.Domain.Entities.Achat;
+using OliveMorocco.Domain.Entities.Common;
+using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
+using OliveMorocco.Domain.Enums;
 
 namespace OliveMorocco.DataAccess;
 
@@ -12,6 +16,9 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync(cancellationToken);
         await SeedDemoProduitsAsync(db, cancellationToken);
+        await SeedDemoIntrantsAsync(db, cancellationToken);
+        await SeedDemoFournisseursAsync(db, cancellationToken);
+        await SeedDemoTypesChargesAsync(db, cancellationToken);
     }
 
     private static async Task SeedDemoProduitsAsync(AppDbContext db, CancellationToken cancellationToken)
@@ -63,6 +70,113 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
                 CreatedAt = now,
                 UpdatedAt = now,
             });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoIntrantsAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Intrants.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Intrants.AddRange(
+            new Intrant
+            {
+                Nom = "Engrais NPK 15-15-15",
+                Unite = "sac 25 kg",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Compost organique",
+                Unite = "tonne",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Phytosanitaire cuivre",
+                Unite = "L",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Irrigation — tuyaux PE",
+                Unite = "m",
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoFournisseursAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Tiers.AnyAsync(t => t.Type == TypeTiers.Fournisseur || t.Type == TypeTiers.LesDeux, cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Tiers.AddRange(
+            new Tiers
+            {
+                Nom = "Coopérative Oléicole Atlas",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Route de Fès, Km 12",
+                Ville = "Meknès",
+                Telephone = "+212 5 35 00 00 01",
+                Email = "contact@coop-atlas.ma",
+                ICE = "000000000000001",
+                ConditionsPaiement = "30 jours fin de mois",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Tiers
+            {
+                Nom = "Emballages Maroc SA",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Zone industrielle Aïn Sebaâ",
+                Ville = "Casablanca",
+                Telephone = "+212 5 22 00 00 02",
+                Email = "achats@emballages-maroc.ma",
+                ICE = "000000000000002",
+                ConditionsPaiement = "45 jours",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Tiers
+            {
+                Nom = "Matières Premières du Rif",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Bd Mohammed V",
+                Ville = "Taza",
+                Telephone = "+212 5 35 00 00 03",
+                Email = "info@mp-rif.ma",
+                ICE = "000000000000003",
+                ConditionsPaiement = "Comptant",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoTypesChargesAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.TypesCharge.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.TypesCharge.AddRange(
+            new TypeCharge { Nom = "Main d'œuvre", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Matériel", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Transport", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Autre", Actif = true, CreatedAt = now, UpdatedAt = now });
 
         await db.SaveChangesAsync(cancellationToken);
     }

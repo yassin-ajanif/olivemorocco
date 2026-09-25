@@ -1,0 +1,47 @@
+﻿@model AvoirFormViewModel
+@{
+    var title = Model.IsEdit ? "Modifier l'avoir" : "Nouvel avoir";
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Vente</p>
+    <h1>@title</h1>
+    <p class="form-ref">R├⌐f├⌐rence <strong>@Model.Numero</strong></p>
+</div>
+
+<div class="form-toolbar">
+    <a asp-action="Index" class="btn">ΓåÉ Retour</a>
+    <button type="submit" form="avoir-form" class="btn btn-primary">Enregistrer</button>
+</div>
+
+@if (Model.IsEdit)
+{
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="avoir-form">
+        @Html.AntiForgeryToken()
+        <partial name="_FormBody" model="Model" />
+    </form>
+
+    <form asp-action="Delete"
+          asp-route-id="@Model.Id"
+          method="post"
+          class="form-delete"
+          onsubmit="return confirm('Supprimer cet avoir ?');">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+}
+else
+{
+    <form asp-action="Create" method="post" id="avoir-form">
+        @Html.AntiForgeryToken()
+        <partial name="_FormBody" model="Model" />
+    </form>
+}
+
+@section Scripts {
+    <script src="~/js/document-totals.js" asp-append-version="true"></script>
+    <script src="~/js/vente-document-form.js" asp-append-version="true"></script>
+    <script src="~/js/avoir-form.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,180 @@
+@model FournisseurListViewModel
+
+@{
+
+    const string cols = "2fr 1fr 1fr auto minmax(5.5rem, auto)";
+
+    const string emptyMessage = "Aucun enregistrement — cliquez sur Nouveau pour commencer.";
+
+    var pagination = new ListPaginationViewModel
+
+    {
+
+        Page = Model.Page,
+
+        TotalPages = Model.TotalPages,
+
+        HasPrevious = Model.HasPrevious,
+
+        HasNext = Model.HasNext,
+
+        Search = Model.Search
+
+    };
+
+}
+
+
+
+<partial name="_DashboardAlerts" />
+
+
+
+<div class="page-head">
+
+    <p class="eyebrow">Achat</p>
+
+    <h1>Fournisseurs</h1>
+
+    <p class="module-section">Huileries, emballages, intrants</p>
+
+</div>
+
+
+
+<form method="get" asp-action="Index" class="list-toolbar">
+
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+
+    <input type="search"
+
+           class="list-search"
+
+           name="search"
+
+           value="@Model.Search"
+
+           placeholder="Rechercher…"
+
+           autocomplete="off" />
+
+</form>
+
+
+
+<div class="list-wrap">
+
+    <div class="list-header" style="grid-template-columns:@cols">
+
+        <span>Nom</span>
+
+        <span>ICE</span>
+
+        <span>Ville</span>
+
+        <span>Actif</span>
+
+        <span>Actions</span>
+
+    </div>
+
+    <div class="list-body">
+
+        @if (Model.Items.Count == 0)
+
+        {
+
+            <partial name="_ListEmpty" model="emptyMessage" />
+
+        }
+
+        else
+
+        {
+
+            foreach (var fournisseur in Model.Items)
+
+            {
+
+                <div class="list-row" style="grid-template-columns:@cols">
+
+                    <span data-label="Nom">
+
+                        <a asp-action="Edit" asp-route-id="@fournisseur.Id" class="list-link">@fournisseur.Nom</a>
+
+                    </span>
+
+                    <span data-label="ICE">@fournisseur.ICE</span>
+
+                    <span data-label="Ville">@fournisseur.Ville</span>
+
+                    <span data-label="Actif">
+
+                        @if (fournisseur.Actif)
+
+                        {
+
+                            <span class="badge badge-ok">Actif</span>
+
+                        }
+
+                        else
+
+                        {
+
+                            <span class="badge badge-warn">Inactif</span>
+
+                        }
+
+                    </span>
+
+                    <span class="list-row-actions" data-label="Actions">
+
+                        <a asp-action="Edit"
+
+                           asp-route-id="@fournisseur.Id"
+
+                           class="btn btn-icon"
+
+                           title="Modifier"
+
+                           aria-label="Modifier">
+
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+
+                        </a>
+
+                        <form asp-action="ToggleActif" method="post" class="inline-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="id" value="@fournisseur.Id" />
+
+                            <input type="hidden" name="search" value="@Model.Search" />
+
+                            <input type="hidden" name="page" value="@Model.Page" />
+
+                            <button type="submit" class="btn btn-sm" title="@(fournisseur.Actif ? "Désactiver" : "Activer")">
+
+                                @(fournisseur.Actif ? "Off" : "On")
+
+                            </button>
+
+                        </form>
+
+                    </span>
+
+                </div>
+
+            }
+
+        }
+
+    </div>
+
+</div>
+
+
+
+<partial name="_ListPagination" model="pagination" />
+

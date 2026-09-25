@@ -91,12 +91,12 @@ namespace OliveMorocco.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("IntrantId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("PrixUnitaireHT")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
-
-                    b.Property<int>("ProduitId")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("Quantite")
                         .HasPrecision(12, 4)
@@ -117,7 +117,7 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.HasIndex("AvoirFournisseurId");
 
-                    b.HasIndex("ProduitId");
+                    b.HasIndex("IntrantId");
 
                     b.ToTable("AvoirFournisseurLignes", (string)null);
                 });
@@ -188,12 +188,12 @@ namespace OliveMorocco.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("IntrantId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("PrixUnitaireHT")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
-
-                    b.Property<int?>("ProduitId")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("QuantiteCommandee")
                         .HasPrecision(12, 4)
@@ -217,13 +217,13 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.HasIndex("BonCommandeFournisseurId");
 
-                    b.HasIndex("ProduitId");
+                    b.HasIndex("IntrantId");
 
                     b.HasIndex("ServiceId");
 
                     b.ToTable("BonCommandeLignes", null, t =>
                         {
-                            t.HasCheckConstraint("CK_BonCommandeLignes_ProduitOrService", "(\"ProduitId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"ProduitId\" IS NULL AND \"ServiceId\" IS NOT NULL)");
+                            t.HasCheckConstraint("CK_BonCommandeLignes_IntrantOrService", "(\"IntrantId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"IntrantId\" IS NULL AND \"ServiceId\" IS NOT NULL)");
                         });
                 });
 
@@ -303,12 +303,12 @@ namespace OliveMorocco.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("IntrantId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("PrixUnitaireHT")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
-
-                    b.Property<int>("ProduitId")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("QuantiteRecue")
                         .HasPrecision(12, 4)
@@ -325,7 +325,7 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.HasIndex("BRId");
 
-                    b.HasIndex("ProduitId");
+                    b.HasIndex("IntrantId");
 
                     b.ToTable("BonReceptionLignes", (string)null);
                 });
@@ -463,12 +463,12 @@ namespace OliveMorocco.DataAccess.Migrations
                     b.Property<int>("FactureFournisseurId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("IntrantId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("PrixUnitaireHT")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
-
-                    b.Property<int?>("ProduitId")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("Quantite")
                         .HasPrecision(12, 4)
@@ -494,13 +494,13 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.HasIndex("FactureFournisseurId");
 
-                    b.HasIndex("ProduitId");
+                    b.HasIndex("IntrantId");
 
                     b.HasIndex("ServiceId");
 
                     b.ToTable("FactureFournisseurLignes", null, t =>
                         {
-                            t.HasCheckConstraint("CK_FactureFournisseurLignes_ProduitOrService", "(\"ProduitId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"ProduitId\" IS NULL AND \"ServiceId\" IS NOT NULL)");
+                            t.HasCheckConstraint("CK_FactureFournisseurLignes_IntrantOrService", "(\"IntrantId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"IntrantId\" IS NULL AND \"ServiceId\" IS NOT NULL)");
                         });
                 });
 
@@ -1819,15 +1819,15 @@ namespace OliveMorocco.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OliveMorocco.Domain.Entities.Vente.Produit", "Produit")
+                    b.HasOne("OliveMorocco.Domain.Entities.Operationnel.Intrant", "Intrant")
                         .WithMany()
-                        .HasForeignKey("ProduitId")
+                        .HasForeignKey("IntrantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AvoirFournisseur");
 
-                    b.Navigation("Produit");
+                    b.Navigation("Intrant");
                 });
 
             modelBuilder.Entity("OliveMorocco.Domain.Entities.Achat.BonCommandeFournisseur", b =>
@@ -1849,9 +1849,9 @@ namespace OliveMorocco.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OliveMorocco.Domain.Entities.Vente.Produit", "Produit")
+                    b.HasOne("OliveMorocco.Domain.Entities.Operationnel.Intrant", "Intrant")
                         .WithMany()
-                        .HasForeignKey("ProduitId")
+                        .HasForeignKey("IntrantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("OliveMorocco.Domain.Entities.Achat.Service", "Service")
@@ -1861,7 +1861,7 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.Navigation("BonCommandeFournisseur");
 
-                    b.Navigation("Produit");
+                    b.Navigation("Intrant");
 
                     b.Navigation("Service");
                 });
@@ -1899,15 +1899,15 @@ namespace OliveMorocco.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OliveMorocco.Domain.Entities.Vente.Produit", "Produit")
+                    b.HasOne("OliveMorocco.Domain.Entities.Operationnel.Intrant", "Intrant")
                         .WithMany()
-                        .HasForeignKey("ProduitId")
+                        .HasForeignKey("IntrantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("BonReception");
 
-                    b.Navigation("Produit");
+                    b.Navigation("Intrant");
                 });
 
             modelBuilder.Entity("OliveMorocco.Domain.Entities.Achat.Charge", b =>
@@ -1952,9 +1952,9 @@ namespace OliveMorocco.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OliveMorocco.Domain.Entities.Vente.Produit", "Produit")
+                    b.HasOne("OliveMorocco.Domain.Entities.Operationnel.Intrant", "Intrant")
                         .WithMany()
-                        .HasForeignKey("ProduitId")
+                        .HasForeignKey("IntrantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("OliveMorocco.Domain.Entities.Achat.Service", "Service")
@@ -1966,7 +1966,7 @@ namespace OliveMorocco.DataAccess.Migrations
 
                     b.Navigation("FactureFournisseur");
 
-                    b.Navigation("Produit");
+                    b.Navigation("Intrant");
 
                     b.Navigation("Service");
                 });
