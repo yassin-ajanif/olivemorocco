@@ -55,7 +55,7 @@ public sealed class FournisseursController(IFournisseurService clients) : Contro
             return View(model);
         }
 
-        TempData["Success"] = "Client enregistr├⌐ avec succ├¿s.";
+        TempData["Success"] = "Fournisseur enregistré avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -95,7 +95,7 @@ public sealed class FournisseursController(IFournisseurService clients) : Contro
             return View(model);
         }
 
-        TempData["Success"] = "Client modifi├⌐ avec succ├¿s.";
+        TempData["Success"] = "Fournisseur modifié avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -106,7 +106,7 @@ public sealed class FournisseursController(IFournisseurService clients) : Contro
         try
         {
             await clients.DeleteFournisseurAsync(id, cancellationToken);
-            TempData["Success"] = "Client supprim├⌐ avec succ├¿s.";
+            TempData["Success"] = "Fournisseur supprimé avec succès.";
             return RedirectToAction(nameof(Index));
         }
         catch (KeyNotFoundException)
@@ -133,8 +133,8 @@ public sealed class FournisseursController(IFournisseurService clients) : Contro
         {
             var client = await clients.ToggleActifAsync(id, cancellationToken);
             TempData["Success"] = client.Actif
-                ? $"{client.Nom} a ├⌐t├⌐ activ├⌐."
-                : $"{client.Nom} a ├⌐t├⌐ d├⌐sactiv├⌐.";
+                ? $"{client.Nom} a été activé."
+                : $"{client.Nom} a été désactivé.";
         }
         catch (KeyNotFoundException)
         {

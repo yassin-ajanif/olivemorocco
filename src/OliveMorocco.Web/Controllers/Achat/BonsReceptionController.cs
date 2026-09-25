@@ -70,7 +70,7 @@ public sealed class BonsReceptionController(
             return View("Edit", model);
         }
 
-        TempData["Success"] = "Bon de rÃ©ception enregistr├⌐ avec succ├¿s.";
+        TempData["Success"] = "Bon de réception enregistré avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -113,7 +113,7 @@ public sealed class BonsReceptionController(
             return View(model);
         }
 
-        TempData["Success"] = "Bon de rÃ©ception modifi├⌐ avec succ├¿s.";
+        TempData["Success"] = "Bon de réception modifié avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -124,7 +124,7 @@ public sealed class BonsReceptionController(
         try
         {
             await bonsReception.DeleteBonReceptionAsync(id, cancellationToken);
-            TempData["Success"] = "Bon de rÃ©ception supprim├⌐ avec succ├¿s.";
+            TempData["Success"] = "Bon de réception supprimé avec succès.";
             return RedirectToAction(nameof(Index));
         }
         catch (KeyNotFoundException)
@@ -216,19 +216,19 @@ public sealed class BonsReceptionController(
             var prefix = $"Lignes[{i}]";
 
             if (string.IsNullOrWhiteSpace(line.Designation))
-                ModelState.AddModelError($"{prefix}.Designation", "La d├⌐signation est obligatoire.");
+                ModelState.AddModelError($"{prefix}.Designation", "La désignation est obligatoire.");
 
             if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "S├⌐lectionnez un article depuis la recherche.");
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
 
             if (line.QuantiteCommandee <= 0)
-                ModelState.AddModelError($"{prefix}.QuantiteCommandee", "La quantit├⌐ command├⌐e doit ├¬tre positive.");
+                ModelState.AddModelError($"{prefix}.QuantiteCommandee", "La quantité commandée doit être positive.");
 
             if (line.QuantiteRecue <= 0)
-                ModelState.AddModelError($"{prefix}.QuantiteRecue", "La quantit├⌐ livr├⌐e doit ├¬tre positive.");
+                ModelState.AddModelError($"{prefix}.QuantiteRecue", "La quantité livrée doit être positive.");
 
             if (line.PrixUnitaireHT < 0)
-                ModelState.AddModelError($"{prefix}.PrixUnitaireHT", "Le prix unitaire doit ├¬tre positif ou nul.");
+                ModelState.AddModelError($"{prefix}.PrixUnitaireHT", "Le prix unitaire doit être positif ou nul.");
         }
     }
 

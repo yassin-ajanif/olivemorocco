@@ -1,6 +1,6 @@
 @model BonReceptionFormViewModel
 @{
-    var title = Model.IsEdit ? "Modifier le bon de rÃ©ception" : "Nouveau bon de rÃ©ception";
+    var title = Model.IsEdit ? "Modifier le bon de réception" : "Nouveau bon de réception";
 }
 
 <partial name="_DashboardAlerts" />
@@ -8,7 +8,7 @@
 <div class="page-head">
     <p class="eyebrow">Achat</p>
     <h1>@title</h1>
-    <p class="form-ref">R├⌐f├⌐rence <strong>@Model.Numero</strong></p>
+    <p class="form-ref">Référence <strong>@Model.Numero</strong></p>
 </div>
 
 <div class="form-toolbar">
@@ -57,7 +57,7 @@
               asp-route-id="@Model.Id"
               method="post"
               class="form-delete"
-              onsubmit="return confirm('Supprimer ce bon de rÃ©ception ?');">
+              onsubmit="return confirm('Supprimer ce bon de réception ?');">
             @Html.AntiForgeryToken()
             <button type="submit" class="btn btn-danger">Supprimer</button>
         </form>

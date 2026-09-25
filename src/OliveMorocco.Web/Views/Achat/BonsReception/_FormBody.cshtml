@@ -7,7 +7,7 @@
 
 <div class="doc-meta">
     <div class="form-field">
-        <label asp-for="Numero">R├⌐f├⌐rence</label>
+        <label asp-for="Numero">Référence</label>
         <input asp-for="Numero" readonly />
     </div>
     <div class="form-field">
@@ -21,7 +21,7 @@
         <input type="search"
                id="fournisseur-search"
                value="@Model.FournisseurNom"
-               placeholder="Rechercher un fournisseurΓÇª"
+               placeholder="Rechercher un fournisseur…"
                autocomplete="off" />
         <div id="fournisseur-suggestions" class="doc-suggestions" hidden></div>
         <span asp-validation-for="FournisseurId" class="field-validation-error"></span>
@@ -35,7 +35,7 @@
             <input type="search"
                    id="article-search"
                    class="doc-product-pick"
-                   placeholder="Rechercher par r├⌐f├⌐rence ou d├⌐signationΓÇª"
+                   placeholder="Rechercher par référence ou désignation…"
                    autocomplete="off" />
             <div id="article-suggestions" class="doc-suggestions" hidden></div>
         </div>
@@ -46,10 +46,10 @@
             <thead>
                 <tr>
                     <th class="col-actions"></th>
-                    <th class="col-ref">R├⌐f.</th>
-                    <th class="col-designation">D├⌐signation</th>
-                    <th class="col-qty">Qt├⌐ cmd.</th>
-                    <th class="col-qty">Qt├⌐ livr├⌐e</th>
+                    <th class="col-ref">Réf.</th>
+                    <th class="col-designation">Désignation</th>
+                    <th class="col-qty">Qté cmd.</th>
+                    <th class="col-qty">Qté livrée</th>
                     <th class="col-pu">PU HT</th>
                     <th class="col-rem">Remise</th>
                     <th class="col-tva">TVA %</th>
@@ -62,29 +62,29 @@
                 {
                     var line = Model.Lignes[i];
                     <tr class="devis-line">
-                        <td class="col-actions col-details" data-label="S├⌐lection">
-                            <input type="radio" name="selected-line" class="line-select" aria-label="S├⌐lectionner la ligne" />
+                        <td class="col-actions col-details" data-label="Sélection">
+                            <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
                         </td>
-                        <td class="col-ref col-details" data-label="R├⌐f.">
+                        <td class="col-ref col-details" data-label="Réf.">
                             <input type="hidden" name="Lignes[@i].ProduitId" value="@line.ProduitId" class="produit-id" />
                             <input name="Lignes[@i].Reference" value="@line.Reference" class="line-ref" readonly />
                         </td>
-                        <td class="col-designation" data-label="D├⌐signation">
+                        <td class="col-designation" data-label="Désignation">
                             <div class="devis-line-head">
                                 <button type="button"
                                         class="devis-line-toggle"
                                         aria-expanded="true"
-                                        aria-label="Afficher ou masquer le d├⌐tail de la ligne">
+                                        aria-label="Afficher ou masquer le détail de la ligne">
                                     <span class="devis-line-toggle-icon" aria-hidden="true"></span>
                                 </button>
                                 <input name="Lignes[@i].Designation" value="@line.Designation" class="line-designation" readonly required />
                                 <span class="devis-line-head-ttc" aria-hidden="true">0,00</span>
                             </div>
                         </td>
-                        <td class="col-qty col-details" data-label="Qt├⌐ cmd.">
+                        <td class="col-qty col-details" data-label="Qté cmd.">
                             <input name="Lignes[@i].QuantiteCommandee" value="@line.QuantiteCommandee.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-qte calc-trigger" />
                         </td>
-                        <td class="col-qty col-details" data-label="Qt├⌐ livr├⌐e">
+                        <td class="col-qty col-details" data-label="Qté livrée">
                             <input name="Lignes[@i].QuantiteRecue" value="@line.QuantiteRecue.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-qte-recue calc-trigger" />
                         </td>
                         <td class="col-pu col-details" data-label="PU HT">
@@ -137,29 +137,29 @@
 
 <template id="bon-reception-line-template">
     <tr class="devis-line">
-        <td class="col-actions col-details" data-label="S├⌐lection">
-            <input type="radio" name="selected-line" class="line-select" aria-label="S├⌐lectionner la ligne" />
+        <td class="col-actions col-details" data-label="Sélection">
+            <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
         </td>
-        <td class="col-ref col-details" data-label="R├⌐f.">
+        <td class="col-ref col-details" data-label="Réf.">
             <input type="hidden" name="Lignes[__index__].ProduitId" class="produit-id" />
             <input name="Lignes[__index__].Reference" class="line-ref" readonly />
         </td>
-        <td class="col-designation" data-label="D├⌐signation">
+        <td class="col-designation" data-label="Désignation">
             <div class="devis-line-head">
                 <button type="button"
                         class="devis-line-toggle"
                         aria-expanded="true"
-                        aria-label="Afficher ou masquer le d├⌐tail de la ligne">
+                        aria-label="Afficher ou masquer le détail de la ligne">
                     <span class="devis-line-toggle-icon" aria-hidden="true"></span>
                 </button>
                 <input name="Lignes[__index__].Designation" class="line-designation" readonly required />
                 <span class="devis-line-head-ttc" aria-hidden="true">0,00</span>
             </div>
         </td>
-        <td class="col-qty col-details" data-label="Qt├⌐ cmd.">
+        <td class="col-qty col-details" data-label="Qté cmd.">
             <input name="Lignes[__index__].QuantiteCommandee" value="1" type="number" step="1" min="0" class="line-qte calc-trigger" />
         </td>
-        <td class="col-qty col-details" data-label="Qt├⌐ livr├⌐e">
+        <td class="col-qty col-details" data-label="Qté livrée">
             <input name="Lignes[__index__].QuantiteRecue" value="1" type="number" step="1" min="0" class="line-qte-recue calc-trigger" />
         </td>
         <td class="col-pu col-details" data-label="PU HT">

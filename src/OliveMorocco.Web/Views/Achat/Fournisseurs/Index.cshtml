@@ -4,7 +4,7 @@
 
     const string cols = "2fr 1fr 1fr auto minmax(5.5rem, auto)";
 
-    const string emptyMessage = "Aucun enregistrement ΓÇö cliquez sur Nouveau pour commencer.";
+    const string emptyMessage = "Aucun enregistrement — cliquez sur Nouveau pour commencer.";
 
     var pagination = new ListPaginationViewModel
 
@@ -36,7 +36,7 @@
 
     <h1>Fournisseurs</h1>
 
-    <p class="module-section">Restaurateurs, importateurs, ├⌐piciers</p>
+    <p class="module-section">Huileries, emballages, intrants</p>
 
 </div>
 
@@ -54,7 +54,7 @@
 
            value="@Model.Search"
 
-           placeholder="RechercherΓÇª"
+           placeholder="Rechercher…"
 
            autocomplete="off" />
 
@@ -154,7 +154,7 @@
 
                             <input type="hidden" name="page" value="@Model.Page" />
 
-                            <button type="submit" class="btn btn-sm" title="@(fournisseur.Actif ? "D├⌐sactiver" : "Activer")">
+                            <button type="submit" class="btn btn-sm" title="@(fournisseur.Actif ? "Désactiver" : "Activer")">
 
                                 @(fournisseur.Actif ? "Off" : "On")
 

@@ -49,7 +49,7 @@ public sealed class FacturesFournisseursController(
         });
     }
 
-    /// <summary>Prefills a new facture from one or more bons de rÃ©ception.</summary>
+    /// <summary>Prefills a new facture from one or more bons de réception.</summary>
     [HttpGet("FromBonsReception")]
     public async Task<IActionResult> FromBonsReception(
         [FromQuery] int[] ids,
@@ -68,7 +68,7 @@ public sealed class FacturesFournisseursController(
             var bl = await bonsReception.GetBonReceptionByIdAsync(id, cancellationToken);
             if (bl is null)
             {
-                TempData["Error"] = $"Bon de rÃ©ception {id} introuvable.";
+                TempData["Error"] = $"Bon de réception {id} introuvable.";
                 return RedirectToAction("Index", "BonsReception");
             }
 
@@ -159,7 +159,7 @@ public sealed class FacturesFournisseursController(
             return View("Edit", model);
         }
 
-        TempData["Success"] = "Facture enregistr├⌐e avec succ├¿s.";
+        TempData["Success"] = "Facture enregistrée avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -203,7 +203,7 @@ public sealed class FacturesFournisseursController(
             return View(model);
         }
 
-        TempData["Success"] = "Facture modifi├⌐e avec succ├¿s.";
+        TempData["Success"] = "Facture modifiée avec succès.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -214,7 +214,7 @@ public sealed class FacturesFournisseursController(
         try
         {
             await factures.DeleteFactureAsync(id, cancellationToken);
-            TempData["Success"] = "Facture supprim├⌐e avec succ├¿s.";
+            TempData["Success"] = "Facture supprimée avec succès.";
             return RedirectToAction(nameof(Index));
         }
         catch (KeyNotFoundException)
@@ -348,19 +348,19 @@ public sealed class FacturesFournisseursController(
             var prefix = $"Lignes[{i}]";
 
             if (string.IsNullOrWhiteSpace(line.Designation))
-                ModelState.AddModelError($"{prefix}.Designation", "La d├⌐signation est obligatoire.");
+                ModelState.AddModelError($"{prefix}.Designation", "La désignation est obligatoire.");
 
             if (string.IsNullOrWhiteSpace(line.Unite))
-                ModelState.AddModelError($"{prefix}.Unite", "L'unit├⌐ est obligatoire.");
+                ModelState.AddModelError($"{prefix}.Unite", "L'unité est obligatoire.");
 
             if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "S├⌐lectionnez un article depuis la recherche.");
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
 
             if (line.Quantite <= 0)
-                ModelState.AddModelError($"{prefix}.Quantite", "La quantit├⌐ doit ├¬tre positive.");
+                ModelState.AddModelError($"{prefix}.Quantite", "La quantité doit être positive.");
 
             if (line.PrixUnitaireHT < 0)
-                ModelState.AddModelError($"{prefix}.PrixUnitaireHT", "Le prix unitaire doit ├¬tre positif ou nul.");
+                ModelState.AddModelError($"{prefix}.PrixUnitaireHT", "Le prix unitaire doit être positif ou nul.");
         }
     }
 

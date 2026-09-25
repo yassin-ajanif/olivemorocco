@@ -243,7 +243,7 @@ public sealed class BonReceptionService
         {
             throw new ValidationException([
                 new ValidationFailure(nameof(CreateBonReceptionDto.FournisseurId),
-                    "Le tiers s├⌐lectionn├⌐ n'est pas un fournisseur.")]);
+                    "Le tiers sélectionné n'est pas un fournisseur.")]);
         }
     }
 
@@ -262,7 +262,7 @@ public sealed class BonReceptionService
         {
             throw new ValidationException([
                 new ValidationFailure(string.Empty,
-                    $"Impossible de supprimer ce bon de rÃ©ception : li├⌐ ├á une {string.Join(", ", linked)}.")]);
+                    $"Impossible de supprimer ce bon de réception : lié à une {string.Join(", ", linked)}.")]);
         }
     }
 }

@@ -231,7 +231,7 @@ public sealed class BonCommandeFournisseurService
         {
             throw new ValidationException([
                 new ValidationFailure(nameof(CreateBonCommandeFournisseurDto.FournisseurId),
-                    "Le tiers s├⌐lectionn├⌐ n'est pas un fournisseur.")]);
+                    "Le tiers sélectionné n'est pas un fournisseur.")]);
         }
     }
 
@@ -240,12 +240,12 @@ public sealed class BonCommandeFournisseurService
         var linked = new List<string>();
 
         if (await _bonsReception.AnyAsync(b => b.BonCommandeId == id, cancellationToken))
-            linked.Add("bon de rÃ©ception");
+            linked.Add("bon de réception");
         if (linked.Count > 0)
         {
             throw new ValidationException([
                 new ValidationFailure(string.Empty,
-                    $"Impossible de supprimer ce bon de commande : li├⌐ ├á un {string.Join(", ", linked)}.")]);
+                    $"Impossible de supprimer ce bon de commande : lié à un {string.Join(", ", linked)}.")]);
         }
     }
 }

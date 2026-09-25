@@ -207,7 +207,7 @@ public sealed class FactureFournisseurService
         {
             throw new ValidationException([
                 new ValidationFailure(nameof(CreateFactureFournisseurDto.FournisseurId),
-                    "Le tiers s├⌐lectionn├⌐ n'est pas un fournisseur.")]);
+                    "Le tiers sélectionné n'est pas un fournisseur.")]);
         }
     }
 
@@ -229,14 +229,14 @@ public sealed class FactureFournisseurService
         foreach (var blId in blIds)
         {
             var bl = await _bonsReception.GetByIdAsync(blId, cancellationToken)
-                ?? throw new KeyNotFoundException($"Bon de rÃ©ception {blId} introuvable.");
+                ?? throw new KeyNotFoundException($"Bon de réception {blId} introuvable.");
 
             if (bl.FactureFournisseurId is int existingFactureId && existingFactureId != factureId)
             {
                 throw new ValidationException([
                     new ValidationFailure(
                         "Lignes",
-                        $"Le bon de rÃ©ception {bl.Numero} est d├⌐j├á li├⌐ ├á une autre facture.")]);
+                        $"Le bon de réception {bl.Numero} est déjà lié à une autre facture.")]);
             }
 
             if (bl.FournisseurId != clientId)
@@ -244,7 +244,7 @@ public sealed class FactureFournisseurService
                 throw new ValidationException([
                     new ValidationFailure(
                         nameof(CreateFactureFournisseurDto.FournisseurId),
-                        $"Le bon de rÃ©ception {bl.Numero} n'appartient pas au m├¬me client.")]);
+                        $"Le bon de réception {bl.Numero} n'appartient pas au même fournisseur.")]);
             }
 
             bl.FactureFournisseurId = factureId;
@@ -263,7 +263,7 @@ public sealed class FactureFournisseurService
         {
             throw new ValidationException([
                 new ValidationFailure(string.Empty,
-                    $"Impossible de supprimer cette facture : li├⌐e ├á un {string.Join(", ", linked)}.")]);
+                    $"Impossible de supprimer cette facture : liée à un {string.Join(", ", linked)}.")]);
         }
     }
 }

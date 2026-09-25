@@ -1,7 +1,7 @@
 @model BonCommandeFournisseurListViewModel
 @{
     const string cols = "1.2fr 1.5fr 1fr 1fr auto";
-    const string emptyMessage = "Aucun bon de commande ΓÇö cliquez sur Nouveau pour commencer.";
+    const string emptyMessage = "Aucun bon de commande — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
         Page = Model.Page,
@@ -26,13 +26,13 @@
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher par n┬░ ou fournisseurΓÇª"
+           placeholder="Rechercher par n° ou fournisseur…"
            autocomplete="off" />
 </form>
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>N┬░</span>
+        <span>N°</span>
         <span>Fournisseur</span>
         <span>Date</span>
         <span class="cell-bold">Total TTC</span>
@@ -48,7 +48,7 @@
             foreach (var item in Model.Items)
             {
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="N┬░">
+                    <span data-label="N°">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
                     </span>
                     <span data-label="Fournisseur">@item.FournisseurNom</span>

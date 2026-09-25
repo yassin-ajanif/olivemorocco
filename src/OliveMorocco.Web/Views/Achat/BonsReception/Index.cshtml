@@ -1,7 +1,7 @@
 @model BonReceptionListViewModel
 @{
     const string cols = "auto 1.2fr 1.5fr 1fr 1fr 1fr auto";
-    const string emptyMessage = "Aucun bon de rÃ©ception ΓÇö cliquez sur Nouveau pour commencer.";
+    const string emptyMessage = "Aucun bon de réception — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
         Page = Model.Page,
@@ -16,7 +16,7 @@
 
 <div class="page-head">
     <p class="eyebrow">Achat</p>
-    <h1>Bons de rÃ©ception</h1>
+    <h1>Bons de réception</h1>
     <p class="module-section">Livraisons fournisseurs</p>
 </div>
 
@@ -34,7 +34,7 @@
                class="list-search"
                name="search"
                value="@Model.Search"
-               placeholder="Rechercher par n┬░ ou fournisseurΓÇª"
+               placeholder="Rechercher par n° ou fournisseur…"
                autocomplete="off" />
     </form>
 </div>
@@ -42,7 +42,7 @@
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
         <span aria-hidden="true"></span>
-        <span>N┬░</span>
+        <span>N°</span>
         <span>Fournisseur</span>
         <span>Date</span>
         <span class="cell-bold">Total TTC</span>
@@ -60,7 +60,7 @@
             {
                 var isFactured = item.FactureId is not null;
                 <div class="list-row" style="grid-template-columns:@cols" data-fournisseur-id="@item.FournisseurId">
-                    <span data-label="S├⌐lection">
+                    <span data-label="Sélection">
                         @if (!isFactured)
                         {
                             <input type="checkbox"
@@ -68,10 +68,10 @@
                                    name="ids"
                                    value="@item.Id"
                                    form="br-to-facture-form"
-                                   aria-label="S├⌐lectionner @item.Numero" />
+                                   aria-label="Sélectionner @item.Numero" />
                         }
                     </span>
-                    <span data-label="N┬░">
+                    <span data-label="N°">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
                     </span>
                     <span data-label="Fournisseur">@item.FournisseurNom</span>
@@ -87,7 +87,7 @@
                         }
                         else
                         {
-                            <span class="list-muted">ΓÇö</span>
+                            <span class="list-muted">—</span>
                         }
                     </span>
                     <span class="list-row-actions" data-label="Actions">
