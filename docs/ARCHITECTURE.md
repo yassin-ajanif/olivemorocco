@@ -167,8 +167,9 @@ Code, DTOs, services, EF configurations, and controllers are grouped into **thre
 
 | Domain | Folder (all layers) | Sidebar | Main entities |
 |--------|---------------------|---------|---------------|
-| **Opérationnel** | `Operationnel/` | Opérationnel | `Secteur`, `SecteurVariete`, `Variete`, `Intrant`, `Intervention`, `Recolte`, `Pressage` |
-| **Vente** | `Vente/` | Vente | `Produit`, `MouvementStock`, devis / BC / BL / factures / avoirs **client** + lignes, paiements client |
+| **Stockage** | `Stockage/` (Web UI); entities split across `Vente/` + `Operationnel/` | Stockage | `Produit`, `MouvementStock`, `Intrant`, `Secteur`, `Variete`, `SecteurVariete` |
+| **Opérationnel** | `Operationnel/` | Opérationnel | `Intervention`, `Recolte`, `Pressage` (+ field ops using secteurs / intrants) |
+| **Vente** | `Vente/` | Vente | devis / BC / BL / factures / avoirs **client** + lignes, paiements client |
 | **Achat** | `Achat/` | Achat | `Service`, `TypeCharge`, `Charge`, BC / BR / factures / avoirs **fournisseur** + lignes, paiements fournisseur |
 
 **Shared reference data** (used by several domains) lives in `Common/` — not a fourth sidebar section:
@@ -197,9 +198,10 @@ Same pattern as FaturatiWeb: controllers use **route prefixes** matching the das
 |---------|------------|----------|
 | Public site | `/`, `/Home` | ZAHO marketing page |
 | Dashboard | `/Dashboard` | Gestion shell (today) |
+| Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock` |
 | Vente | `/Vente/...` | `/Vente/Clients`, `/Vente/Devis` |
 | Achat | `/Achat/...` | `/Achat/Fournisseurs`, `/Achat/BonsReception` |
-| Opérationnel | `/Operationnel/...` | `/Operationnel/Secteurs`, `/Operationnel/Recoltes` |
+| Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Recoltes` |
 
 Defined in `Web/Routing/AppSections.cs` (to be created).
 
@@ -209,7 +211,8 @@ Organized under the **three domains** (mirrors Business services):
 
 ```
 Controllers/
-├── Operationnel/      (SecteursController, RecoltesController, …)
+├── Stockage/          (ProduitsController, IntrantsController, SecteursController, StockController)
+├── Operationnel/      (InterventionsController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)
 ```

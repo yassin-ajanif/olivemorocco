@@ -47,6 +47,18 @@
             <p class="dash-user">Blad Atouaa Elmahdi</p>
 
             <nav class="dash-nav" id="dashNav">
+                <div class="@SectionClass("stockage")" data-section="stockage">
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("stockage")">
+                        <span class="arrow">@SectionArrow("stockage")</span> Stockage
+                    </button>
+                    <div class="dash-section-items">
+                        <a href="/@AppSections.Stockage/Produits" class="@NavClass("produits")">Produits</a>
+                        <a href="/@AppSections.Stockage/Intrants" class="@NavClass("intrants")">Intrants</a>
+                        <a href="/@AppSections.Stockage/Secteurs" class="@NavClass("secteurs")">Secteurs</a>
+                        <a href="/@AppSections.Stockage/Stock" class="@NavClass("stock")">État du stock</a>
+                    </div>
+                </div>
+
                 <div class="@SectionClass("vente")" data-section="vente">
                     <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("vente")">
                         <span class="arrow">@SectionArrow("vente")</span> Vente

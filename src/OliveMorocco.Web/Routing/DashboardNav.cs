@@ -7,6 +7,10 @@ public static class DashboardNav
 
     private static readonly Dictionary<string, Module> ByController = new(StringComparer.OrdinalIgnoreCase)
     {
+        ["Produits"] = new("stockage", "produits", "Produits", "produit"),
+        ["Intrants"] = new("stockage", "intrants", "Intrants", "intrant"),
+        ["Secteurs"] = new("stockage", "secteurs", "Secteurs", "secteur"),
+        ["Stock"] = new("stockage", "stock", "État du stock", "stock"),
         ["Clients"] = new("vente", "clients", "Clients", "client"),
         ["Devis"] = new("vente", "devis", "Devis", "devis"),
         ["BonsCommande"] = new("vente", "bons-commande", "Bons de commande", "bon de commande"),
@@ -55,7 +59,8 @@ public static class DashboardNav
 
         foreach (var (controller, module) in ByController)
         {
-            if (path.Contains($"/{AppSections.Vente}/{controller}", StringComparison.OrdinalIgnoreCase)
+            if (path.Contains($"/{AppSections.Stockage}/{controller}", StringComparison.OrdinalIgnoreCase)
+                || path.Contains($"/{AppSections.Vente}/{controller}", StringComparison.OrdinalIgnoreCase)
                 || path.Contains($"/{AppSections.Achat}/{controller}", StringComparison.OrdinalIgnoreCase)
                 || path.Contains($"/{AppSections.Operationnel}/{controller}", StringComparison.OrdinalIgnoreCase))
             {
