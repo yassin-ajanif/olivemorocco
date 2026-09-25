@@ -1,0 +1,37 @@
+using Microsoft.EntityFrameworkCore;
+using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.DataAccess.Repositories;
+using OliveMorocco.Domain.Entities.Vente;
+
+namespace OliveMorocco.Business.Services.Vente;
+
+public sealed class ArticleSuggestionService(IRepository<Produit> produits) : IArticleSuggestionService
+{
+    public async Task<IReadOnlyList<ArticleSuggestionDto>> SearchArticlesAsync(
+        string? search,
+        CancellationToken cancellationToken = default)
+    {
+        var q = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
+        var pattern = q is null ? null : $"%{q}%";
+
+        var result = await produits.QueryPagedAsync(
+            p => p.Actif
+                 && (pattern == null
+                     || EF.Functions.ILike(p.Reference, pattern)
+                     || EF.Functions.ILike(p.Designation, pattern)
+                     || (p.CodeBarre != null && EF.Functions.ILike(p.CodeBarre, pattern))),
+            query => query.OrderBy(p => p.Designation).ThenBy(p => p.Reference),
+            p => new ArticleSuggestionDto(
+                p.Id,
+                p.Reference,
+                p.Designation,
+                p.Unite,
+                p.PrixVenteHT,
+                p.TauxTVA),
+            page: 1,
+            pageSize: 30,
+            cancellationToken);
+
+        return result.Items;
+    }
+}

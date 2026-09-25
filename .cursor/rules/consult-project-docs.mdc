@@ -14,6 +14,7 @@ Before implementing features, refactors, or schema/UI changes, **read the releva
 | Solution structure, layers, folders, services, controllers | `docs/ARCHITECTURE.md` |
 | Entities, tables, relationships, enums, business rules | `docs/DATABASE_SCHEMA.md` |
 | Colors, typography, components, UI tokens | `docs/DESIGN-SYSTEM.md` |
+| Dashboard CSS split + Tailwind-first | `.cursor/rules/dashboard-css.mdc` |
 | Branches, PRs, merge flow | `docs/GIT-WORKFLOW.md` |
 | Unit tests (MSTest, DataAccess, Business) | `docs/UNIT-TESTING.md` |
 

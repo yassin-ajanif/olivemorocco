@@ -12,7 +12,8 @@ All UI (site vitrine, dashboard, future modules) **must** use tokens from `Style
 1. **Read `_tokens.css`** before styling — use an existing token if it fits.
 2. **Use `color-mix()`** for tints/opacity on an existing token (e.g. `color-mix(in srgb, var(--gold) 45%, transparent)`) before inventing a new hex.
 3. **Add a new token** in `_tokens.css` only when no existing token can express the intent — then update `docs/DESIGN-SYSTEM.md`.
-4. **Never duplicate hex** in `_DashboardLayout.css`, `Home/Index.css`, or `@theme` in `app.css` — `@theme` must reference `var(--…)` from `_tokens.css`.
+4. **Never duplicate hex** in dashboard module CSS (`Styles/Vente/`, `Styles/Shared/_Dashboard*.css`), `Home/Index.css`, or `@theme` in `app.css` — `@theme` must reference `var(--…)` from `_tokens.css`.
+5. **Split by module** — see `.cursor/rules/dashboard-css.mdc` (Tailwind first; `Styles/Vente/Devis.css`, `Styles/Vente/Clients.css`, etc.).
 
 ## Core tokens
 
