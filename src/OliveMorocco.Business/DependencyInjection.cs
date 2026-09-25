@@ -51,6 +51,7 @@ public static class DependencyInjection
         services.AddScoped<ISecteurService, SecteurService>();
         services.AddScoped<IStockService, StockService>();
         services.AddScoped<IInterventionService, InterventionService>();
+        services.AddScoped<IPressageService, PressageService>();
 
         return services;
     }

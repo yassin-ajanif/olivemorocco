@@ -1,0 +1,104 @@
+@model PressageFormViewModel
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid pressage-form"
+      id="pressageForm"
+      data-pressage-form
+      data-factures-url="@Url.Action("Factures")">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label for="FournisseurId">Huilerie</label>
+        <select asp-for="FournisseurId" id="FournisseurId" data-pressage-fournisseur>
+            <option value="">— Sélectionner —</option>
+            @foreach (var fournisseur in Model.Fournisseurs)
+            {
+                <option value="@fournisseur.Id">@fournisseur.Nom</option>
+            }
+        </select>
+        <span asp-validation-for="FournisseurId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="VarieteId">Variété</label>
+        <select asp-for="VarieteId">
+            <option value="">— Sélectionner —</option>
+            @foreach (var variete in Model.Varietes)
+            {
+                <option value="@variete.Id">@variete.Nom</option>
+            }
+        </select>
+        <span asp-validation-for="VarieteId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Date">Date</label>
+        <input asp-for="Date" type="date" />
+        <span asp-validation-for="Date" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="QuantiteOlives">Quantité d'olives (kg)</label>
+        <input asp-for="QuantiteOlives"
+               type="number"
+               step="1"
+               min="0"
+               id="QuantiteOlives"
+               data-pressage-olives />
+        <span asp-validation-for="QuantiteOlives" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Rendement">Rendement (%)</label>
+        <input asp-for="Rendement"
+               type="number"
+               step="1"
+               min="0"
+               max="100"
+               id="Rendement"
+               data-pressage-rendement />
+        <span asp-validation-for="Rendement" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="QuantiteHuile">Quantité d'huile (L)</label>
+        <input asp-for="QuantiteHuile"
+               type="number"
+               step="1"
+               min="0"
+               id="QuantiteHuile"
+               data-pressage-huile />
+        <p class="pressage-form-hint">Laisser vide pour calculer automatiquement (olives × rendement).</p>
+        <span asp-validation-for="QuantiteHuile" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="FactureFournisseurId">Facture fournisseur</label>
+        <select asp-for="FactureFournisseurId" id="FactureFournisseurId" data-pressage-facture>
+            <option value="">— Aucune —</option>
+            @foreach (var facture in Model.Factures)
+            {
+                <option value="@facture.Id">@facture.Numero (@facture.Date.ToString("dd/MM/yyyy"))</option>
+            }
+        </select>
+        <span asp-validation-for="FactureFournisseurId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+        @if (Model.IsEdit)
+        {
+            <button type="submit"
+                    formaction="@Url.Action("Delete", new { id = Model.Id })"
+                    formmethod="post"
+                    class="btn btn-danger"
+                    onclick="return confirm('Supprimer ce pressage ?');">
+                Supprimer
+            </button>
+        }
+    </div>
+</form>

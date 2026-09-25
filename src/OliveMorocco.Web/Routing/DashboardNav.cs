@@ -24,6 +24,7 @@ public static class DashboardNav
         ["AvoirFournisseur"] = new("achat", "avoir-fournisseur", "Avoir fournisseur", "avoir fournisseur"),
         ["Charges"] = new("achat", "charges", "Charges", "charge"),
         ["Interventions"] = new("operationnel", "interventions", "Interventions", "intervention"),
+        ["Pressages"] = new("operationnel", "pressages", "Pressages", "pressage"),
     };
 
     public static Module? Resolve(HttpContext http)

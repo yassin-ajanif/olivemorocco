@@ -1,0 +1,16 @@
+@model PressageFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Opérationnel · Pressages</p>
+    <h1>Modifier pressage</h1>
+</div>
+
+<div class="form-panel">
+    <partial name="_PressageForm" model="Model" />
+</div>
+
+@section Scripts {
+    <script src="~/js/pressage-form.js" asp-append-version="true"></script>
+}

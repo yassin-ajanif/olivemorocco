@@ -20,6 +20,8 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         await SeedDemoSecteursAsync(db, cancellationToken);
         await SeedDemoFournisseursAsync(db, cancellationToken);
         await SeedDemoTypesChargesAsync(db, cancellationToken);
+        await SeedDemoVarietesAsync(db, cancellationToken);
+        await SeedDemoPressagesAsync(db, cancellationToken);
     }
 
     private static async Task SeedDemoProduitsAsync(AppDbContext db, CancellationToken cancellationToken)
@@ -158,6 +160,20 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         db.Tiers.AddRange(
             new Tiers
             {
+                Nom = "Huilerie Atlas",
+                Type = TypeTiers.Fournisseur,
+                Adresse = "Route de Fès, Km 8",
+                Ville = "Meknès",
+                Telephone = "+212 5 35 00 00 00",
+                Email = "contact@huilerie-atlas.ma",
+                ICE = "000000000000000",
+                ConditionsPaiement = "30 jours fin de mois",
+                Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Tiers
+            {
                 Nom = "Coopérative Oléicole Atlas",
                 Type = TypeTiers.Fournisseur,
                 Adresse = "Route de Fès, Km 12",
@@ -213,6 +229,74 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             new TypeCharge { Nom = "Matériel", Actif = true, CreatedAt = now, UpdatedAt = now },
             new TypeCharge { Nom = "Transport", Actif = true, CreatedAt = now, UpdatedAt = now },
             new TypeCharge { Nom = "Autre", Actif = true, CreatedAt = now, UpdatedAt = now });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoVarietesAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Varietes.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Varietes.AddRange(
+            new Variete
+            {
+                Nom = "Picholine Marocaine",
+                Code = "PICH",
+                RegionOrigine = "Fès-Meknès",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Variete
+            {
+                Nom = "Haouzia",
+                Code = "HAOU",
+                RegionOrigine = "Marrakech-Safi",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Variete
+            {
+                Nom = "Meslala",
+                Code = "MESL",
+                RegionOrigine = "Marrakech-Safi",
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoPressagesAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Pressages.AnyAsync(cancellationToken))
+            return;
+
+        var huilerie = await db.Tiers
+            .FirstOrDefaultAsync(t => t.Nom == "Huilerie Atlas", cancellationToken)
+            ?? await db.Tiers.FirstOrDefaultAsync(
+                t => t.Type == TypeTiers.Fournisseur || t.Type == TypeTiers.LesDeux,
+                cancellationToken);
+        var picholine = await db.Varietes
+            .FirstOrDefaultAsync(v => v.Code == "PICH", cancellationToken)
+            ?? await db.Varietes.OrderBy(v => v.Id).FirstOrDefaultAsync(cancellationToken);
+
+        if (huilerie is null || picholine is null)
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Pressages.Add(new Pressage
+        {
+            FournisseurId = huilerie.Id,
+            VarieteId = picholine.Id,
+            Date = new DateTime(2026, 11, 20),
+            QuantiteOlives = 3200,
+            Rendement = 17.5m,
+            QuantiteHuile = 560,
+            CreatedAt = now,
+            UpdatedAt = now,
+        });
 
         await db.SaveChangesAsync(cancellationToken);
     }

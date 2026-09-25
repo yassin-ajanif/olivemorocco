@@ -47,5 +47,24 @@ public class OperationnelProfile : Profile
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore());
 
+        CreateMap<CreatePressageDto, Pressage>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Fournisseur, o => o.Ignore())
+            .ForMember(d => d.Variete, o => o.Ignore())
+            .ForMember(d => d.FactureFournisseur, o => o.Ignore())
+            .ForMember(d => d.QuantiteHuile, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore());
+
+        CreateMap<UpdatePressageDto, Pressage>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Fournisseur, o => o.Ignore())
+            .ForMember(d => d.Variete, o => o.Ignore())
+            .ForMember(d => d.FactureFournisseur, o => o.Ignore())
+            .ForMember(d => d.QuantiteHuile, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore());
     }
 }

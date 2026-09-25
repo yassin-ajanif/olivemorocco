@@ -203,7 +203,7 @@ Same pattern as FaturatiWeb: controllers use **route prefixes** matching the das
 | Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock` |
 | Vente | `/Vente/...` | `/Vente/Clients`, `/Vente/Devis` |
 | Achat | `/Achat/...` | `/Achat/Fournisseurs`, `/Achat/BonsReception` |
-| Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Recoltes` |
+| Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Pressages`, `/Operationnel/Recoltes` |
 
 Defined in `Web/Routing/AppSections.cs` (to be created).
 
@@ -214,7 +214,7 @@ Organized under the **three domains** (mirrors Business services):
 ```
 Controllers/
 ├── Stockage/          (ProduitsController, IntrantsController, SecteursController, StockController)
-├── Operationnel/      (InterventionsController, RecoltesController, …)
+├── Operationnel/      (InterventionsController, PressagesController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)
 ```

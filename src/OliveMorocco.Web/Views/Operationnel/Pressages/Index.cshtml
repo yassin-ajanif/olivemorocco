@@ -1,0 +1,83 @@
+@model PressageListViewModel
+@{
+    const string cols = "0.85fr 1.5fr 1fr 0.9fr 0.75fr 0.75fr 0.85fr auto";
+    const string emptyMessage = "Aucun pressage — cliquez sur Nouveau pour commencer.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search
+    };
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Opérationnel</p>
+    <h1>Pressages</h1>
+    <p class="module-section">Pressage des olives à l'huilerie — rendement et facturation</p>
+</div>
+
+<form method="get" asp-action="Index" class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher par huilerie, variété ou facture…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap pressage-list">
+    @if (Model.Items.Count == 0)
+    {
+        <div class="list-body">
+            <partial name="_ListEmpty" model="emptyMessage" />
+        </div>
+    }
+    else
+    {
+        <div class="pressage-list-table" style="grid-template-columns:@cols">
+            <div class="list-header">
+                <span>Date</span>
+                <span>Huilerie</span>
+                <span>Variété</span>
+                <span class="cell-bold">Olives (kg)</span>
+                <span class="cell-bold">Rendement</span>
+                <span class="cell-bold">Huile (L)</span>
+                <span>Facture</span>
+                <span>Actions</span>
+            </div>
+            @foreach (var item in Model.Items)
+            {
+                var huileLabel = item.QuantiteHuile.HasValue ? item.QuantiteHuile.Value.ToString("N2") : "—";
+                var factureLabel = string.IsNullOrWhiteSpace(item.FactureNumero) ? "—" : item.FactureNumero;
+
+                <div class="list-row">
+                    <span data-label="Date">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Date.ToString("dd/MM/yyyy")</a>
+                    </span>
+                    <span data-label="Huilerie" class="pressage-list-huilerie" title="@item.FournisseurNom">@item.FournisseurNom</span>
+                    <span data-label="Variété">@item.VarieteNom</span>
+                    <span data-label="Olives (kg)" class="cell-bold">@item.QuantiteOlives.ToString("N2")</span>
+                    <span data-label="Rendement" class="cell-bold">@item.Rendement.ToString("N2") %</span>
+                    <span data-label="Huile (L)" class="cell-bold">@huileLabel</span>
+                    <span data-label="Facture">@factureLabel</span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
+                    </span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<partial name="_ListPagination" model="pagination" />
