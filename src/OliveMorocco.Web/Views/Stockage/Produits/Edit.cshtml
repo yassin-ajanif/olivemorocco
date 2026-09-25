@@ -1,0 +1,22 @@
+@model ProduitFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Stockage · Produits</p>
+    <h1>@Model.Designation</h1>
+    <p class="form-ref">Réf. <strong>@Model.Reference</strong></p>
+</div>
+
+<div class="form-panel">
+    <partial name="_ProduitForm" model="Model" />
+</div>
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-delete"
+      onsubmit="return confirm('Supprimer ce produit ?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>

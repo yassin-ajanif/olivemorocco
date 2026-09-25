@@ -171,5 +171,40 @@ public class VenteProfile : Profile
             .ForMember(d => d.FacturesFournisseur, o => o.Ignore())
             .ForMember(d => d.AvoirsFournisseur, o => o.Ignore())
             .ForMember(d => d.Pressages, o => o.Ignore());
+
+        CreateMap<CreateProduitDto, Produit>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.StockActuel, o => o.Ignore())
+            .ForMember(d => d.Variete, o => o.Ignore())
+            .ForMember(d => d.ImageData, o => o.Ignore())
+            .ForMember(d => d.MouvementsStock, o => o.Ignore())
+            .ForMember(d => d.DevisClientLignes, o => o.Ignore())
+            .ForMember(d => d.BonCommandeClientLignes, o => o.Ignore())
+            .ForMember(d => d.BonLivraisonClientLignes, o => o.Ignore())
+            .ForMember(d => d.FactureClientLignes, o => o.Ignore())
+            .ForMember(d => d.AvoirClientLignes, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore())
+            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)));
+
+        CreateMap<UpdateProduitDto, Produit>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.StockActuel, o => o.Ignore())
+            .ForMember(d => d.Variete, o => o.Ignore())
+            .ForMember(d => d.ImageData, o => o.Ignore())
+            .ForMember(d => d.MouvementsStock, o => o.Ignore())
+            .ForMember(d => d.DevisClientLignes, o => o.Ignore())
+            .ForMember(d => d.BonCommandeClientLignes, o => o.Ignore())
+            .ForMember(d => d.BonLivraisonClientLignes, o => o.Ignore())
+            .ForMember(d => d.FactureClientLignes, o => o.Ignore())
+            .ForMember(d => d.AvoirClientLignes, o => o.Ignore())
+            .ForMember(d => d.CreatedAt, o => o.Ignore())
+            .ForMember(d => d.UpdatedAt, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.Ignore())
+            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)));
     }
+
+    private static string? NormalizeOptional(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }

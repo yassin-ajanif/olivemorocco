@@ -1,9 +1,102 @@
+@model ProduitListViewModel
+@{
+    const string cols = "1fr 1.5fr 1fr 0.7fr 1fr 0.8fr auto minmax(5.5rem, auto)";
+    const string emptyMessage = "Aucun produit — cliquez sur Nouveau pour commencer.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search
+    };
+}
+
+<partial name="_DashboardAlerts" />
+
 <div class="page-head">
     <p class="eyebrow">Stockage</p>
     <h1>Produits</h1>
     <p class="module-section">Catalogue des produits vendus (huile, conditionnements, accessoires)</p>
 </div>
 
-<div class="dash-panel p-6">
-    <p class="text-muted">Module en cours de développement.</p>
+<form method="get" asp-action="Index" class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher par réf., désignation ou code-barres…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>Réf.</span>
+        <span>Désignation</span>
+        <span>Variété</span>
+        <span>Unité</span>
+        <span class="cell-bold">P. vente HT</span>
+        <span>Stock</span>
+        <span>Statut</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_ListEmpty" model="emptyMessage" />
+        }
+        else
+        {
+            foreach (var produit in Model.Items)
+            {
+                <div class="list-row" style="grid-template-columns:@cols">
+                    <span data-label="Réf.">
+                        <a asp-action="Edit" asp-route-id="@produit.Id" class="list-link">@produit.Reference</a>
+                    </span>
+                    <span data-label="Désignation">@produit.Designation</span>
+                    <span data-label="Variété">@(produit.VarieteNom ?? "—")</span>
+                    <span data-label="Unité">@produit.Unite</span>
+                    <span data-label="P. vente HT" class="cell-bold">@produit.PrixVenteHT.ToString("N2") DH</span>
+                    <span data-label="Stock">
+                        @produit.StockActuel.ToString("N0")
+                        @if (produit.StockBas)
+                        {
+                            <span class="badge badge-warn">Stock bas</span>
+                        }
+                    </span>
+                    <span data-label="Statut">
+                        @if (produit.Actif)
+                        {
+                            <span class="badge badge-ok">Actif</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warn">Inactif</span>
+                        }
+                    </span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Edit"
+                           asp-route-id="@produit.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
+                        <form asp-action="ToggleActif" method="post" class="inline-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@produit.Id" />
+                            <input type="hidden" name="search" value="@Model.Search" />
+                            <input type="hidden" name="page" value="@Model.Page" />
+                            <button type="submit" class="btn btn-sm" title="@(produit.Actif ? "Désactiver" : "Activer")">
+                                @(produit.Actif ? "Off" : "On")
+                            </button>
+                        </form>
+                    </span>
+                </div>
+            }
+        }
+    </div>
 </div>
+
+<partial name="_ListPagination" model="pagination" />

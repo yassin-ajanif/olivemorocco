@@ -1,0 +1,99 @@
+@model ProduitFormViewModel
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="form-field">
+        <label for="Reference">Référence</label>
+        <input asp-for="Reference" autocomplete="off" />
+        <span asp-validation-for="Reference" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="CodeBarre">Code-barres</label>
+        <input asp-for="CodeBarre" autocomplete="off" />
+        <span asp-validation-for="CodeBarre" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Designation">Désignation</label>
+        <input asp-for="Designation" autocomplete="off" />
+        <span asp-validation-for="Designation" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="VarieteId">Variété</label>
+        <select asp-for="VarieteId">
+            <option value="">— Aucune —</option>
+            @foreach (var variete in Model.Varietes)
+            {
+                <option value="@variete.Id">@variete.Nom</option>
+            }
+        </select>
+        <span asp-validation-for="VarieteId" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="Unite">Unité</label>
+        <input asp-for="Unite" autocomplete="off" placeholder="bouteille, L, unité…" />
+        <span asp-validation-for="Unite" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field form-check">
+        <input asp-for="Actif" type="checkbox" />
+        <label for="Actif">Actif</label>
+    </div>
+
+    <div class="form-field">
+        <label for="PrixAchatHT">Prix achat HT (DH)</label>
+        <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
+        <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="PrixVenteHT">Prix vente HT (DH)</label>
+        <input asp-for="PrixVenteHT" type="number" step="1" min="0" />
+        <span asp-validation-for="PrixVenteHT" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
+        <label for="TauxTVA">Taux TVA (%)</label>
+        <input asp-for="TauxTVA" type="number" step="1" min="0" />
+        <span asp-validation-for="TauxTVA" class="field-validation-error"></span>
+    </div>
+
+    @if (Model.IsEdit)
+    {
+        <div class="form-field">
+            <label for="StockActuel">Stock actuel</label>
+            <input asp-for="StockActuel"
+                   type="number"
+                   step="1"
+                   readonly />
+            <p class="mt-1 text-sm text-muted">Modifié via les mouvements de stock et les documents de vente.</p>
+        </div>
+    }
+    else
+    {
+        <div class="form-field">
+            <label for="StockInitial">Stock initial</label>
+            <input asp-for="StockInitial" type="number" step="1" min="0" />
+            <span asp-validation-for="StockInitial" class="field-validation-error"></span>
+        </div>
+    }
+
+    <div class="form-field">
+        <label for="StockMinimum">Stock minimum (alerte)</label>
+        <input asp-for="StockMinimum" type="number" step="1" min="0" />
+        <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+    </div>
+</form>
