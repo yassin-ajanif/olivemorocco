@@ -6,7 +6,7 @@
       class="produit-form"
       id="produitForm"
       data-produit-form
-      data-variete-url="@Url.Action("CreateVariete")">
+      data-variete-base="@Url.Action("CreateVariete")">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
@@ -24,21 +24,23 @@
                 <span asp-validation-for="CodeBarre" class="field-validation-error"></span>
             </div>
 
-            <div class="form-field">
-                <label for="Designation">Désignation</label>
-                <input asp-for="Designation" autocomplete="off" />
-                <span asp-validation-for="Designation" class="field-validation-error"></span>
+            <div class="produit-form-row-designation">
+                <div class="form-field">
+                    <label for="Designation">Désignation</label>
+                    <input asp-for="Designation" autocomplete="off" />
+                    <span asp-validation-for="Designation" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-field form-check">
+                    <input asp-for="Actif" type="checkbox" />
+                    <label for="Actif">Actif</label>
+                </div>
             </div>
 
             <div class="form-field">
                 <label for="Unite">Unité</label>
                 <input asp-for="Unite" autocomplete="off" placeholder="bouteille, L, unité…" />
                 <span asp-validation-for="Unite" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-field form-check">
-                <input asp-for="Actif" type="checkbox" />
-                <label for="Actif">Actif</label>
             </div>
 
             <div class="form-field">
@@ -62,6 +64,12 @@
             @if (Model.IsEdit)
             {
                 <div class="form-field">
+                    <label for="StockMinimum">Stock minimum (alerte)</label>
+                    <input asp-for="StockMinimum" type="number" step="1" min="0" />
+                    <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-field form-field-span-2">
                     <label for="StockActuel">Stock actuel</label>
                     <input asp-for="StockActuel"
                            type="number"
@@ -77,13 +85,13 @@
                     <input asp-for="StockInitial" type="number" step="1" min="0" />
                     <span asp-validation-for="StockInitial" class="field-validation-error"></span>
                 </div>
-            }
 
-            <div class="form-field">
-                <label for="StockMinimum">Stock minimum (alerte)</label>
-                <input asp-for="StockMinimum" type="number" step="1" min="0" />
-                <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
-            </div>
+                <div class="form-field">
+                    <label for="StockMinimum">Stock minimum (alerte)</label>
+                    <input asp-for="StockMinimum" type="number" step="1" min="0" />
+                    <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
+                </div>
+            }
 
             <div class="form-toolbar">
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
@@ -106,29 +114,48 @@
                 <span asp-validation-for="VarieteId" class="field-validation-error"></span>
             </div>
 
+            <div class="variete-actions">
+                <button type="button"
+                        class="btn"
+                        id="editVarieteBtn"
+                        disabled>
+                    Modifier
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        id="deleteVarieteBtn"
+                        disabled>
+                    Supprimer
+                </button>
+            </div>
+
             <button type="button"
                     class="btn btn-block"
                     id="toggleVarieteAdd"
                     aria-expanded="false"
-                    aria-controls="varieteAddPanel">
+                    aria-controls="varieteManagePanel">
                 + Ajouter une variété
             </button>
 
-            <div id="varieteAddPanel" class="variete-add-panel" hidden>
+            <div id="varieteManagePanel" class="variete-manage-panel" hidden>
+                <p class="variete-manage-panel-title" id="varieteManagePanelTitle">Nouvelle variété</p>
                 <div class="form-field">
-                    <label for="newVarieteNom">Nom</label>
-                    <input type="text" id="newVarieteNom" autocomplete="off" maxlength="128" />
+                    <label for="varieteNom">Nom</label>
+                    <input type="text" id="varieteNom" autocomplete="off" maxlength="128" />
                 </div>
                 <div class="form-field">
-                    <label for="newVarieteCode">Code</label>
-                    <input type="text" id="newVarieteCode" autocomplete="off" maxlength="32" />
+                    <label for="varieteCode">Code</label>
+                    <input type="text" id="varieteCode" autocomplete="off" maxlength="32" />
                 </div>
                 <div class="form-field">
-                    <label for="newVarieteRegion">Région d'origine</label>
-                    <input type="text" id="newVarieteRegion" autocomplete="off" maxlength="128" />
+                    <label for="varieteRegion">Région d'origine</label>
+                    <input type="text" id="varieteRegion" autocomplete="off" maxlength="128" />
                 </div>
-                <p id="varieteAddError" class="field-validation-error" hidden></p>
-                <button type="button" class="btn btn-primary btn-block" id="saveVarieteBtn">Enregistrer</button>
+                <p id="varieteManageError" class="field-validation-error" hidden></p>
+                <div class="variete-manage-actions">
+                    <button type="button" class="btn btn-primary" id="saveVarieteBtn">Enregistrer</button>
+                    <button type="button" class="btn" id="cancelVarieteBtn">Annuler</button>
+                </div>
             </div>
         </aside>
     </div>

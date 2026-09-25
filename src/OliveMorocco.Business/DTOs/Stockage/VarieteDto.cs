@@ -5,6 +5,17 @@ public record CreateVarieteDto(
     string? Code,
     string? RegionOrigine);
 
+public record UpdateVarieteDto(
+    string Nom,
+    string? Code,
+    string? RegionOrigine);
+
+public record VarieteDto(
+    int Id,
+    string Nom,
+    string? Code,
+    string? RegionOrigine);
+
 public record VarieteCreatedDto(
     int Id,
     string Nom);

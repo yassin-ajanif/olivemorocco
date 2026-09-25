@@ -1,18 +1,75 @@
 /* Stockage · Produits — two-column create/edit form */
 
 .form-panel-produit{
-  max-width:960px;
+  max-width:none;
+  min-width:0;
+}
+
+.produit-form,
+.produit-form-layout{
+  min-width:0;
+  max-width:100%;
 }
 
 .produit-form-layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(220px,280px);
+  grid-template-columns:minmax(0,1fr);
   gap:var(--space-xl);
   align-items:start;
 }
 
 .produit-form-main{
   min-width:0;
+}
+
+.produit-form .form-field input:not([type="checkbox"]):not([type="radio"]),
+.produit-form .form-field select{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+.produit-form-main .form-check{
+  width:fit-content;
+  max-width:100%;
+}
+
+@media (min-width:769px){
+  .produit-form-layout{
+    grid-template-columns:minmax(0,1fr) minmax(260px,320px);
+  }
+}
+
+@media (min-width:769px){
+  .produit-form-main.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:var(--space-md) var(--space-lg);
+  }
+
+  .produit-form-main .form-field-span-2,
+  .produit-form-main .form-toolbar,
+  .produit-form-main .produit-form-row-designation{
+    grid-column:1 / -1;
+  }
+
+  .produit-form-row-designation{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:var(--space-md) var(--space-lg);
+    align-items:end;
+  }
+
+  .produit-form-row-designation .form-check{
+    padding-bottom:var(--space-2_5);
+    white-space:nowrap;
+  }
+
+  .produit-form-main .form-toolbar{
+    margin-bottom:0;
+    margin-top:var(--space-sm);
+  }
 }
 
 .produit-form-hint{
@@ -43,7 +100,17 @@
   justify-content:center;
 }
 
-.variete-add-panel{
+.variete-actions{
+  display:flex;
+  gap:var(--space-sm);
+}
+
+.variete-actions .btn{
+  flex:1;
+  justify-content:center;
+}
+
+.variete-manage-panel{
   padding-top:var(--space-sm);
   border-top:1px solid var(--line);
   display:flex;
@@ -51,12 +118,37 @@
   gap:var(--space-md);
 }
 
+.variete-manage-panel-title{
+  margin:0;
+  font-size:var(--text-base);
+  font-weight:600;
+  color:var(--pine);
+}
+
+.variete-manage-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--space-sm);
+}
+
 @media (max-width:768px){
-  .produit-form-layout{
-    grid-template-columns:1fr;
+  .form-panel-produit{
+    padding:var(--space-lg);
+    overflow-x:clip;
   }
 
   .produit-form-variete{
     order:-1;
+    min-width:0;
+  }
+
+  .variete-actions{
+    flex-direction:column;
+  }
+
+  .variete-actions .btn{
+    flex:none;
+    width:100%;
+    min-width:0;
   }
 }
