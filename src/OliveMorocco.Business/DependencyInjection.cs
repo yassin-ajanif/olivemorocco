@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IFactureFournisseurService, FactureFournisseurService>();
         services.AddScoped<IAvoirFournisseurService, AvoirFournisseurService>();
         services.AddScoped<IIntrantSuggestionService, IntrantSuggestionService>();
+        services.AddScoped<IChargeService, ChargeService>();
 
         return services;
     }

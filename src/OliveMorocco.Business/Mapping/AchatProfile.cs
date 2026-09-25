@@ -133,5 +133,17 @@ public class AchatProfile : Profile
             .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
+
+        CreateMap<CreateChargeDto, Charge>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.TypeCharge, o => o.Ignore())
+            .ForMember(d => d.Intervention, o => o.Ignore())
+            .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty));
+
+        CreateMap<UpdateChargeDto, Charge>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.TypeCharge, o => o.Ignore())
+            .ForMember(d => d.Intervention, o => o.Ignore())
+            .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty));
     }
 }

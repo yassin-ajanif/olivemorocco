@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
@@ -17,6 +18,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         await SeedDemoProduitsAsync(db, cancellationToken);
         await SeedDemoIntrantsAsync(db, cancellationToken);
         await SeedDemoFournisseursAsync(db, cancellationToken);
+        await SeedDemoTypesChargesAsync(db, cancellationToken);
     }
 
     private static async Task SeedDemoProduitsAsync(AppDbContext db, CancellationToken cancellationToken)
@@ -160,6 +162,21 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
                 CreatedAt = now,
                 UpdatedAt = now,
             });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoTypesChargesAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.TypesCharge.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.TypesCharge.AddRange(
+            new TypeCharge { Nom = "Main d'œuvre", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Matériel", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Transport", Actif = true, CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Autre", Actif = true, CreatedAt = now, UpdatedAt = now });
 
         await db.SaveChangesAsync(cancellationToken);
     }
