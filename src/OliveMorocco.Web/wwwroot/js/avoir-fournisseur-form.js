@@ -1,9 +1,9 @@
 (() => {
     window.Zaho?.initAchatDocumentForm({
         formId: "avoir-fournisseur-form",
-        bodyId: "avoir-fournisseur-lignes-body",
-        templateId: "avoir-fournisseur-line-template",
-        emptyHintId: "avoir-fournisseur-empty-hint",
+        bodyId: "avoir-lignes-body",
+        templateId: "avoir-line-template",
+        emptyHintId: "avoir-empty-hint",
         validateFournisseur: true,
     });
 })();
