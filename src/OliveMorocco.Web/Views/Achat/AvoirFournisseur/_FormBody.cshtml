@@ -102,7 +102,7 @@
                             <input name="Lignes[@i].Unite" value="@line.Unite" class="line-unite" readonly required />
                         </td>
                         <td class="col-pu col-details" data-label="PU HT">
-                            <input name="Lignes[@i].PrixUnitaireHT" value="@line.PrixUnitaireHT.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
+                            <input name="Lignes[@i].PrixUnitaireHT" value="@line.PrixUnitaireHT.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-pu calc-trigger" />
                         </td>
                         <td class="col-rem col-details" data-label="Remise">
                             <input name="Lignes[@i].Remise" value="@line.Remise.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-remise calc-trigger" />
@@ -172,7 +172,7 @@
             <input name="Lignes[__index__].Unite" class="line-unite" readonly required />
         </td>
         <td class="col-pu col-details" data-label="PU HT">
-            <input name="Lignes[__index__].PrixUnitaireHT" value="0" type="number" step="1" min="0" class="line-pu calc-trigger" readonly />
+            <input name="Lignes[__index__].PrixUnitaireHT" value="0" type="number" step="1" min="0" class="line-pu calc-trigger" />
         </td>
         <td class="col-rem col-details" data-label="Remise">
             <input name="Lignes[__index__].Remise" value="0" type="number" step="1" min="0" class="line-remise calc-trigger" />
