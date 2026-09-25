@@ -1,0 +1,57 @@
+---
+description: Dashboard CSS organization — Tailwind first, split module files, tokens only
+globs: src/OliveMorocco.Web/Styles/**/*.css,src/OliveMorocco.Web/Views/**/*.cshtml
+alwaysApply: false
+---
+
+# Dashboard CSS — Tailwind first, module files
+
+## Styling priority (dashboard / gestion)
+
+1. **Tailwind utilities** in Razor (via `Styles/app.css` `@theme` tokens: `bg-surface`, `border-line`, `text-pine`, etc.).
+2. **Shared dashboard CSS** for patterns reused across modules (lists, forms, shell).
+3. **Module CSS file** when a Vente/Achat/Opérationnel page needs layout or behavior Tailwind cannot express cleanly (e.g. table → mobile cards, autocomplete dropdowns).
+4. **Never** add one-off rules to a monolithic layout file — use the module file.
+
+## File layout (mirrors `Views/`)
+
+```
+Styles/
+├── app.css                    ← Tailwind entry + @import chain
+├── Shared/
+│   ├── _tokens.css            ← colors, spacing (single hex source)
+│   ├── _DashboardLayout.css   ← barrel @import only
+│   ├── _DashboardShell.css    ← topbar, sidebar, dash-main
+│   ├── _DashboardLists.css    ← .list-*, pagination, mobile list cards
+│   ├── _DashboardForms.css    ← .form-*, .dash-alert
+│   └── _DashboardUtilities.css
+├── Vente/
+│   ├── Clients.css            ← client-only overrides
+│   └── Devis.css              ← .doc-* document forms + mobile line cards
+├── Achat/                     ← (future module CSS)
+└── Operationnel/
+    └── OpsPages.css
+```
+
+When adding a new dashboard module:
+
+1. Create `Styles/{Section}/{Module}.css` (e.g. `Styles/Vente/BonsCommande.css`).
+2. Add `@import "../{Section}/{Module}.css";` to `Shared/_DashboardLayout.css`.
+3. Reuse shared `.list-*` / `.form-*` before inventing new class names.
+
+## Tailwind vs custom CSS
+
+| Use Tailwind | Use module CSS |
+|--------------|----------------|
+| Page spacing, flex/grid one-offs | Complex responsive table → card transforms |
+| Typography with `@theme` fonts | `data-label` + `::before` mobile list/card rows |
+| Simple borders/backgrounds on wrappers | Autocomplete dropdown positioning |
+| `@apply` in `@layer components` for **global** primitives (`.btn-gold`, `.dash-panel`) | Document line tables with many column widths |
+
+**Tokens:** custom CSS must use `var(--…)` from `_tokens.css` — no hardcoded hex. Tailwind `@theme` mirrors the same tokens.
+
+## Build
+
+After CSS changes: `npm run css:build` in `src/OliveMorocco.Web` (or `dotnet build`).
+
+Do **not** edit `wwwroot/css/site.css` directly.

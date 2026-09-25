@@ -1,0 +1,28 @@
+---
+description: Dashboard number inputs — arrow keys and scroll wheel step by 1, not 0.01
+globs: src/OliveMorocco.Web/Views/**/*.cshtml,src/OliveMorocco.Web/wwwroot/js/**/*.js
+alwaysApply: false
+---
+
+# Number inputs — step increment
+
+Browser **arrow keys** and **mouse wheel** on `<input type="number">` use the `step` attribute. Do not use fractional steps unless the field truly requires fractional arrow stepping.
+
+## Default
+
+- Use **`step="1"`** for quantities, counts, remises, and other dashboard numeric fields.
+- Users adjust values by **whole units** with keyboard or scroll.
+- Typing a decimal manually is allowed only when the business field accepts decimals — then document why in the view or validator, not with `step="0.01"` for arrow UX.
+
+## Do not
+
+- **`step="0.01"`** on quantity (`Qté`), remise, or similar fields — arrow/scroll will change by 0.01, which is bad UX for document line items.
+- **`step="any"`** unless there is no sensible whole-unit step and fractional stepping is intentional.
+
+## When decimals are required on arrow keys
+
+Rare (e.g. weight in kg). Only then use a smaller `step` (e.g. `0.1`) and note the exception in the module doc or view comment.
+
+## Reference
+
+- Devis line inputs: `Views/Vente/Devis/_DevisFormBody.cshtml` — `step="1"` on `line-qte`, `line-remise`, etc.

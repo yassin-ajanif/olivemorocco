@@ -1,0 +1,112 @@
+@model BonLivraisonListViewModel
+@{
+    const string cols = "auto 1.2fr 1.5fr 1fr 1fr 1fr auto";
+    const string emptyMessage = "Aucun bon de livraison — cliquez sur Nouveau pour commencer.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search
+    };
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Vente</p>
+    <h1>Bons de livraison</h1>
+    <p class="module-section">Livraisons clients</p>
+</div>
+
+<div class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <form method="get"
+          asp-controller="Facturation"
+          asp-action="FromBonsLivraison"
+          id="bl-to-facture-form"
+          class="list-toolbar-form">
+        <button type="submit" class="btn btn-primary" id="bl-to-facture-btn" disabled>Vers facture</button>
+    </form>
+    <form method="get" asp-action="Index" class="list-toolbar-search">
+        <input type="search"
+               class="list-search"
+               name="search"
+               value="@Model.Search"
+               placeholder="Rechercher par n° ou client…"
+               autocomplete="off" />
+    </form>
+</div>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span aria-hidden="true"></span>
+        <span>N°</span>
+        <span>Client</span>
+        <span>Date</span>
+        <span class="cell-bold">Total TTC</span>
+        <span>Facture</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body" id="bl-list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_ListEmpty" model="emptyMessage" />
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                var isFactured = item.FactureId is not null;
+                <div class="list-row" style="grid-template-columns:@cols" data-client-id="@item.ClientId">
+                    <span data-label="Sélection">
+                        @if (!isFactured)
+                        {
+                            <input type="checkbox"
+                                   class="bl-select"
+                                   name="ids"
+                                   value="@item.Id"
+                                   form="bl-to-facture-form"
+                                   aria-label="Sélectionner @item.Numero" />
+                        }
+                    </span>
+                    <span data-label="N°">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
+                    </span>
+                    <span data-label="Client">@item.ClientNom</span>
+                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Total TTC" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
+                    <span data-label="Facture">
+                        @if (isFactured)
+                        {
+                            <a asp-controller="Facturation"
+                               asp-action="Edit"
+                               asp-route-id="@item.FactureId"
+                               class="list-link">@item.FactureNumero</a>
+                        }
+                        else
+                        {
+                            <span class="list-muted">—</span>
+                        }
+                    </span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
+                    </span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<partial name="_ListPagination" model="pagination" />
+
+@section Scripts {
+    <script src="~/js/bon-livraison-index.js" asp-append-version="true"></script>
+}
