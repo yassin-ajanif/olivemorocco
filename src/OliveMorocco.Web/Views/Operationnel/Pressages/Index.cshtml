@@ -1,6 +1,6 @@
 @model PressageListViewModel
 @{
-    const string cols = "0.85fr 1.5fr 1fr 0.9fr 0.75fr 0.75fr 0.85fr auto";
+    const string cols = "1fr 1.4fr 1fr 0.9fr 0.8fr 0.8fr 0.9fr auto";
     const string emptyMessage = "Aucun pressage — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -30,36 +30,34 @@
            autocomplete="off" />
 </form>
 
-<div class="list-wrap pressage-list">
-    @if (Model.Items.Count == 0)
-    {
-        <div class="list-body">
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>Date</span>
+        <span>Huilerie</span>
+        <span>Variété</span>
+        <span class="cell-bold">Olives (kg)</span>
+        <span class="cell-bold">Rendement</span>
+        <span class="cell-bold">Huile (L)</span>
+        <span>Facture</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
             <partial name="_ListEmpty" model="emptyMessage" />
-        </div>
-    }
-    else
-    {
-        <div class="pressage-list-table" style="grid-template-columns:@cols">
-            <div class="list-header">
-                <span>Date</span>
-                <span>Huilerie</span>
-                <span>Variété</span>
-                <span class="cell-bold">Olives (kg)</span>
-                <span class="cell-bold">Rendement</span>
-                <span class="cell-bold">Huile (L)</span>
-                <span>Facture</span>
-                <span>Actions</span>
-            </div>
-            @foreach (var item in Model.Items)
+        }
+        else
+        {
+            foreach (var item in Model.Items)
             {
                 var huileLabel = item.QuantiteHuile.HasValue ? item.QuantiteHuile.Value.ToString("N2") : "—";
                 var factureLabel = string.IsNullOrWhiteSpace(item.FactureNumero) ? "—" : item.FactureNumero;
 
-                <div class="list-row">
+                <div class="list-row" style="grid-template-columns:@cols">
                     <span data-label="Date">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Date.ToString("dd/MM/yyyy")</a>
                     </span>
-                    <span data-label="Huilerie" class="pressage-list-huilerie" title="@item.FournisseurNom">@item.FournisseurNom</span>
+                    <span data-label="Huilerie">@item.FournisseurNom</span>
                     <span data-label="Variété">@item.VarieteNom</span>
                     <span data-label="Olives (kg)" class="cell-bold">@item.QuantiteOlives.ToString("N2")</span>
                     <span data-label="Rendement" class="cell-bold">@item.Rendement.ToString("N2") %</span>
@@ -76,8 +74,8 @@
                     </span>
                 </div>
             }
-        </div>
-    }
+        }
+    </div>
 </div>
 
 <partial name="_ListPagination" model="pagination" />
