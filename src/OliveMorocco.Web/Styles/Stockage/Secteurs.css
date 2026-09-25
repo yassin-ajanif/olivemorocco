@@ -1,30 +1,44 @@
-/* Stockage · Secteurs — two-column create/edit form */
+/* Stockage · Secteurs — create/edit form */
 
 .form-panel-secteur {
-  max-width: 960px;
-}
-
-.secteur-form-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
-  gap: var(--space-xl);
-  align-items: start;
-}
-
-.secteur-form-main {
+  max-width: none;
   min-width: 0;
 }
 
-.secteur-form-varietes {
-  padding: var(--space-lg);
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--slot-bg) 40%, transparent);
+.secteur-form {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.secteur-form.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md) var(--space-sm);
+}
+
+.secteur-form .form-field-span-2,
+.secteur-form .form-toolbar,
+.secteur-form .secteur-varietes-section {
+  grid-column: 1 / -1;
+}
+
+.secteur-varietes-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line);
 }
 
-.secteur-form-varietes-title {
+.secteur-varietes-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+}
+
+.secteur-varietes-title {
   margin: 0;
   font-family: 'Fraunces', serif;
   font-size: var(--text-lg);
@@ -59,6 +73,8 @@
 .secteur-varietes-table select,
 .secteur-varietes-table input[type="number"] {
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .secteur-varietes-table .col-actions {
@@ -76,26 +92,42 @@
   color: var(--danger);
 }
 
-.btn-block {
-  width: 100%;
-  justify-content: center;
+.secteur-form-hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
 }
 
-.variete-add-panel {
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+.secteur-form-hint a {
+  color: var(--pine);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.secteur-form-hint a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 769px) {
+  .secteur-form.form-grid {
+    gap: var(--space-md) var(--space-lg);
+  }
+
+  .secteur-form .form-toolbar {
+    margin-bottom: 0;
+    margin-top: var(--space-sm);
+  }
 }
 
 @media (max-width: 768px) {
-  .secteur-form-layout {
-    grid-template-columns: 1fr;
+  .form-panel-secteur {
+    padding: var(--space-lg);
+    overflow-x: clip;
   }
 
-  .secteur-form-varietes {
-    order: -1;
+  .secteur-form.form-grid .form-field > label {
+    font-size: var(--text-sm);
+    letter-spacing: 0.3px;
   }
 
   .secteur-varietes-table thead {
