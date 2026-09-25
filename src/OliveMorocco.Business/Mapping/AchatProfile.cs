@@ -56,7 +56,7 @@ public class AchatProfile : Profile
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.BonCommandeFournisseurId, o => o.Ignore())
             .ForMember(d => d.BonCommandeFournisseur, o => o.Ignore())
-            .ForMember(d => d.Produit, o => o.Ignore())
+            .ForMember(d => d.Intrant, o => o.Ignore())
             .ForMember(d => d.Conditionnement, o => o.MapFrom(s => s.Conditionnement ?? string.Empty));
 
         CreateMap<UpdateBonCommandeFournisseurDto, BonCommandeFournisseur>()
@@ -79,7 +79,7 @@ public class AchatProfile : Profile
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.BRId, o => o.Ignore())
             .ForMember(d => d.BonReception, o => o.Ignore())
-            .ForMember(d => d.Produit, o => o.Ignore());
+            .ForMember(d => d.Intrant, o => o.Ignore());
 
         CreateMap<UpdateBonReceptionDto, BonReception>()
             .ForMember(d => d.Id, o => o.Ignore())
@@ -104,7 +104,7 @@ public class AchatProfile : Profile
             .ForMember(d => d.FactureFournisseurId, o => o.Ignore())
             .ForMember(d => d.FactureFournisseur, o => o.Ignore())
             .ForMember(d => d.BonReception, o => o.Ignore())
-            .ForMember(d => d.Produit, o => o.Ignore())
+            .ForMember(d => d.Intrant, o => o.Ignore())
             .ForMember(d => d.Conditionnement, o => o.MapFrom(s => s.Conditionnement ?? string.Empty));
 
         CreateMap<UpdateFactureFournisseurDto, FactureFournisseur>()
@@ -125,7 +125,7 @@ public class AchatProfile : Profile
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.AvoirFournisseurId, o => o.Ignore())
             .ForMember(d => d.AvoirFournisseur, o => o.Ignore())
-            .ForMember(d => d.Produit, o => o.Ignore())
+            .ForMember(d => d.Intrant, o => o.Ignore())
             .ForMember(d => d.Conditionnement, o => o.MapFrom(s => s.Conditionnement ?? string.Empty));
 
         CreateMap<UpdateAvoirFournisseurDto, AvoirFournisseur>()

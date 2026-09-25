@@ -4,7 +4,7 @@ public sealed class FactureFournisseurLigneViewModel
 {
     public int? BonReceptionId { get; set; }
 
-    public int ProduitId { get; set; }
+    public int IntrantId { get; set; }
 
     public string Reference { get; set; } = string.Empty;
 

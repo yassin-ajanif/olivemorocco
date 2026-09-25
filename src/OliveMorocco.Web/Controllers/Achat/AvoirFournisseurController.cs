@@ -166,7 +166,7 @@ public sealed class AvoirFournisseurController(
             RetourMarchandise = dto.RetourMarchandise,
             Lignes = dto.Lignes.Select(l => new AvoirFournisseurLigneViewModel
             {
-                ProduitId = l.ProduitId,
+                IntrantId = l.IntrantId,
                 Reference = l.Reference,
                 Designation = l.Designation,
                 Quantite = l.Quantite,
@@ -200,7 +200,7 @@ public sealed class AvoirFournisseurController(
     private static List<CreateAvoirFournisseurLigneDto> ToLineDtos(IEnumerable<AvoirFournisseurLigneViewModel> lignes) =>
         lignes
             .Select(l => new CreateAvoirFournisseurLigneDto(
-                l.ProduitId,
+                l.IntrantId,
                 l.Designation.Trim(),
                 l.Quantite,
                 l.PrixUnitaireHT,
@@ -213,7 +213,7 @@ public sealed class AvoirFournisseurController(
     {
         if (model.Lignes.Count == 0)
         {
-            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'articles.");
+            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'intrants.");
             return;
         }
 
@@ -228,8 +228,8 @@ public sealed class AvoirFournisseurController(
             if (string.IsNullOrWhiteSpace(line.Unite))
                 ModelState.AddModelError($"{prefix}.Unite", "L'unité est obligatoire.");
 
-            if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
+            if (line.IntrantId <= 0)
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un intrant depuis la recherche.");
 
             if (line.Quantite <= 0)
                 ModelState.AddModelError($"{prefix}.Quantite", "La quantité doit être positive.");

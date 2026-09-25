@@ -166,7 +166,7 @@ public sealed class BonsReceptionController(
             FactureNumero = dto.FactureNumero,
             Lignes = dto.Lignes.Select(l => new BonReceptionLigneViewModel
             {
-                ProduitId = l.ProduitId,
+                IntrantId = l.IntrantId,
                 Reference = l.Reference,
                 Designation = l.Designation,
                 QuantiteRecue = l.QuantiteRecue,
@@ -194,7 +194,7 @@ public sealed class BonsReceptionController(
     private static List<CreateBonReceptionLigneDto> ToLineDtos(IEnumerable<BonReceptionLigneViewModel> lignes) =>
         lignes
             .Select(l => new CreateBonReceptionLigneDto(
-                l.ProduitId,
+                l.IntrantId,
                 l.Designation.Trim(),
                 l.QuantiteRecue,
                 l.PrixUnitaireHT,
@@ -205,7 +205,7 @@ public sealed class BonsReceptionController(
     {
         if (model.Lignes.Count == 0)
         {
-            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'articles.");
+            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'intrants.");
             return;
         }
 
@@ -217,8 +217,8 @@ public sealed class BonsReceptionController(
             if (string.IsNullOrWhiteSpace(line.Designation))
                 ModelState.AddModelError($"{prefix}.Designation", "La désignation est obligatoire.");
 
-            if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
+            if (line.IntrantId <= 0)
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un intrant depuis la recherche.");
 
             if (line.QuantiteRecue <= 0)
                 ModelState.AddModelError($"{prefix}.QuantiteRecue", "La quantité reçue doit être positive.");

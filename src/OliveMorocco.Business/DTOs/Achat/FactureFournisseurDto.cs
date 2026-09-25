@@ -4,7 +4,7 @@ public record FactureFournisseurLigneDto(
     int Id,
     int FactureFournisseurId,
     int? BonReceptionId,
-    int? ProduitId,
+    int? IntrantId,
     int? ServiceId,
     string Reference,
     string Designation,
@@ -16,7 +16,7 @@ public record FactureFournisseurLigneDto(
 
 public record CreateFactureFournisseurLigneDto(
     int? BonReceptionId,
-    int? ProduitId,
+    int? IntrantId,
     int? ServiceId,
     string Designation,
     decimal Quantite,

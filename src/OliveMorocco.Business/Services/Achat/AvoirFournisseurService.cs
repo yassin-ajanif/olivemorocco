@@ -74,7 +74,7 @@ public sealed class AvoirFournisseurService
                 var full = byId[a.Id];
                 var (_, _, ttc) = IAvoirFournisseurService.ComputeTotals(
                     full.Lignes.Select(l => new CreateAvoirFournisseurLigneDto(
-                        l.ProduitId,
+                        l.IntrantId,
                         l.Designation,
                         l.Quantite,
                         l.PrixUnitaireHT,
@@ -109,12 +109,12 @@ public sealed class AvoirFournisseurService
 
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.AvoirFournisseurId == id,
-            [l => l.Produit!],
+            [l => l.Intrant!],
             cancellationToken);
 
         var (_, _, ttc) = IAvoirFournisseurService.ComputeTotals(
             ligneDtos.Select(l => new CreateAvoirFournisseurLigneDto(
-                l.ProduitId,
+                l.IntrantId,
                 l.Designation,
                 l.Quantite,
                 l.PrixUnitaireHT,
@@ -134,8 +134,8 @@ public sealed class AvoirFournisseurService
             ligneDtos.Select(l => new AvoirFournisseurLigneDto(
                 l.Id,
                 l.AvoirFournisseurId,
-                l.ProduitId,
-                l.Produit?.Reference ?? string.Empty,
+                l.IntrantId,
+                string.Empty,
                 l.Designation,
                 l.Conditionnement,
                 l.Quantite,

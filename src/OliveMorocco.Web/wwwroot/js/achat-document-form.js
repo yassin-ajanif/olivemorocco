@@ -5,8 +5,8 @@
         const fournisseurIdInput = document.getElementById(config.fournisseurIdInputId ?? "fournisseur-id");
         const fournisseurSearchInput = document.getElementById(config.fournisseurSearchInputId ?? "fournisseur-search");
         const fournisseurSuggestions = document.getElementById(config.fournisseurSuggestionsId ?? "fournisseur-suggestions");
-        const articleSearchInput = document.getElementById(config.articleSearchInputId ?? "article-search");
-        const articleSuggestions = document.getElementById(config.articleSuggestionsId ?? "article-suggestions");
+        const intrantSearchInput = document.getElementById(config.intrantSearchInputId ?? "intrant-search");
+        const intrantSuggestions = document.getElementById(config.intrantSuggestionsId ?? "intrant-suggestions");
         const body = document.getElementById(config.bodyId);
         const template = document.getElementById(config.templateId);
         const remiseGlobaleInput = config.remiseGlobaleId
@@ -72,14 +72,14 @@
             showSuggestions(fournisseurSuggestions, "");
         });
 
-        articleSearchInput?.addEventListener("input", () => {
-            fetchSuggestions("/Achat/Suggestions/Articles", articleSearchInput.value.trim(), articleSuggestions);
+        intrantSearchInput?.addEventListener("input", () => {
+            fetchSuggestions("/Achat/Suggestions/Intrants", intrantSearchInput.value.trim(), intrantSuggestions);
         });
 
         document.addEventListener("click", (event) => {
             if (!event.target.closest(".doc-suggest-wrap")) {
                 showSuggestions(fournisseurSuggestions, "");
-                showSuggestions(articleSuggestions, "");
+                showSuggestions(intrantSuggestions, "");
             }
         });
 
@@ -162,10 +162,10 @@
             if (ttcEl) ttcEl.textContent = `${formatMoney(totalTtc)} DH`;
         };
 
-        const findLineByProduitId = (produitId) => {
-            const id = String(produitId);
+        const findLineByIntrantId = (intrantId) => {
+            const id = String(intrantId);
             for (const row of body.querySelectorAll(`.${lineRowClass}`)) {
-                if (row.querySelector(".produit-id")?.value !== id)
+                if (row.querySelector(".intrant-id")?.value !== id)
                     continue;
                 const brInput = row.querySelector('input[name*="BonReceptionId"]');
                 if (brInput?.value)
@@ -186,13 +186,13 @@
 
         const addLine = (data = {}) => {
             const designation = (data.designation || "").trim();
-            const produitId = data.produitId || "";
-            if (!produitId || !designation) {
-                alert("Impossible d'ajouter cet article : données incomplètes.");
+            const intrantId = data.intrantId || "";
+            if (!intrantId || !designation) {
+                alert("Impossible d'ajouter cet intrant : données incomplètes.");
                 return;
             }
 
-            const existingRow = findLineByProduitId(produitId);
+            const existingRow = findLineByIntrantId(intrantId);
             if (existingRow) {
                 incrementQty(existingRow);
                 recalculate();
@@ -210,39 +210,36 @@
             if (!row)
                 return;
 
-            row.querySelector(".produit-id").value = produitId;
-            row.querySelector(".line-ref").value = data.reference || "";
+            row.querySelector(".intrant-id").value = intrantId;
+            row.querySelector(".line-ref").value = data.unite || "";
             row.querySelector(".line-designation").value = designation;
             const uniteInput = row.querySelector(".line-unite");
             if (uniteInput)
                 uniteInput.value = data.unite || "U";
-            if (data.prix)
-                row.querySelector(".line-pu").value = data.prix;
-            if (data.tva)
-                row.querySelector(".line-tva").value = data.tva;
+            row.querySelector(".line-pu").value = data.prix || "0";
+            row.querySelector(".line-tva").value = data.tva || "20";
 
             reindexLines();
             updateEmptyHint();
             recalculate();
         };
 
-        articleSuggestions?.addEventListener("click", (event) => {
-            const btn = event.target.closest(".article-suggestion");
+        intrantSuggestions?.addEventListener("click", (event) => {
+            const btn = event.target.closest(".intrant-suggestion");
             if (!btn)
                 return;
 
             addLine({
-                produitId: btn.dataset.produitId || "",
-                reference: btn.dataset.reference || "",
-                designation: btn.dataset.designation || "",
+                intrantId: btn.dataset.intrantId || "",
+                designation: btn.dataset.nom || "",
                 unite: btn.dataset.unite || "",
-                prix: btn.dataset.prix || "0",
-                tva: btn.dataset.tva || "0",
+                prix: "0",
+                tva: "20",
             });
 
-            if (articleSearchInput)
-                articleSearchInput.value = "";
-            showSuggestions(articleSuggestions, "");
+            if (intrantSearchInput)
+                intrantSearchInput.value = "";
+            showSuggestions(intrantSuggestions, "");
         });
 
         document.getElementById(config.removeLineButtonId ?? "remove-selected-line")?.addEventListener("click", () => {
@@ -286,7 +283,7 @@
                 const rows = [...body.querySelectorAll(`.${lineRowClass}`)];
                 if (rows.length === 0) {
                     event.preventDefault();
-                    alert("Ajoutez au moins une ligne via la recherche d'articles.");
+                    alert("Ajoutez au moins une ligne via la recherche d'intrants.");
                 }
             });
         }

@@ -3,7 +3,7 @@ namespace OliveMorocco.Business.DTOs.Achat;
 public record AvoirFournisseurLigneDto(
     int Id,
     int AvoirFournisseurId,
-    int ProduitId,
+    int IntrantId,
     string Reference,
     string Designation,
     string Conditionnement,
@@ -13,7 +13,7 @@ public record AvoirFournisseurLigneDto(
     decimal TauxTVA);
 
 public record CreateAvoirFournisseurLigneDto(
-    int ProduitId,
+    int IntrantId,
     string Designation,
     decimal Quantite,
     decimal PrixUnitaireHT,

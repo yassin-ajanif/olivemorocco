@@ -120,7 +120,7 @@ public sealed class FacturesFournisseursController(
                 .SelectMany(bl => bl.Lignes.Select(l => new FactureFournisseurLigneViewModel
                 {
                     BonReceptionId = bl.Id,
-                    ProduitId = l.ProduitId,
+                    IntrantId = l.IntrantId,
                     Reference = l.Reference,
                     Designation = l.Designation,
                     Unite = "U",
@@ -258,7 +258,7 @@ public sealed class FacturesFournisseursController(
             Lignes = dto.Lignes.Select(l => new FactureFournisseurLigneViewModel
             {
                 BonReceptionId = l.BonReceptionId,
-                ProduitId = l.ProduitId ?? 0,
+                IntrantId = l.IntrantId ?? 0,
                 Reference = l.Reference,
                 Designation = l.Designation,
                 Quantite = l.Quantite,
@@ -324,7 +324,7 @@ public sealed class FacturesFournisseursController(
         lignes
             .Select(l => new CreateFactureFournisseurLigneDto(
                 l.BonReceptionId is > 0 ? l.BonReceptionId : null,
-                l.ProduitId > 0 ? l.ProduitId : null,
+                l.IntrantId > 0 ? l.IntrantId : null,
                 null,
                 l.Designation.Trim(),
                 l.Quantite,
@@ -338,7 +338,7 @@ public sealed class FacturesFournisseursController(
     {
         if (model.Lignes.Count == 0)
         {
-            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'articles.");
+            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'intrants.");
             return;
         }
 
@@ -353,8 +353,8 @@ public sealed class FacturesFournisseursController(
             if (string.IsNullOrWhiteSpace(line.Unite))
                 ModelState.AddModelError($"{prefix}.Unite", "L'unité est obligatoire.");
 
-            if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
+            if (line.IntrantId <= 0)
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un intrant depuis la recherche.");
 
             if (line.Quantite <= 0)
                 ModelState.AddModelError($"{prefix}.Quantite", "La quantité doit être positive.");

@@ -89,7 +89,7 @@ public sealed class BonReceptionService
                 var full = byId[b.Id];
                 var (_, _, ttc) = IBonReceptionService.ComputeTotals(
                     full.Lignes.Select(l => new CreateBonReceptionLigneDto(
-                        l.ProduitId,
+                        l.IntrantId,
                         l.Designation,
                         l.QuantiteRecue,
                         l.PrixUnitaireHT,
@@ -127,12 +127,12 @@ public sealed class BonReceptionService
 
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.BRId == id,
-            [l => l.Produit!],
+            [l => l.Intrant!],
             cancellationToken);
 
         var (_, _, ttc) = IBonReceptionService.ComputeTotals(
             ligneDtos.Select(l => new CreateBonReceptionLigneDto(
-                l.ProduitId,
+                l.IntrantId,
                 l.Designation,
                 l.QuantiteRecue,
                 l.PrixUnitaireHT,
@@ -158,8 +158,8 @@ public sealed class BonReceptionService
             ligneDtos.Select(l => new BonReceptionLigneDto(
                 l.Id,
                 l.BRId,
-                l.ProduitId,
-                l.Produit?.Reference ?? string.Empty,
+                l.IntrantId,
+                string.Empty,
                 l.Designation,
                 l.QuantiteRecue,
                 l.PrixUnitaireHT,

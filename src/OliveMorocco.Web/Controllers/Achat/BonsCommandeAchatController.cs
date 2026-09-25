@@ -164,7 +164,7 @@ public sealed class BonsCommandeAchatController(
             Note = dto.Note,
             Lignes = dto.Lignes.Select(l => new BonCommandeFournisseurLigneViewModel
             {
-                ProduitId = l.ProduitId ?? 0,
+                IntrantId = l.IntrantId ?? 0,
                 Reference = l.Reference,
                 Designation = l.Designation,
                 QuantiteCommandee = l.QuantiteCommandee,
@@ -191,7 +191,7 @@ public sealed class BonsCommandeAchatController(
     private static List<CreateBonCommandeFournisseurLigneDto> ToLineDtos(IEnumerable<BonCommandeFournisseurLigneViewModel> lignes) =>
         lignes
             .Select(l => new CreateBonCommandeFournisseurLigneDto(
-                l.ProduitId > 0 ? l.ProduitId : null,
+                l.IntrantId > 0 ? l.IntrantId : null,
                 null,
                 l.Designation.Trim(),
                 l.QuantiteCommandee,
@@ -205,7 +205,7 @@ public sealed class BonsCommandeAchatController(
     {
         if (model.Lignes.Count == 0)
         {
-            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'articles.");
+            ModelState.AddModelError(string.Empty, "Ajoutez au moins une ligne via la recherche d'intrants.");
             return;
         }
 
@@ -220,8 +220,8 @@ public sealed class BonsCommandeAchatController(
             if (string.IsNullOrWhiteSpace(line.Unite))
                 ModelState.AddModelError($"{prefix}.Unite", "L'unité est obligatoire.");
 
-            if (line.ProduitId <= 0)
-                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un article depuis la recherche.");
+            if (line.IntrantId <= 0)
+                ModelState.AddModelError($"{prefix}.Designation", "Sélectionnez un intrant depuis la recherche.");
 
             if (line.QuantiteCommandee <= 0)
                 ModelState.AddModelError($"{prefix}.QuantiteCommandee", "La quantité doit être positive.");

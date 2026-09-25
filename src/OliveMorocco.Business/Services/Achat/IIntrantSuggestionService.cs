@@ -2,9 +2,9 @@ using OliveMorocco.Business.DTOs.Achat;
 
 namespace OliveMorocco.Business.Services.Achat;
 
-public interface IArticleSuggestionService
+public interface IIntrantSuggestionService
 {
-    Task<IReadOnlyList<ArticleSuggestionDto>> SearchArticlesAsync(
+    Task<IReadOnlyList<IntrantSuggestionDto>> SearchIntrantsAsync(
         string? search,
         CancellationToken cancellationToken = default);
 }

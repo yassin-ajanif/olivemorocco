@@ -7,7 +7,7 @@ public sealed class CreateAvoirFournisseurLigneDtoValidator : AbstractValidator<
 {
     public CreateAvoirFournisseurLigneDtoValidator()
     {
-        RuleFor(x => x.ProduitId)
+        RuleFor(x => x.IntrantId)
             .GreaterThan(0).WithMessage("Chaque ligne doit référencer un produit.");
 
         RuleFor(x => x.Designation)

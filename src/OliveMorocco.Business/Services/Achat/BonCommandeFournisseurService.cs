@@ -76,7 +76,7 @@ public sealed class BonCommandeFournisseurService
                 var full = byId[b.Id];
                 var (_, _, ttc) = IBonCommandeFournisseurService.ComputeTotals(
                     full.Lignes.Select(l => new CreateBonCommandeFournisseurLigneDto(
-                        l.ProduitId,
+                        l.IntrantId,
                         l.ServiceId,
                         l.Designation,
                         l.QuantiteCommandee,
@@ -111,12 +111,12 @@ public sealed class BonCommandeFournisseurService
 
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.BonCommandeFournisseurId == id,
-            [l => l.Produit!],
+            [l => l.Intrant!],
             cancellationToken);
 
         var (_, _, ttc) = IBonCommandeFournisseurService.ComputeTotals(
             ligneDtos.Select(l => new CreateBonCommandeFournisseurLigneDto(
-                l.ProduitId,
+                l.IntrantId,
                 l.ServiceId,
                 l.Designation,
                 l.QuantiteCommandee,
@@ -135,9 +135,9 @@ public sealed class BonCommandeFournisseurService
             ligneDtos.Select(l => new BonCommandeFournisseurLigneDto(
                 l.Id,
                 l.BonCommandeFournisseurId,
-                l.ProduitId,
+                l.IntrantId,
                 l.ServiceId,
-                l.Produit?.Reference ?? string.Empty,
+                string.Empty,
                 l.Designation,
                 l.Conditionnement,
                 l.QuantiteCommandee,

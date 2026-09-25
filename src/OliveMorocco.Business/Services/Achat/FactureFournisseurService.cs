@@ -89,7 +89,7 @@ public sealed class FactureFournisseurService
 
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.FactureFournisseurId == id,
-            [l => l.Produit!],
+            [l => l.Intrant!],
             cancellationToken);
 
         return new FactureFournisseurDto(
@@ -106,9 +106,9 @@ public sealed class FactureFournisseurService
                 l.Id,
                 l.FactureFournisseurId,
                 l.BonReceptionId,
-                l.ProduitId,
+                l.IntrantId,
                 l.ServiceId,
-                l.Produit?.Reference ?? string.Empty,
+                string.Empty,
                 l.Designation,
                 l.Conditionnement,
                 l.Quantite,

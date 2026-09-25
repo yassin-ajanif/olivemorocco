@@ -106,8 +106,10 @@ erDiagram
 
     Service ||--o{ FactureFournisseurLigne : "billed as"
     Service ||--o{ BonCommandeLigne : "ordered as"
-    Produit ||--o{ FactureFournisseurLigne : "billed as"
-    Produit ||--o{ BonCommandeLigne : "ordered as"
+    Intrant ||--o{ FactureFournisseurLigne : "billed as"
+    Intrant ||--o{ BonCommandeLigne : "ordered as"
+    Intrant ||--o{ BonReceptionLigne : "received as"
+    Intrant ||--o{ AvoirFournisseurLigne : "credited as"
 
     Devis ||--|{ DevisLigne : "lines"
     BonCommandeClient ||--|{ BonCommandeClientLigne : "lines"
@@ -632,7 +634,7 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 |--------|------|------|-------|
 | Id | INT | NO | PK |
 | BonCommandeId | INT | NO | FK → `BonsCommande.Id` (Cascade) |
-| ProduitId | INT | YES | FK → `Produits.Id` (Restrict). **Exactly one** of `ProduitId` or `ServiceId` |
+| IntrantId | INT | YES | FK → `Intrants.Id` (Restrict). **Exactly one** of `IntrantId` or `ServiceId` |
 | ServiceId | INT | YES | FK → `Services.Id` (Restrict) |
 | Designation | NVARCHAR | NO | |
 | Conditionnement | NVARCHAR | NO | |
@@ -644,9 +646,9 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 | UpdatedAt | DATETIME | NO | |
 | CreatedByUserId | INT | YES | |
 
-**Indexes:** `BonCommandeId`, `ProduitId`, `ServiceId`.
+**Indexes:** `BonCommandeId`, `IntrantId`, `ServiceId`.
 
-**Check:** `(ProduitId IS NOT NULL AND ServiceId IS NULL) OR (ProduitId IS NULL AND ServiceId IS NOT NULL)`.
+**Check:** `(IntrantId IS NOT NULL AND ServiceId IS NULL) OR (IntrantId IS NULL AND ServiceId IS NOT NULL)`.
 
 ---
 
@@ -676,7 +678,7 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 |--------|------|------|-------|
 | Id | INT | NO | PK |
 | BRId | INT | NO | FK → `BonsReception.Id` (Cascade) |
-| ProduitId | INT | NO | |
+| IntrantId | INT | NO | FK → `Intrants.Id` (Restrict) |
 | Designation | NVARCHAR | NO | |
 | QuantiteRecue | DECIMAL | NO | Received qty |
 | PrixUnitaireHT | DECIMAL | NO | |
@@ -715,7 +717,7 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 | Id | INT | NO | PK |
 | FactureFournisseurId | INT | NO | FK → `FacturesFournisseurs.Id` (Cascade) |
 | BonReceptionId | INT | YES | FK → `BonsReception.Id` (SetNull). Null for service lines |
-| ProduitId | INT | YES | FK → `Produits.Id` (Restrict). **Exactly one** of `ProduitId` or `ServiceId` |
+| IntrantId | INT | YES | FK → `Intrants.Id` (Restrict). **Exactly one** of `IntrantId` or `ServiceId` |
 | ServiceId | INT | YES | FK → `Services.Id` (Restrict) |
 | Designation | NVARCHAR | NO | |
 | Conditionnement | NVARCHAR | NO | |
@@ -727,13 +729,13 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 | UpdatedAt | DATETIME | NO | |
 | CreatedByUserId | INT | YES | |
 
-**Indexes:** `FactureFournisseurId`, `BonReceptionId`, `ProduitId`, `ServiceId`.
+**Indexes:** `FactureFournisseurId`, `BonReceptionId`, `IntrantId`, `ServiceId`.
 
-**Check:** `(ProduitId IS NOT NULL AND ServiceId IS NULL) OR (ProduitId IS NULL AND ServiceId IS NOT NULL)`.
+**Check:** `(IntrantId IS NOT NULL AND ServiceId IS NULL) OR (IntrantId IS NULL AND ServiceId IS NOT NULL)`.
 
 **Pressage invoice line example:**
 
-| ProduitId | ServiceId | Designation | Quantite | PrixUnitaireHT |
+| IntrantId | ServiceId | Designation | Quantite | PrixUnitaireHT |
 |-----------|-----------|-------------|----------|----------------|
 | NULL | → Pressage | Pressage Picholine 3.2 t | 3.2 | 450.00 |
 
@@ -778,7 +780,7 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 |--------|------|------|-------|
 | Id | INT | NO | PK |
 | AvoirFournisseurId | INT | NO | FK → `AvoirsFournisseurs.Id` (Cascade) |
-| ProduitId | INT | NO | |
+| IntrantId | INT | NO | FK → `Intrants.Id` (Restrict) |
 | Designation | NVARCHAR | NO | |
 | Conditionnement | NVARCHAR | NO | |
 | Quantite | DECIMAL | NO | |
@@ -950,6 +952,6 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 8. **Interventions:** One row per field operation on a single `Secteur`. Optional `IntrantId` + `QuantiteIntrant`, water in m³. Labor and material costs attach via `Charges.InterventionId`.
 9. **Recoltes:** One row per harvest on a single `Secteur` and single `Variete`. Quantity in kg. Validate that the variety exists on that sector via `SecteurVarietes`.
 10. **Services:** Purchasable services catalog (pressage, transport, etc.). Not stocked. Document lines use `ServiceId` instead of `ProduitId`.
-11. **Product vs service lines:** On `BonCommandeLignes` and `FactureFournisseurLignes`, enforce exactly one of `ProduitId` or `ServiceId` (check constraint or validation). `BonReceptionLignes` remains product-only.
+11. **Intrant vs service lines:** On `BonCommandeLignes` and `FactureFournisseurLignes`, enforce exactly one of `IntrantId` or `ServiceId` (check constraint or validation). `BonReceptionLignes` and `AvoirFournisseurLignes` are intrant-only (purchased inputs, not finished products).
 12. **Pressages:** Production record for milling. Bill the mill with `FacturesFournisseurs` + `ServiceId` on the line; set `Pressages.FactureFournisseurId` to link operation and invoice.
 13. **AppSettings:** Review which desktop-only fields (backup, virtual keyboard) belong in the web backend vs. admin UI.

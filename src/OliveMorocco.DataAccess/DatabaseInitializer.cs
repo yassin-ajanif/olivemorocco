@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OliveMorocco.Domain.Entities.Common;
+using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
 using OliveMorocco.Domain.Enums;
 
@@ -14,6 +15,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync(cancellationToken);
         await SeedDemoProduitsAsync(db, cancellationToken);
+        await SeedDemoIntrantsAsync(db, cancellationToken);
         await SeedDemoFournisseursAsync(db, cancellationToken);
     }
 
@@ -63,6 +65,45 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
                 StockActuel = 40,
                 StockMinimum = 8,
                 Actif = true,
+                CreatedAt = now,
+                UpdatedAt = now,
+            });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedDemoIntrantsAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Intrants.AnyAsync(cancellationToken))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.Intrants.AddRange(
+            new Intrant
+            {
+                Nom = "Engrais NPK 15-15-15",
+                Unite = "sac 25 kg",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Compost organique",
+                Unite = "tonne",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Phytosanitaire cuivre",
+                Unite = "L",
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
+            new Intrant
+            {
+                Nom = "Irrigation — tuyaux PE",
+                Unite = "m",
                 CreatedAt = now,
                 UpdatedAt = now,
             });

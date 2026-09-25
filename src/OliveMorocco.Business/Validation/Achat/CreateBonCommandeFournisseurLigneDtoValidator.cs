@@ -8,7 +8,7 @@ public sealed class CreateBonCommandeFournisseurLigneDtoValidator : AbstractVali
     public CreateBonCommandeFournisseurLigneDtoValidator()
     {
         RuleFor(x => x)
-            .Must(l => (l.ProduitId is > 0) ^ (l.ServiceId is > 0))
+            .Must(l => (l.IntrantId is > 0) ^ (l.ServiceId is > 0))
             .WithMessage("Chaque ligne doit référencer un produit ou un service, mais pas les deux.");
 
         RuleFor(x => x.Designation)

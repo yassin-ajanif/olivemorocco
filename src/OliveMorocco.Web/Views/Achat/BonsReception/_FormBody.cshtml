@@ -31,13 +31,13 @@
 <div class="doc-lines-section">
     <div class="doc-lines-toolbar">
         <div class="doc-suggest-wrap doc-suggest-grow">
-            <label for="article-search" class="doc-toolbar-label">Ajouter un article</label>
+            <label for="intrant-search" class="doc-toolbar-label">Ajouter un intrant</label>
             <input type="search"
-                   id="article-search"
+                   id="intrant-search"
                    class="doc-product-pick"
-                   placeholder="Rechercher par référence ou désignation…"
+                   placeholder="Rechercher un intrant par nom…"
                    autocomplete="off" />
-            <div id="article-suggestions" class="doc-suggestions" hidden></div>
+            <div id="intrant-suggestions" class="doc-suggestions" hidden></div>
         </div>
         <button type="button" id="remove-selected-line" class="btn btn-sm">Supprimer la ligne</button>
     </div>
@@ -65,7 +65,7 @@
                             <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
                         </td>
                         <td class="col-ref col-details" data-label="Réf.">
-                            <input type="hidden" name="Lignes[@i].ProduitId" value="@line.ProduitId" class="produit-id" />
+                            <input type="hidden" name="Lignes[@i].IntrantId" value="@line.IntrantId" class="intrant-id" />
                             <input name="Lignes[@i].Reference" value="@line.Reference" class="line-ref" readonly />
                         </td>
                         <td class="col-designation" data-label="Désignation">
@@ -101,7 +101,7 @@
                     </tr>
                 }
                 <tr id="bon-reception-empty-hint" class="@(Model.Lignes.Count > 0 ? "hidden" : string.Empty)">
-                    <td colspan="9" class="list-empty">Ajoutez des articles via la recherche ci-dessus.</td>
+                    <td colspan="9" class="list-empty">Ajoutez des intrants via la recherche ci-dessus.</td>
                 </tr>
             </tbody>
         </table>
@@ -137,7 +137,7 @@
             <input type="radio" name="selected-line" class="line-select" aria-label="Sélectionner la ligne" />
         </td>
         <td class="col-ref col-details" data-label="Réf.">
-            <input type="hidden" name="Lignes[__index__].ProduitId" class="produit-id" />
+            <input type="hidden" name="Lignes[__index__].IntrantId" class="intrant-id" />
             <input name="Lignes[__index__].Reference" class="line-ref" readonly />
         </td>
         <td class="col-designation" data-label="Désignation">

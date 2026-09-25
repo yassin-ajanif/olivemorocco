@@ -8,7 +8,7 @@ namespace OliveMorocco.Web.Controllers.Achat;
 [Route(AppSections.Achat + "/[controller]")]
 public sealed class SuggestionsController(
     IFournisseurService clients,
-    IArticleSuggestionService articles) : Controller
+    IIntrantSuggestionService intrants) : Controller
 {
     private const int SuggestionPageSize = 15;
 
@@ -28,11 +28,11 @@ public sealed class SuggestionsController(
         return PartialView("~/Views/Achat/Suggestions/_FournisseurSuggestions.cshtml", items);
     }
 
-    [HttpGet("Articles")]
-    public async Task<IActionResult> Articles(string? search, CancellationToken cancellationToken)
+    [HttpGet("Intrants")]
+    public async Task<IActionResult> Intrants(string? search, CancellationToken cancellationToken)
     {
-        var items = await articles.SearchArticlesAsync(Normalize(search), cancellationToken);
-        return PartialView("~/Views/Achat/Suggestions/_ArticleSuggestions.cshtml", items);
+        var items = await intrants.SearchIntrantsAsync(Normalize(search), cancellationToken);
+        return PartialView("~/Views/Achat/Suggestions/_IntrantSuggestions.cshtml", items);
     }
 
     private static string? Normalize(string? value) =>

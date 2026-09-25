@@ -3,7 +3,7 @@ namespace OliveMorocco.Business.DTOs.Achat;
 public record BonCommandeFournisseurLigneDto(
     int Id,
     int BonCommandeFournisseurId,
-    int? ProduitId,
+    int? IntrantId,
     int? ServiceId,
     string Reference,
     string Designation,
@@ -14,7 +14,7 @@ public record BonCommandeFournisseurLigneDto(
     decimal TauxTVA);
 
 public record CreateBonCommandeFournisseurLigneDto(
-    int? ProduitId,
+    int? IntrantId,
     int? ServiceId,
     string Designation,
     decimal QuantiteCommandee,

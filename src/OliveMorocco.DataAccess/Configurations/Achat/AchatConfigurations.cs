@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Operationnel;
-using OliveMorocco.Domain.Entities.Vente;
 
 namespace OliveMorocco.DataAccess.Configurations.Achat;
 
@@ -90,11 +89,11 @@ public class BonCommandeFournisseurLigneConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<BonCommandeFournisseurLigne> builder)
     {
         builder.ToTable("BonCommandeLignes", t => t.HasCheckConstraint(
-            "CK_BonCommandeLignes_ProduitOrService",
-            "(\"ProduitId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"ProduitId\" IS NULL AND \"ServiceId\" IS NOT NULL)"));
+            "CK_BonCommandeLignes_IntrantOrService",
+            "(\"IntrantId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"IntrantId\" IS NULL AND \"ServiceId\" IS NOT NULL)"));
 
         builder.HasIndex(l => l.BonCommandeFournisseurId);
-        builder.HasIndex(l => l.ProduitId);
+        builder.HasIndex(l => l.IntrantId);
         builder.HasIndex(l => l.ServiceId);
 
         builder.Property(l => l.Designation).IsRequired();
@@ -104,9 +103,9 @@ public class BonCommandeFournisseurLigneConfiguration : IEntityTypeConfiguration
         builder.Property(l => l.Remise).HasPrecision(18, 2);
         builder.Property(l => l.TauxTVA).HasPrecision(18, 2);
 
-        builder.HasOne(l => l.Produit)
+        builder.HasOne(l => l.Intrant)
             .WithMany()
-            .HasForeignKey(l => l.ProduitId)
+            .HasForeignKey(l => l.IntrantId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(l => l.Service)
@@ -163,9 +162,11 @@ public class BonReceptionLigneConfiguration : IEntityTypeConfiguration<BonRecept
         builder.Property(l => l.PrixUnitaireHT).HasPrecision(18, 2);
         builder.Property(l => l.TauxTVA).HasPrecision(18, 2);
 
-        builder.HasOne(l => l.Produit)
+        builder.HasIndex(l => l.IntrantId);
+
+        builder.HasOne(l => l.Intrant)
             .WithMany()
-            .HasForeignKey(l => l.ProduitId)
+            .HasForeignKey(l => l.IntrantId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
@@ -205,12 +206,12 @@ public class FactureFournisseurLigneConfiguration : IEntityTypeConfiguration<Fac
     public void Configure(EntityTypeBuilder<FactureFournisseurLigne> builder)
     {
         builder.ToTable("FactureFournisseurLignes", t => t.HasCheckConstraint(
-            "CK_FactureFournisseurLignes_ProduitOrService",
-            "(\"ProduitId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"ProduitId\" IS NULL AND \"ServiceId\" IS NOT NULL)"));
+            "CK_FactureFournisseurLignes_IntrantOrService",
+            "(\"IntrantId\" IS NOT NULL AND \"ServiceId\" IS NULL) OR (\"IntrantId\" IS NULL AND \"ServiceId\" IS NOT NULL)"));
 
         builder.HasIndex(l => l.FactureFournisseurId);
         builder.HasIndex(l => l.BonReceptionId);
-        builder.HasIndex(l => l.ProduitId);
+        builder.HasIndex(l => l.IntrantId);
         builder.HasIndex(l => l.ServiceId);
 
         builder.Property(l => l.Designation).IsRequired();
@@ -225,9 +226,9 @@ public class FactureFournisseurLigneConfiguration : IEntityTypeConfiguration<Fac
             .HasForeignKey(l => l.BonReceptionId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasOne(l => l.Produit)
+        builder.HasOne(l => l.Intrant)
             .WithMany()
-            .HasForeignKey(l => l.ProduitId)
+            .HasForeignKey(l => l.IntrantId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(l => l.Service)
@@ -293,9 +294,11 @@ public class AvoirFournisseurLigneConfiguration : IEntityTypeConfiguration<Avoir
         builder.Property(l => l.Remise).HasPrecision(18, 2);
         builder.Property(l => l.TauxTVA).HasPrecision(18, 2);
 
-        builder.HasOne(l => l.Produit)
+        builder.HasIndex(l => l.IntrantId);
+
+        builder.HasOne(l => l.Intrant)
             .WithMany()
-            .HasForeignKey(l => l.ProduitId)
+            .HasForeignKey(l => l.IntrantId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
