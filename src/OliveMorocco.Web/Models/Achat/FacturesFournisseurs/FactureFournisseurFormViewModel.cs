@@ -14,8 +14,6 @@ public sealed class FactureFournisseurFormViewModel
 
     public DateTime DateEcheance { get; set; } = DateTime.Today.AddDays(30);
 
-    public string? BonCommandeReference { get; set; }
-
     public decimal RemiseGlobale { get; set; }
 
     public bool EstPayee { get; set; }
