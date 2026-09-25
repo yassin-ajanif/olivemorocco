@@ -1,0 +1,129 @@
+/* Stockage · Secteurs — two-column create/edit form */
+
+.form-panel-secteur {
+  max-width: 960px;
+}
+
+.secteur-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.secteur-form-main {
+  min-width: 0;
+}
+
+.secteur-form-varietes {
+  padding: var(--space-lg);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--slot-bg) 40%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.secteur-form-varietes-title {
+  margin: 0;
+  font-family: 'Fraunces', serif;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--pine);
+}
+
+.secteur-varietes-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.secteur-varietes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.secteur-varietes-table th,
+.secteur-varietes-table td {
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.secteur-varietes-table th {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.secteur-varietes-table select,
+.secteur-varietes-table input[type="number"] {
+  width: 100%;
+}
+
+.secteur-varietes-table .col-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.secteur-allocation-total {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.secteur-allocation-over strong:first-child {
+  color: var(--danger);
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+.variete-add-panel {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .secteur-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .secteur-form-varietes {
+    order: -1;
+  }
+
+  .secteur-varietes-table thead {
+    display: none;
+  }
+
+  .secteur-varietes-table tr {
+    display: block;
+    border: 1px solid var(--line);
+    margin-bottom: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--surface);
+  }
+
+  .secteur-varietes-table td {
+    display: block;
+    padding: var(--space-xs) 0;
+  }
+
+  .secteur-varietes-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .secteur-varietes-table .col-actions::before {
+    content: none;
+  }
+}

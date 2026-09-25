@@ -1,0 +1,25 @@
+@model SecteurFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Stockage · Secteurs</p>
+    <h1>@Model.Nom</h1>
+</div>
+
+<div class="form-panel form-panel-secteur">
+    <partial name="_SecteurForm" model="Model" />
+</div>
+
+<form asp-action="Delete"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-delete"
+      onsubmit="return confirm('Supprimer ce secteur ?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>
+
+@section Scripts {
+    <script src="~/js/secteur-form.js" asp-append-version="true"></script>
+}

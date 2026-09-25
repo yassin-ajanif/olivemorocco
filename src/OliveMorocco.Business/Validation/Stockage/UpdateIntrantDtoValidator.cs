@@ -1,11 +1,11 @@
 using FluentValidation;
-using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Business.Validation.Operationnel;
+namespace OliveMorocco.Business.Validation.Stockage;
 
-public class CreateIntrantDtoValidator : AbstractValidator<CreateIntrantDto>
+public class UpdateIntrantDtoValidator : AbstractValidator<UpdateIntrantDto>
 {
-    public CreateIntrantDtoValidator()
+    public UpdateIntrantDtoValidator()
     {
         RuleFor(x => x.Nom)
             .NotEmpty().WithMessage("Le nom est obligatoire.")

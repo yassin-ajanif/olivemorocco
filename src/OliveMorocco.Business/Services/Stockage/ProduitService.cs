@@ -3,12 +3,12 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
-using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
 
-namespace OliveMorocco.Business.Services.Vente;
+namespace OliveMorocco.Business.Services.Stockage;
 
 public sealed class ProduitService : IProduitService
 {

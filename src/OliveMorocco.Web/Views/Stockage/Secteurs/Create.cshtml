@@ -1,0 +1,16 @@
+@model SecteurFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Stockage · Secteurs</p>
+    <h1>Nouveau secteur</h1>
+</div>
+
+<div class="form-panel form-panel-secteur">
+    <partial name="_SecteurForm" model="Model" />
+</div>
+
+@section Scripts {
+    <script src="~/js/secteur-form.js" asp-append-version="true"></script>
+}

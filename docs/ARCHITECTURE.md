@@ -115,14 +115,16 @@ OliveMorocco.sln
 │   ├── OliveMorocco.Business/
 │   │   ├── DTOs/
 │   │   │   ├── Common/
+│   │   │   ├── Stockage/                  (Produit, Intrant, Secteur, Variete DTOs)
 │   │   │   ├── Operationnel/
 │   │   │   ├── Vente/
 │   │   │   └── Achat/
 │   │   ├── Mapping/                       (AutoMapper profiles per domain)
-│   │   ├── Validation/                    (FluentValidation — Operationnel / Vente / Achat)
+│   │   ├── Validation/                    (FluentValidation — Stockage / Operationnel / Vente / Achat)
 │   │   ├── Services/
 │   │   │   ├── GenericService.cs / IGenericService.cs
-│   │   │   ├── Operationnel/              (SecteurService, RecolteService, …)
+│   │   │   ├── Stockage/                  (ProduitService, IntrantService, SecteurService, VarieteService)
+│   │   │   ├── Operationnel/              (InterventionService, RecolteService, …)
 │   │   │   ├── Vente/
 │   │   │   └── Achat/
 │   │   └── DependencyInjection.cs

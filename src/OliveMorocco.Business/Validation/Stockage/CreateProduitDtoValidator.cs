@@ -1,7 +1,7 @@
 using FluentValidation;
-using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Business.Validation.Vente;
+namespace OliveMorocco.Business.Validation.Stockage;
 
 public class CreateProduitDtoValidator : AbstractValidator<CreateProduitDto>
 {

@@ -3,12 +3,12 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
-using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Operationnel;
 
-namespace OliveMorocco.Business.Services.Operationnel;
+namespace OliveMorocco.Business.Services.Stockage;
 
 public sealed class IntrantService : IIntrantService
 {

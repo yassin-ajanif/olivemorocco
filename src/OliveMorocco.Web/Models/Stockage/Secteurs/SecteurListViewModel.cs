@@ -1,12 +1,12 @@
 using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Web.Models.Stockage.Produits;
+namespace OliveMorocco.Web.Models.Stockage.Secteurs;
 
-public sealed class ProduitListViewModel
+public sealed class SecteurListViewModel
 {
     public const int DefaultPageSize = 15;
 
-    public IReadOnlyList<ProduitListItemDto> Items { get; init; } = [];
+    public IReadOnlyList<SecteurListItemDto> Items { get; init; } = [];
 
     public string? Search { get; init; }
 

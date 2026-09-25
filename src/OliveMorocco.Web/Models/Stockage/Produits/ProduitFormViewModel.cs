@@ -1,4 +1,4 @@
-using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.DTOs.Stockage;
 
 namespace OliveMorocco.Web.Models.Stockage.Produits;
 

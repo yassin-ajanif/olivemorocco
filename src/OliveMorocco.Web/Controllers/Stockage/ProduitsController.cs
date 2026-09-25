@@ -1,9 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using OliveMorocco.Business.DTOs.Operationnel;
-using OliveMorocco.Business.DTOs.Vente;
-using OliveMorocco.Business.Services.Operationnel;
-using OliveMorocco.Business.Services.Vente;
+using OliveMorocco.Business.DTOs.Stockage;
+using OliveMorocco.Business.Services.Stockage;
 using OliveMorocco.Web.Models.Stockage.Produits;
 using OliveMorocco.Web.Routing;
 

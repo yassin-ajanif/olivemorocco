@@ -1,4 +1,4 @@
-namespace OliveMorocco.Business.DTOs.Operationnel;
+namespace OliveMorocco.Business.DTOs.Stockage;
 
 public record IntrantDto(
     int Id,

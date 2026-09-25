@@ -1,7 +1,7 @@
 using OliveMorocco.Business.DTOs;
-using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Business.Services.Operationnel;
+namespace OliveMorocco.Business.Services.Stockage;
 
 public interface IIntrantService
 {

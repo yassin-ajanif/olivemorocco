@@ -1,0 +1,153 @@
+@model SecteurFormViewModel
+@using System.Globalization
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="secteur-form"
+      id="secteur-form"
+      data-secteur-form
+      data-variete-url="@Url.Action("CreateVariete")">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="secteur-form-layout">
+        <div class="secteur-form-main form-grid">
+            <div class="form-field">
+                <label asp-for="Nom">Nom</label>
+                <input asp-for="Nom" autocomplete="off" maxlength="128" />
+                <span asp-validation-for="Nom" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Code">Code</label>
+                <input asp-for="Code" autocomplete="off" maxlength="32" placeholder="SN, PS…" />
+                <span asp-validation-for="Code" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="SuperficieHectares">Superficie totale (ha)</label>
+                <input asp-for="SuperficieHectares"
+                       id="superficie-totale"
+                       type="number"
+                       step="0.1"
+                       min="0" />
+                <span asp-validation-for="SuperficieHectares" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-toolbar">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a asp-action="Index" class="btn">Annuler</a>
+            </div>
+        </div>
+
+        <aside class="secteur-form-varietes" aria-labelledby="secteurVarietesTitle">
+            <p class="secteur-form-varietes-title" id="secteurVarietesTitle">Variétés du secteur</p>
+
+            <div class="secteur-varietes-wrap">
+                <table class="secteur-varietes-table" id="secteur-varietes-table">
+                    <thead>
+                        <tr>
+                            <th>Variété</th>
+                            <th>Superficie (ha)</th>
+                            <th class="col-actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="secteur-varietes-body">
+                        @for (var i = 0; i < Model.Lignes.Count; i++)
+                        {
+                            var line = Model.Lignes[i];
+                            <tr class="secteur-variete-line">
+                                <td data-label="Variété">
+                                    <select name="Lignes[@i].VarieteId" class="line-variete-id">
+                                        <option value="">— Sélectionner —</option>
+                                        @foreach (var variete in Model.Varietes)
+                                        {
+                                            if (line.VarieteId == variete.Id)
+                                            {
+                                                <option value="@variete.Id" selected>@variete.Nom</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@variete.Id">@variete.Nom</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td data-label="Superficie (ha)">
+                                    <input name="Lignes[@i].SuperficieHectares"
+                                           value="@(line.SuperficieHectares > 0 ? line.SuperficieHectares.ToString(CultureInfo.InvariantCulture) : "")"
+                                           type="number"
+                                           step="0.1"
+                                           min="0"
+                                           class="line-superficie" />
+                                </td>
+                                <td class="col-actions" data-label="">
+                                    <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne">Supprimer</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <p id="secteur-varietes-empty" class="list-empty @(Model.Lignes.Count > 0 ? "hidden" : "")">
+                    Aucune variété — ajoutez une ligne si le secteur est mixte.
+                </p>
+            </div>
+
+            <button type="button" id="add-variete-line" class="btn btn-block">+ Ajouter une variété</button>
+
+            <p class="secteur-allocation-total" id="allocation-total" aria-live="polite">
+                Alloué : <strong id="allocation-current">0</strong> / <strong id="allocation-max">0</strong> ha
+            </p>
+
+            <button type="button"
+                    class="btn btn-block"
+                    id="toggleVarieteAdd"
+                    aria-expanded="false"
+                    aria-controls="varieteAddPanel">
+                + Créer une variété
+            </button>
+
+            <div id="varieteAddPanel" class="variete-add-panel" hidden>
+                <div class="form-field">
+                    <label for="newVarieteNom">Nom</label>
+                    <input type="text" id="newVarieteNom" autocomplete="off" maxlength="128" />
+                </div>
+                <div class="form-field">
+                    <label for="newVarieteCode">Code</label>
+                    <input type="text" id="newVarieteCode" autocomplete="off" maxlength="32" />
+                </div>
+                <div class="form-field">
+                    <label for="newVarieteRegion">Région d'origine</label>
+                    <input type="text" id="newVarieteRegion" autocomplete="off" maxlength="128" />
+                </div>
+                <p id="varieteAddError" class="field-validation-error" hidden></p>
+                <button type="button" class="btn btn-primary btn-block" id="saveVarieteBtn">Enregistrer</button>
+            </div>
+        </aside>
+    </div>
+</form>
+
+<template id="secteur-variete-line-template">
+    <tr class="secteur-variete-line">
+        <td data-label="Variété">
+            <select name="Lignes[__index__].VarieteId" class="line-variete-id">
+                <option value="">— Sélectionner —</option>
+                @foreach (var variete in Model.Varietes)
+                {
+                    <option value="@variete.Id">@variete.Nom</option>
+                }
+            </select>
+        </td>
+        <td data-label="Superficie (ha)">
+            <input name="Lignes[__index__].SuperficieHectares"
+                   type="number"
+                   step="0.1"
+                   min="0"
+                   class="line-superficie" />
+        </td>
+        <td class="col-actions" data-label="">
+            <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne">Supprimer</button>
+        </td>
+    </tr>
+</template>

@@ -1,4 +1,4 @@
-namespace OliveMorocco.Business.DTOs.Vente;
+namespace OliveMorocco.Business.DTOs.Stockage;
 
 public record VarieteSelectItemDto(int Id, string Nom);
 
