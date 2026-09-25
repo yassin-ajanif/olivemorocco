@@ -12,8 +12,8 @@ public sealed class SuggestionsController(
 {
     private const int SuggestionPageSize = 15;
 
-    [HttpGet("Clients")]
-    public async Task<IActionResult> Clients(string? search, CancellationToken cancellationToken)
+    [HttpGet("Fournisseurs")]
+    public async Task<IActionResult> Fournisseurs(string? search, CancellationToken cancellationToken)
     {
         var result = await clients.GetFournisseursAsync(
             Normalize(search),
