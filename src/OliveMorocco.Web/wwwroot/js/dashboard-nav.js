@@ -9,8 +9,6 @@
         if (!section?.querySelector('.dash-section-items')) return;
         const isOpen = section.classList.toggle('open');
         btn.setAttribute('aria-expanded', isOpen);
-        const arrow = btn.querySelector('.arrow');
-        if (arrow) arrow.textContent = isOpen ? '▼' : '▶';
       });
     });
   }

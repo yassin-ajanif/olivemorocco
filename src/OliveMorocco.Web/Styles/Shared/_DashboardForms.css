@@ -10,7 +10,22 @@
 .form-field > label{font-size:var(--text-base);font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;}
 .form-field input,.form-field select,.form-field textarea{
   background:var(--cream);border:1px solid var(--line);border-radius:0;
-  padding:var(--space-2_5);font-family:'Work Sans',sans-serif;font-size:var(--text-md);color:var(--ink);outline:none;
+  font-family:'Work Sans',sans-serif;font-size:var(--text-md);color:var(--ink);outline:none;
+}
+.form-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.form-field select{
+  width:100%;box-sizing:border-box;display:block;
+  height:var(--control-h);min-height:var(--control-h);max-height:var(--control-h);
+  padding:0 var(--space-2_5);line-height:calc(var(--control-h) - 2px);
+}
+.form-field input[type="date"]{
+  appearance:none;-webkit-appearance:none;
+}
+.form-field input[type="date"]::-webkit-calendar-picker-indicator{
+  margin:0;padding:0;cursor:pointer;
+}
+.form-field textarea{
+  width:100%;box-sizing:border-box;padding:var(--space-2_5);min-height:6rem;resize:vertical;
 }
 .form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--gold);}
 .form-check{flex-direction:row;align-items:center;gap:var(--space-2_5);}

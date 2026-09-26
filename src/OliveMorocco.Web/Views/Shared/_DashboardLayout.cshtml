@@ -6,7 +6,6 @@
     var pageTitle = DashboardNav.PageTitle(Context, nav);
     string NavClass(string module) => dashModule == module ? "dash-item active" : "dash-item";
     string SectionClass(string section) => dashSection == section ? "dash-section open" : "dash-section";
-    string SectionArrow(string section) => dashSection == section ? "▼" : "▶";
     string SectionExpanded(string section) => dashSection == section ? "true" : "false";
 }
 <!DOCTYPE html>
@@ -48,9 +47,7 @@
 
             <nav class="dash-nav" id="dashNav">
                 <div class="@SectionClass("stockage")" data-section="stockage">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("stockage")">
-                        <span class="arrow">@SectionArrow("stockage")</span> Stockage
-                    </button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("stockage")">Stockage</button>
                     <div class="dash-section-items">
                         <a href="/@AppSections.Stockage/Produits" class="@NavClass("produits")">Produits</a>
                         <a href="/@AppSections.Stockage/Varietes" class="@NavClass("varietes")">Variétés</a>
@@ -61,9 +58,7 @@
                 </div>
 
                 <div class="@SectionClass("vente")" data-section="vente">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("vente")">
-                        <span class="arrow">@SectionArrow("vente")</span> Vente
-                    </button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("vente")">Vente</button>
                     <div class="dash-section-items">
                         <a href="/@AppSections.Vente/Clients" class="@NavClass("clients")">Clients</a>
                         <a href="/@AppSections.Vente/Devis" class="@NavClass("devis")">Devis</a>
@@ -75,9 +70,7 @@
                 </div>
 
                 <div class="@SectionClass("achat")" data-section="achat">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("achat")">
-                        <span class="arrow">@SectionArrow("achat")</span> Achat
-                    </button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("achat")">Achat</button>
                     <div class="dash-section-items">
                         <a href="/@AppSections.Achat/Fournisseurs" class="@NavClass("fournisseurs")">Fournisseurs</a>
                         <a href="/@AppSections.Achat/BonsCommande" class="@NavClass("bons-commande-achat")">Bons de commande</a>
@@ -91,9 +84,7 @@
                 <div class="dash-section-spacer"></div>
 
                 <div class="@SectionClass("operationnel")" data-section="operationnel">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("operationnel")">
-                        <span class="arrow">@SectionArrow("operationnel")</span> Opérationnel
-                    </button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("operationnel")">Opérationnel</button>
                     <div class="dash-section-items">
                         <a href="/@AppSections.Operationnel/Interventions" class="@NavClass("interventions")">Interventions</a>
                         <a href="/@AppSections.Operationnel/Pressages" class="@NavClass("pressages")">Pressages</a>
