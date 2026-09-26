@@ -5,11 +5,15 @@
         <div class="pagination-nav">
             @if (Model.HasPrevious)
             {
-                <a asp-route-search="@Model.Search"
+                <a asp-route-id="@Model.Id"
+                   asp-route-search="@Model.Search"
+                   asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-page="1"
                    class="pagination-link"
                    title="Première page">⏮</a>
-                <a asp-route-search="@Model.Search"
+                <a asp-route-id="@Model.Id"
+                   asp-route-search="@Model.Search"
+                   asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-page="@(Model.Page - 1)"
                    class="pagination-link"
                    title="Page précédente">‹</a>
@@ -24,11 +28,15 @@
 
             @if (Model.HasNext)
             {
-                <a asp-route-search="@Model.Search"
+                <a asp-route-id="@Model.Id"
+                   asp-route-search="@Model.Search"
+                   asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-page="@(Model.Page + 1)"
                    class="pagination-link"
                    title="Page suivante">›</a>
-                <a asp-route-search="@Model.Search"
+                <a asp-route-id="@Model.Id"
+                   asp-route-search="@Model.Search"
+                   asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-page="@Model.TotalPages"
                    class="pagination-link"
                    title="Dernière page">⏭</a>

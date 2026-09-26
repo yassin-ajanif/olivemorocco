@@ -4,6 +4,15 @@
     var p = Model.Produit;
     const string cols = "1.1fr 0.75fr 0.7fr 0.8fr 0.8fr 1fr minmax(0,1.2fr)";
     const string emptyMessage = "Aucun mouvement enregistré pour ce produit.";
+    var ajustementOpen = !ViewData.ModelState.IsValid;
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.MouvementPage,
+        TotalPages = Model.MouvementTotalPages,
+        HasPrevious = Model.MouvementHasPrevious,
+        HasNext = Model.MouvementHasNext,
+        Id = p.Id,
+    };
 }
 
 <partial name="_DashboardAlerts" />
@@ -12,42 +21,21 @@
     <p class="eyebrow">Stockage · État du stock</p>
     <h1>@p.Designation</h1>
     <p class="module-section">@p.Reference · @(p.VarieteNom ?? "Sans variété")</p>
+    <a asp-action="Index" class="btn btn-sm">← Retour à la liste</a>
 </div>
 
-<div class="stock-detail-layout">
-    <div class="dash-panel stock-summary-panel">
-        <dl class="stock-summary-grid">
-            <div>
-                <dt>Stock actuel</dt>
-                <dd class="stock-summary-value">@p.StockActuel.ToString("N0") @p.Unite</dd>
-            </div>
-            <div>
-                <dt>Stock minimum</dt>
-                <dd>@p.StockMinimum.ToString("N0") @p.Unite</dd>
-            </div>
-            <div>
-                <dt>Statut</dt>
-                <dd>
-                    @if (p.Rupture)
-                    {
-                        <span class="badge badge-stock-rupture">Rupture</span>
-                    }
-                    else if (p.StockBas)
-                    {
-                        <span class="badge badge-warn">Stock bas</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-ok">OK</span>
-                    }
-                </dd>
-            </div>
-        </dl>
-        <a asp-action="Index" class="btn btn-sm">← Retour à la liste</a>
-    </div>
-
-    <div class="dash-panel stock-ajustement-panel">
-        <h2 class="stock-panel-title">Ajustement manuel</h2>
+<div class="dash-panel stock-ajustement-panel@(ajustementOpen ? " is-open" : "")"
+     id="stockAjustementPanel">
+    <button type="button"
+            class="stock-ajustement-toggle"
+            aria-expanded="@(ajustementOpen ? "true" : "false")"
+            aria-controls="stockAjustementBody">
+        <span class="stock-ajustement-toggle-arrow" aria-hidden="true">@(ajustementOpen ? "▼" : "▶")</span>
+        <span class="stock-panel-title">Ajustement manuel</span>
+    </button>
+    <div class="stock-ajustement-body"
+         id="stockAjustementBody"
+         @(!ajustementOpen ? "hidden" : null)>
         <p class="stock-panel-hint">Entrez une variation positive (entrée) ou négative (sortie).</p>
         <form asp-action="Ajustement"
               asp-route-id="@p.Id"
@@ -56,23 +44,28 @@
               class="stock-ajustement-form">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="form-validation-summary"></div>
-            <div class="form-field">
-                <label asp-for="Ajustement.Variation">Variation</label>
-                <input asp-for="Ajustement.Variation"
-                       type="number"
-                       step="1"
-                       placeholder="Ex. 10 ou -5" />
-                <span asp-validation-for="Ajustement.Variation" class="field-validation-error"></span>
+            <div class="stock-ajustement-row">
+                <div class="form-field stock-ajustement-variation">
+                    <label asp-for="Ajustement.Variation">Variation</label>
+                    <input asp-for="Ajustement.Variation"
+                           type="number"
+                           step="1"
+                           placeholder="Ex. 10 ou -5" />
+                    <span asp-validation-for="Ajustement.Variation" class="field-validation-error"></span>
+                </div>
+                <div class="form-field stock-ajustement-note">
+                    <label asp-for="Ajustement.Note">Note</label>
+                    <input asp-for="Ajustement.Note"
+                           type="text"
+                           maxlength="500"
+                           placeholder="Motif de l'ajustement (optionnel)" />
+                    <span asp-validation-for="Ajustement.Note" class="field-validation-error"></span>
+                </div>
+                <div class="form-field stock-ajustement-submit">
+                    <span class="stock-ajustement-submit-label" aria-hidden="true">&nbsp;</span>
+                    <button type="submit" class="btn btn-primary">Enregistrer l'ajustement</button>
+                </div>
             </div>
-            <div class="form-field">
-                <label asp-for="Ajustement.Note">Note</label>
-                <input asp-for="Ajustement.Note"
-                       type="text"
-                       maxlength="500"
-                       placeholder="Motif de l'ajustement (optionnel)" />
-                <span asp-validation-for="Ajustement.Note" class="field-validation-error"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Enregistrer l'ajustement</button>
         </form>
     </div>
 </div>
@@ -84,9 +77,9 @@
         <div class="list-header" style="grid-template-columns:@cols">
             <span>Date</span>
             <span>Type</span>
-            <span>Quantité</span>
-            <span>Stock avant</span>
-            <span>Stock après</span>
+            <span class="cell-center">Stock avant</span>
+            <span class="cell-center">Quantité</span>
+            <span class="cell-center">Stock après</span>
             <span>Origine</span>
             <span>Note</span>
         </div>
@@ -99,6 +92,8 @@
             {
                 foreach (var m in Model.Mouvements)
                 {
+                    var qtyInbound = m.Type == TypeMouvement.Entree
+                        || (m.Type == TypeMouvement.Ajustement && m.StockApres > m.StockAvant);
                     <div class="list-row" style="grid-template-columns:@cols">
                         <span data-label="Date">@m.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                         <span data-label="Type">
@@ -115,9 +110,9 @@
                                     break;
                             }
                         </span>
-                        <span data-label="Quantité" class="cell-bold">@m.Quantite.ToString("N0")</span>
-                        <span data-label="Stock avant">@m.StockAvant.ToString("N0")</span>
-                        <span data-label="Stock après" class="cell-bold">@m.StockApres.ToString("N0")</span>
+                        <span data-label="Stock avant" class="cell-center">@m.StockAvant.ToString("N0")</span>
+                        <span data-label="Quantité" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N0")</span>
+                        <span data-label="Stock après" class="cell-bold cell-center">@m.StockApres.ToString("N0")</span>
                         <span data-label="Origine">@m.OrigineLabel</span>
                         <span data-label="Note">@(string.IsNullOrWhiteSpace(m.Note) ? "—" : m.Note)</span>
                     </div>
@@ -126,52 +121,10 @@
         </div>
     </div>
 
-    @if (Model.MouvementTotalPages > 1)
-    {
-        <div class="list-pagination">
-            <div class="list-pagination-inner">
-                <div class="pagination-nav">
-                    @if (Model.MouvementHasPrevious)
-                    {
-                        <a asp-action="Detail"
-                           asp-route-id="@p.Id"
-                           asp-route-page="1"
-                           class="pagination-link"
-                           title="Première page">⏮</a>
-                        <a asp-action="Detail"
-                           asp-route-id="@p.Id"
-                           asp-route-page="@(Model.MouvementPage - 1)"
-                           class="pagination-link"
-                           title="Page précédente">‹</a>
-                    }
-                    else
-                    {
-                        <span class="pagination-link disabled">⏮</span>
-                        <span class="pagination-link disabled">‹</span>
-                    }
-
-                    <span class="page-indicator"><b>@Model.MouvementPage</b> / @Model.MouvementTotalPages</span>
-
-                    @if (Model.MouvementHasNext)
-                    {
-                        <a asp-action="Detail"
-                           asp-route-id="@p.Id"
-                           asp-route-page="@(Model.MouvementPage + 1)"
-                           class="pagination-link"
-                           title="Page suivante">›</a>
-                        <a asp-action="Detail"
-                           asp-route-id="@p.Id"
-                           asp-route-page="@Model.MouvementTotalPages"
-                           class="pagination-link"
-                           title="Dernière page">⏭</a>
-                    }
-                    else
-                    {
-                        <span class="pagination-link disabled">›</span>
-                        <span class="pagination-link disabled">⏭</span>
-                    }
-                </div>
-            </div>
-        </div>
-    }
 </div>
+
+<partial name="_ListPagination" model="pagination" />
+
+@section Scripts {
+    <script src="~/js/stock-detail.js" asp-append-version="true"></script>
+}

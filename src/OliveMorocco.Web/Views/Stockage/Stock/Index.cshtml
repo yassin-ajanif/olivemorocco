@@ -2,6 +2,15 @@
 @{
     const string cols = "1fr 1.5fr 1fr 0.7fr 0.9fr 0.9fr auto minmax(5.5rem, auto)";
     const string emptyMessage = "Aucun produit en stock — créez des produits dans le catalogue.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search,
+        StockBasOnly = Model.StockBasOnly,
+    };
 }
 
 <partial name="_DashboardAlerts" />
@@ -34,7 +43,7 @@
         <span>Désignation</span>
         <span>Variété</span>
         <span>Unité</span>
-        <span class="cell-bold">Stock actuel</span>
+        <span class="cell-bold cell-center">Stock actuel</span>
         <span>Stock min.</span>
         <span>Statut</span>
         <span>Actions</span>
@@ -55,7 +64,7 @@
                     <span data-label="Désignation">@item.Designation</span>
                     <span data-label="Variété">@(item.VarieteNom ?? "—")</span>
                     <span data-label="Unité">@item.Unite</span>
-                    <span data-label="Stock actuel" class="cell-bold">
+                    <span data-label="Stock actuel" class="cell-bold cell-center">
                         @item.StockActuel.ToString("N0")
                     </span>
                     <span data-label="Stock min.">@item.StockMinimum.ToString("N0")</span>
@@ -87,55 +96,4 @@
     </div>
 </div>
 
-@if (Model.TotalPages > 1)
-{
-    <div class="list-pagination">
-        <div class="list-pagination-inner">
-            <div class="pagination-nav">
-                @if (Model.HasPrevious)
-                {
-                    <a asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-stockBasOnly="@Model.StockBasOnly"
-                       asp-route-page="1"
-                       class="pagination-link"
-                       title="Première page">⏮</a>
-                    <a asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-stockBasOnly="@Model.StockBasOnly"
-                       asp-route-page="@(Model.Page - 1)"
-                       class="pagination-link"
-                       title="Page précédente">‹</a>
-                }
-                else
-                {
-                    <span class="pagination-link disabled">⏮</span>
-                    <span class="pagination-link disabled">‹</span>
-                }
-
-                <span class="page-indicator"><b>@Model.Page</b> / @Model.TotalPages</span>
-
-                @if (Model.HasNext)
-                {
-                    <a asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-stockBasOnly="@Model.StockBasOnly"
-                       asp-route-page="@(Model.Page + 1)"
-                       class="pagination-link"
-                       title="Page suivante">›</a>
-                    <a asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-stockBasOnly="@Model.StockBasOnly"
-                       asp-route-page="@Model.TotalPages"
-                       class="pagination-link"
-                       title="Dernière page">⏭</a>
-                }
-                else
-                {
-                    <span class="pagination-link disabled">›</span>
-                    <span class="pagination-link disabled">⏭</span>
-                }
-            </div>
-        </div>
-    </div>
-}
+<partial name="_ListPagination" model="pagination" />

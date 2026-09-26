@@ -4,7 +4,7 @@ namespace OliveMorocco.Web.Models.Stockage.Stock;
 
 public sealed class StockDetailViewModel
 {
-    public const int DefaultMouvementPageSize = 20;
+    public const int DefaultMouvementPageSize = 15;
 
     public StockProduitDetailDto Produit { get; init; } = null!;
 
