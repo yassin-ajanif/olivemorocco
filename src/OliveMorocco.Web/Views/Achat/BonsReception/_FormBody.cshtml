@@ -89,7 +89,7 @@
                             <input name="Lignes[@i].Remise" value="@line.Remise.ToString("0.##", CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-remise calc-trigger" />
                         </td>
                         <td class="col-tva col-details" data-label="TVA %">
-                            <input name="Lignes[@i].TauxTVA" value="@line.TauxTVA.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
+                            <input name="Lignes[@i].TauxTVA" value="@line.TauxTVA.ToString(CultureInfo.InvariantCulture)" type="number" step="1" min="0" class="line-tva calc-trigger" />
                         </td>
                         <td class="col-ht" data-label="PU TTC">
                             <span class="line-pu-ttc">0,00</span>
@@ -160,7 +160,7 @@
             <input name="Lignes[__index__].Remise" value="0" type="number" step="1" min="0" class="line-remise calc-trigger" />
         </td>
         <td class="col-tva col-details" data-label="TVA %">
-            <input name="Lignes[__index__].TauxTVA" value="20" type="number" step="1" min="0" class="line-tva calc-trigger" readonly />
+            <input name="Lignes[__index__].TauxTVA" value="20" type="number" step="1" min="0" class="line-tva calc-trigger" />
         </td>
         <td class="col-ht" data-label="PU TTC">
             <span class="line-pu-ttc">0,00</span>
