@@ -72,7 +72,7 @@ public sealed class ProduitService : IProduitService
                 p.Id,
                 p.Reference,
                 p.Designation,
-                p.Variete != null ? p.Variete.Nom : null,
+                p.Variete.Nom,
                 p.Unite,
                 p.PrixVenteHT,
                 p.StockActuel,
@@ -166,7 +166,7 @@ public sealed class ProduitService : IProduitService
             entity.Reference,
             entity.Designation,
             entity.VarieteId,
-            entity.Variete?.Nom,
+            entity.Variete.Nom,
             entity.Unite,
             entity.CodeBarre,
             entity.PrixAchatHT,
@@ -194,12 +194,9 @@ public sealed class ProduitService : IProduitService
         }
     }
 
-    private async Task EnsureVarieteExistsAsync(int? varieteId, CancellationToken cancellationToken)
+    private async Task EnsureVarieteExistsAsync(int varieteId, CancellationToken cancellationToken)
     {
-        if (varieteId is null)
-            return;
-
-        if (!await _varietes.AnyAsync(v => v.Id == varieteId.Value, cancellationToken))
+        if (!await _varietes.AnyAsync(v => v.Id == varieteId, cancellationToken))
         {
             throw new ValidationException([
                 new ValidationFailure(

@@ -28,7 +28,8 @@ public class ProduitConfiguration : IEntityTypeConfiguration<Produit>
         builder.HasOne(p => p.Variete)
             .WithMany(v => v.Produits)
             .HasForeignKey(p => p.VarieteId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
     }
 }
 

@@ -55,7 +55,7 @@
                         <a asp-action="Edit" asp-route-id="@produit.Id" class="list-link">@produit.Reference</a>
                     </span>
                     <span data-label="Désignation">@produit.Designation</span>
-                    <span data-label="Variété">@(produit.VarieteNom ?? "—")</span>
+                    <span data-label="Variété">@produit.VarieteNom</span>
                     <span data-label="Unité">@produit.Unite</span>
                     <span data-label="P. vente HT" class="cell-bold">@produit.PrixVenteHT.ToString("N2") DH</span>
                     <span data-label="Stock">

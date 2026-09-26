@@ -15,6 +15,9 @@ public class CreateProduitDtoValidator : AbstractValidator<CreateProduitDto>
             .NotEmpty().WithMessage("La désignation est obligatoire.")
             .MaximumLength(256).WithMessage("La désignation ne doit pas dépasser 256 caractères.");
 
+        RuleFor(x => x.VarieteId)
+            .GreaterThan(0).WithMessage("La variété est obligatoire.");
+
         RuleFor(x => x.Unite)
             .NotEmpty().WithMessage("L'unité est obligatoire.")
             .MaximumLength(32).WithMessage("L'unité ne doit pas dépasser 32 caractères.");

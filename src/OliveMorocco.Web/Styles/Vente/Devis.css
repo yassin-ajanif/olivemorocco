@@ -142,10 +142,6 @@
   .devis-line-toggle[aria-expanded="false"] .devis-line-toggle-icon{
     transform:rotate(-135deg);margin-top:0.1875rem;
   }
-  .devis-line-head-ttc{
-    display:none;margin-left:auto;font-family:'Fraunces',serif;font-size:var(--text-lg);font-weight:600;
-    color:var(--pine);white-space:nowrap;flex-shrink:0;
-  }
   .doc-lines-table tbody tr.devis-line td.col-designation{
     grid-column:1 / -1;order:-2;padding-bottom:var(--space-md);
     border-bottom:1px solid var(--line);
@@ -158,7 +154,6 @@
   .doc-lines-table tbody tr.devis-line.is-collapsed td.col-designation{
     padding-bottom:0;border-bottom:none;margin-bottom:0;
   }
-  .doc-lines-table tbody tr.devis-line.is-collapsed .devis-line-head-ttc{display:block;}
   .doc-lines-table tbody tr.devis-line.is-collapsed td.col-details{display:none;}
   .doc-lines-table tbody tr.devis-line.is-collapsed td.col-ttc{display:none;}
   .doc-lines-table tbody tr.devis-line td.col-ref{

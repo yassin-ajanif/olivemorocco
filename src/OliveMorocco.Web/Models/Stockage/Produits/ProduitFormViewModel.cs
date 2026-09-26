@@ -10,7 +10,7 @@ public sealed class ProduitFormViewModel
 
     public string Designation { get; set; } = string.Empty;
 
-    public int? VarieteId { get; set; }
+    public int VarieteId { get; set; }
 
     public string Unite { get; set; } = string.Empty;
 

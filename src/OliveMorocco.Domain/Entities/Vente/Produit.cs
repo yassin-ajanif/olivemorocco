@@ -7,7 +7,7 @@ public class Produit : BaseEntity
 {
     public string Reference { get; set; } = string.Empty;
     public string Designation { get; set; } = string.Empty;
-    public int? VarieteId { get; set; }
+    public int VarieteId { get; set; }
     public string Unite { get; set; } = string.Empty;
     public string? CodeBarre { get; set; }
     public decimal PrixAchatHT { get; set; }
@@ -18,7 +18,7 @@ public class Produit : BaseEntity
     public bool Actif { get; set; } = true;
     public byte[]? ImageData { get; set; }
 
-    public Variete? Variete { get; set; }
+    public Variete Variete { get; set; } = null!;
     public ICollection<MouvementStock> MouvementsStock { get; set; } = new List<MouvementStock>();
     public ICollection<DevisClientLigne> DevisClientLignes { get; set; } = new List<DevisClientLigne>();
     public ICollection<BonCommandeClientLigne> BonCommandeClientLignes { get; set; } = new List<BonCommandeClientLigne>();

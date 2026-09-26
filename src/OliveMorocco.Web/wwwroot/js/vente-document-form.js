@@ -144,10 +144,6 @@
                     tva,
                     formatMoney);
 
-                const headTtc = row.querySelector(".devis-line-head-ttc");
-                const lineTtc = row.querySelector(".line-ttc");
-                if (headTtc && lineTtc)
-                    headTtc.textContent = lineTtc.textContent;
             });
 
             const remiseGlobale = parseNum(remiseGlobaleInput?.value);

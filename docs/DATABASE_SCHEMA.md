@@ -87,7 +87,7 @@ erDiagram
     Tiers ||--o{ FactureFournisseur : "fournisseur"
     Tiers ||--o{ AvoirFournisseur : "fournisseur"
 
-    Variete ||--o{ Produit : "optional"
+    Variete ||--|{ Produit : "has"
     Produit ||--o{ MouvementStock : "has"
 
     Secteur ||--|{ SecteurVariete : "allocations"
@@ -351,7 +351,7 @@ Olive tree varieties (*variétés*) used to classify products by the type of oli
 | Id | INT | NO | PK |
 | Reference | NVARCHAR | NO | **Unique** |
 | Designation | NVARCHAR | NO | |
-| VarieteId | INT | YES | FK → `Varietes.Id` (SetNull on delete). Classifies oil by olive variety |
+| VarieteId | INT | NO | FK → `Varietes.Id` (Restrict on delete). Classifies oil by olive variety |
 | Unite | NVARCHAR | NO | Unit of measure |
 | CodeBarre | NVARCHAR | YES | Barcode |
 | PrixAchatHT | DECIMAL | NO | Purchase price |
@@ -962,7 +962,7 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 2. **Foreign keys to `Tiers`:** The source relies on `ClientId` / `FournisseurId` without explicit EF FK constraints in all cases — add proper FKs in the web version for integrity.
 3. **Users & auth:** Source removed the `Users` table; the web app will likely need `AspNetUsers` / roles — out of scope for this document.
 4. **Images:** Consider replacing `Produit.ImageData` blob with file storage + URL for web scalability.
-5. **Varietes:** Replaces the source app's generic `Categories` table. `Produit.VarieteId` is optional — products without a variety (accessories, blends labeled as their own SKU, etc.) can leave it null.
+5. **Varietes:** Replaces the source app's generic `Categories` table. Every `Produit` must reference a `Variete` (`VarieteId` required).
 6. **SecteurVarietes:** Many-to-many link between land (`Secteurs`) and tree types (`Varietes`). Use `SuperficieHectares` on the junction row to record how much of a mixed sector each variety occupies.
 7. **Intrants:** Catalog of agricultural input types (engrais, compost, etc.).
 8. **Interventions:** One row per field operation on a single `Secteur`. Optional intrants via `InterventionLignes` (`IntrantId` + `Quantite` in the intrant's unit). Water in m³ on the header. Labor and material costs attach via `Charges.InterventionId`. Zero lines allowed (irrigation-only).

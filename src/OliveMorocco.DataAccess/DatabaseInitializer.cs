@@ -15,12 +15,12 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync(cancellationToken);
+        await SeedDemoVarietesAsync(db, cancellationToken);
         await SeedDemoProduitsAsync(db, cancellationToken);
         await SeedDemoIntrantsAsync(db, cancellationToken);
         await SeedDemoSecteursAsync(db, cancellationToken);
         await SeedDemoFournisseursAsync(db, cancellationToken);
         await SeedDemoTypesChargesAsync(db, cancellationToken);
-        await SeedDemoVarietesAsync(db, cancellationToken);
         await SeedDemoPressagesAsync(db, cancellationToken);
     }
 
@@ -29,12 +29,20 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         if (await db.Produits.AnyAsync(cancellationToken))
             return;
 
+        var picholine = await db.Varietes
+            .FirstOrDefaultAsync(v => v.Code == "PICH", cancellationToken)
+            ?? await db.Varietes.OrderBy(v => v.Id).FirstOrDefaultAsync(cancellationToken);
+
+        if (picholine is null)
+            return;
+
         var now = DateTime.UtcNow;
         db.Produits.AddRange(
             new Produit
             {
                 Reference = "HVO-500",
                 Designation = "Huile d'olive vierge extra 500 ml",
+                VarieteId = picholine.Id,
                 Unite = "bouteille",
                 PrixAchatHT = 45,
                 PrixVenteHT = 75,
@@ -49,6 +57,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Reference = "HVO-1L",
                 Designation = "Huile d'olive vierge extra 1 L",
+                VarieteId = picholine.Id,
                 Unite = "bouteille",
                 PrixAchatHT = 80,
                 PrixVenteHT = 130,
@@ -63,6 +72,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Reference = "HVO-5L",
                 Designation = "Huile d'olive vierge extra 5 L",
+                VarieteId = picholine.Id,
                 Unite = "bidon",
                 PrixAchatHT = 350,
                 PrixVenteHT = 520,

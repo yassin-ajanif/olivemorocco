@@ -62,7 +62,7 @@
                         <a asp-action="Detail" asp-route-id="@item.Id" class="list-link">@item.Reference</a>
                     </span>
                     <span data-label="Désignation">@item.Designation</span>
-                    <span data-label="Variété">@(item.VarieteNom ?? "—")</span>
+                    <span data-label="Variété">@item.VarieteNom</span>
                     <span data-label="Unité">@item.Unite</span>
                     <span data-label="Stock actuel" class="cell-bold cell-center">
                         @item.StockActuel.ToString("N0")

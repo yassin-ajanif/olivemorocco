@@ -35,7 +35,7 @@
     <div class="form-field">
         <label for="VarieteId">Variété</label>
         <select asp-for="VarieteId" id="VarieteId">
-            <option value="">— Aucune —</option>
+            <option value="">— Sélectionner —</option>
             @foreach (var variete in Model.Varietes)
             {
                 <option value="@variete.Id">@variete.Nom</option>

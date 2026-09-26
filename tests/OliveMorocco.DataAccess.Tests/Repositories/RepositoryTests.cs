@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.DataAccess.Tests.Helpers;
 using OliveMorocco.Domain.Entities.Common;
+using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
 using OliveMorocco.Domain.Enums;
 
@@ -135,8 +136,15 @@ public sealed class RepositoryTests
         var devisRepo = new Repository<DevisClient>(db);
         var ligneRepo = new Repository<DevisClientLigne>(db);
 
+        var varieteRepo = new Repository<Variete>(db);
         var client = await tiersRepo.AddAsync(new Tiers { Nom = "Multi Nav", Type = TypeTiers.Client });
-        var produit = await produitRepo.AddAsync(new Produit { Reference = "P-1", Designation = "Huile" });
+        var variete = await varieteRepo.AddAsync(new Variete { Nom = "Picholine" });
+        var produit = await produitRepo.AddAsync(new Produit
+        {
+            Reference = "P-1",
+            Designation = "Huile",
+            VarieteId = variete.Id,
+        });
         var devis = await devisRepo.AddAsync(new DevisClient
         {
             Numero = "DV-MULTI",
@@ -468,8 +476,15 @@ public sealed class RepositoryTests
         var devisRepo = new Repository<DevisClient>(db);
         var ligneRepo = new Repository<DevisClientLigne>(db);
 
+        var varieteRepo = new Repository<Variete>(db);
         var client = await tiersRepo.AddAsync(new Tiers { Nom = "Inc Multi", Type = TypeTiers.Client });
-        var produit = await produitRepo.AddAsync(new Produit { Reference = "P-2", Designation = "Huile" });
+        var variete = await varieteRepo.AddAsync(new Variete { Nom = "Picholine" });
+        var produit = await produitRepo.AddAsync(new Produit
+        {
+            Reference = "P-2",
+            Designation = "Huile",
+            VarieteId = variete.Id,
+        });
         var devis = await devisRepo.AddAsync(new DevisClient
         {
             Numero = "DV-INC",
