@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.Services.Achat;
-using OliveMorocco.DataAccess;
+
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Operationnel;
@@ -14,7 +14,6 @@ namespace OliveMorocco.Business.Services.Operationnel;
 
 public sealed class InterventionService : IInterventionService
 {
-    private readonly AppDbContext _db;
     private readonly IRepository<Intervention> _interventions;
     private readonly IRepository<Secteur> _secteurs;
     private readonly IRepository<Intrant> _intrants;
@@ -25,7 +24,6 @@ public sealed class InterventionService : IInterventionService
     private readonly IValidator<UpdateInterventionDto>? _updateValidator;
 
     public InterventionService(
-        AppDbContext db,
         IRepository<Intervention> interventions,
         IRepository<Secteur> secteurs,
         IRepository<Intrant> intrants,
@@ -35,7 +33,6 @@ public sealed class InterventionService : IInterventionService
         IEnumerable<IValidator<CreateInterventionDto>> createValidators,
         IEnumerable<IValidator<UpdateInterventionDto>> updateValidators)
     {
-        _db = db;
         _interventions = interventions;
         _secteurs = secteurs;
         _intrants = intrants;
@@ -118,27 +115,18 @@ public sealed class InterventionService : IInterventionService
         await EnsureSecteurExistsAsync(dto.SecteurId, cancellationToken);
         await EnsureIntrantsExistAsync(dto.Lignes, cancellationToken);
 
-        await using var transaction =
-            await _db.Database.BeginTransactionAsync(cancellationToken);
+        int interventionId = 0;
 
-        try
+        await _interventions.ExecuteInTransactionAsync(async ct =>
         {
-            var interventionId = await AddInterventionCoreAsync(dto, cancellationToken);
-
+            interventionId = await AddInterventionCoreAsync(dto, ct);
             await _chargeService.AddChargesForInterventionAsync(
                 interventionId,
                 dto.Charges,
-                cancellationToken);
+                ct);
+        }, cancellationToken);
 
-            await transaction.CommitAsync(cancellationToken);
-
-            return (await GetInterventionByIdAsync(interventionId, cancellationToken))!;
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
+        return (await GetInterventionByIdAsync(interventionId, cancellationToken))!;
     }
 
     public async Task UpdateInterventionAsync(
@@ -153,25 +141,14 @@ public sealed class InterventionService : IInterventionService
         _ = await _interventions.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Intervention {id} introuvable.");
 
-        await using var transaction =
-            await _db.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        await _interventions.ExecuteInTransactionAsync(async ct =>
         {
-            await UpdateInterventionCoreAsync(id, dto, cancellationToken);
-
+            await UpdateInterventionCoreAsync(id, dto, ct);
             await _chargeService.ReplaceChargesForInterventionAsync(
                 id,
                 dto.Charges,
-                cancellationToken);
-
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
+                ct);
+        }, cancellationToken);
     }
 
     public Task DeleteInterventionAsync(int id, CancellationToken cancellationToken = default)
