@@ -17,6 +17,8 @@
             : null;
         const form = document.getElementById(config.formId);
         const lineRowClass = config.lineRowClass ?? "devis-line";
+        const showError = (message) => window.Zaho?.FormValidation?.show(form ?? document, message);
+        const clearErrors = () => window.Zaho?.FormValidation?.clear(form ?? document);
 
         const debounce = (fn, ms) => {
             let timer;
@@ -70,6 +72,7 @@
             if (fournisseurSearchInput)
                 fournisseurSearchInput.value = btn.dataset.fournisseurNom || "";
             showSuggestions(fournisseurSuggestions, "");
+            clearErrors();
         });
 
         intrantSearchInput?.addEventListener("input", () => {
@@ -184,7 +187,7 @@
             const designation = (data.designation || "").trim();
             const intrantId = data.intrantId || "";
             if (!intrantId || !designation) {
-                alert("Impossible d'ajouter cet intrant : données incomplètes.");
+                showError("Impossible d'ajouter cet intrant : données incomplètes.");
                 return;
             }
 
@@ -218,6 +221,7 @@
             reindexLines();
             updateEmptyHint();
             recalculate();
+            clearErrors();
         };
 
         intrantSuggestions?.addEventListener("click", (event) => {
@@ -272,14 +276,14 @@
                 const fournisseurId = Number.parseInt(fournisseurIdInput?.value ?? "", 10);
                 if (!Number.isFinite(fournisseurId) || fournisseurId <= 0) {
                     event.preventDefault();
-                    alert("Sélectionnez un fournisseur depuis la recherche.");
+                    showError("Sélectionnez un fournisseur depuis la recherche.");
                     return;
                 }
 
                 const rows = [...body.querySelectorAll(`.${lineRowClass}`)];
                 if (rows.length === 0) {
                     event.preventDefault();
-                    alert("Ajoutez au moins une ligne via la recherche d'intrants.");
+                    showError("Ajoutez au moins une ligne via la recherche d'intrants.");
                 }
             });
         }

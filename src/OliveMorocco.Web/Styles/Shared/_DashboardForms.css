@@ -24,6 +24,10 @@
   padding:var(--space-md);border:1px solid var(--danger);background:var(--danger-bg);
   color:var(--danger-hover);font-size:var(--text-base);
 }
+.form-validation-summary:empty{display:none;}
+.form-validation-summary ul{margin:0;padding-left:var(--space-lg);}
+.form-validation-summary li{margin:0;}
+.form-validation-summary li + li{margin-top:var(--space-xs);}
 .form-field .field-validation-error{
   display:block;margin-top:var(--space-xs);font-size:var(--text-sm);font-weight:500;
   letter-spacing:normal;text-transform:none;color:var(--danger);

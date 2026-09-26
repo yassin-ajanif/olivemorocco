@@ -17,6 +17,8 @@
             : null;
         const form = document.getElementById(config.formId);
         const lineRowClass = config.lineRowClass ?? "devis-line";
+        const showError = (message) => window.Zaho?.FormValidation?.show(form ?? document, message);
+        const clearErrors = () => window.Zaho?.FormValidation?.clear(form ?? document);
 
         const debounce = (fn, ms) => {
             let timer;
@@ -70,6 +72,7 @@
             if (clientSearchInput)
                 clientSearchInput.value = btn.dataset.clientNom || "";
             showSuggestions(clientSuggestions, "");
+            clearErrors();
         });
 
         articleSearchInput?.addEventListener("input", () => {
@@ -184,7 +187,7 @@
             const designation = (data.designation || "").trim();
             const produitId = data.produitId || "";
             if (!produitId || !designation) {
-                alert("Impossible d'ajouter cet article : données incomplètes.");
+                showError("Impossible d'ajouter cet article : données incomplètes.");
                 return;
             }
 
@@ -220,6 +223,7 @@
             reindexLines();
             updateEmptyHint();
             recalculate();
+            clearErrors();
         };
 
         articleSuggestions?.addEventListener("click", (event) => {
@@ -275,14 +279,14 @@
                 const clientId = Number.parseInt(clientIdInput?.value ?? "", 10);
                 if (!Number.isFinite(clientId) || clientId <= 0) {
                     event.preventDefault();
-                    alert("Sélectionnez un client depuis la recherche.");
+                    showError("Sélectionnez un client depuis la recherche.");
                     return;
                 }
 
                 const rows = [...body.querySelectorAll(`.${lineRowClass}`)];
                 if (rows.length === 0) {
                     event.preventDefault();
-                    alert("Ajoutez au moins une ligne via la recherche d'articles.");
+                    showError("Ajoutez au moins une ligne via la recherche d'articles.");
                 }
             });
         }

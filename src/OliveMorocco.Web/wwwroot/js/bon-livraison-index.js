@@ -11,11 +11,14 @@
         button.disabled = checked.length === 0;
     };
 
+    const showError = (message) => window.Zaho?.FormValidation?.show(form, message);
+    const clearErrors = () => window.Zaho?.FormValidation?.clear(form);
+
     const validateSubmit = (event) => {
         const checked = [...body.querySelectorAll(".bl-select:checked")];
         if (checked.length === 0) {
             event.preventDefault();
-            alert("Sélectionnez au moins un bon de livraison.");
+            showError("Sélectionnez au moins un bon de livraison.");
             return;
         }
 
@@ -26,13 +29,15 @@
 
         if (clientIds.size > 1) {
             event.preventDefault();
-            alert("Les bons sélectionnés doivent appartenir au même client.");
+            showError("Les bons sélectionnés doivent appartenir au même client.");
         }
     };
 
     body.addEventListener("change", (event) => {
-        if (event.target.classList.contains("bl-select"))
+        if (event.target.classList.contains("bl-select")) {
             updateButton();
+            clearErrors();
+        }
     });
 
     form.addEventListener("submit", validateSubmit);

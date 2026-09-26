@@ -11,11 +11,14 @@
         button.disabled = checked.length === 0;
     };
 
+    const showError = (message) => window.Zaho?.FormValidation?.show(form, message);
+    const clearErrors = () => window.Zaho?.FormValidation?.clear(form);
+
     const validateSubmit = (event) => {
         const checked = [...body.querySelectorAll(".br-select:checked")];
         if (checked.length === 0) {
             event.preventDefault();
-            alert("Sélectionnez au moins un bon de réception.");
+            showError("Sélectionnez au moins un bon de réception.");
             return;
         }
 
@@ -26,13 +29,15 @@
 
         if (fournisseurIds.size > 1) {
             event.preventDefault();
-            alert("Les bons sélectionnés doivent appartenir au même fournisseur.");
+            showError("Les bons sélectionnés doivent appartenir au même fournisseur.");
         }
     };
 
     body.addEventListener("change", (event) => {
-        if (event.target.classList.contains("br-select"))
+        if (event.target.classList.contains("br-select")) {
             updateButton();
+            clearErrors();
+        }
     });
 
     form.addEventListener("submit", validateSubmit);
