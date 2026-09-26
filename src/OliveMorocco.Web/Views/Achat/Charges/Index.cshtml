@@ -1,6 +1,6 @@
 @model ChargeListViewModel
 @{
-    const string cols = "1fr 1.5fr 1fr 1fr auto";
+    const string cols = "1fr 1.5fr 1fr 1fr 1.4fr auto";
     const string emptyMessage = "Aucune charge — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -36,6 +36,7 @@
         <span>Libellé</span>
         <span>Date</span>
         <span class="cell-bold">Montant TTC</span>
+        <span>Intervention</span>
         <span>Actions</span>
     </div>
     <div class="list-body">
@@ -63,13 +64,33 @@
                     </span>
                     <span data-label="Date">@charge.Date.ToString("dd/MM/yyyy")</span>
                     <span data-label="Montant TTC" class="cell-bold">@charge.MontantTtc.ToString("N2") DH</span>
+                    <span data-label="Intervention">
+                        @if (linkedToIntervention)
+                        {
+                            <a href="/Operationnel/Interventions/Edit/@charge.InterventionId"
+                               class="list-intervention-link"
+                               title="Modifier depuis l'intervention">
+                                <span class="list-intervention-title">
+                                    @charge.InterventionSecteurNom — @charge.InterventionDate!.Value.ToString("dd/MM/yyyy")
+                                </span>
+                                <span class="list-intervention-ref">
+                                    Réf. intervention <strong>#@charge.InterventionId</strong>
+                                </span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="cell-muted">—</span>
+                        }
+                    </span>
                     <span class="list-row-actions" data-label="Actions">
                         @if (linkedToIntervention)
                         {
                             <button type="button"
                                     class="btn btn-icon"
                                     disabled
-                                    aria-label="Modifier">
+                                    title="Modifiable depuis l'intervention"
+                                    aria-label="Modifier (depuis l'intervention)">
                                 <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                             </button>
                         }

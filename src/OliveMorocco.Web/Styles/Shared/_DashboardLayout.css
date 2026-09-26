@@ -11,4 +11,5 @@
 @import "../Stockage/Produits.css";
 @import "../Stockage/Secteurs.css";
 @import "../Stockage/Stock.css";
+@import "../Achat/Charges.css";
 @import "./_DashboardUtilities.css";

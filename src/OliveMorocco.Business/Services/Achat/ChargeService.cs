@@ -56,7 +56,9 @@ public sealed class ChargeService : IChargeService
                 c.Libelle,
                 c.Date,
                 c.MontantTtc,
-                c.InterventionId),
+                c.InterventionId,
+                c.Intervention != null ? c.Intervention.Secteur.Nom : null,
+                c.Intervention != null ? c.Intervention.Date : null),
             page,
             pageSize,
             cancellationToken);

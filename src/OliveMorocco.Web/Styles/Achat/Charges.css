@@ -1,0 +1,19 @@
+/* Charges list — intervention link (muted, sidebar-item palette) */
+
+.list-intervention-link{
+  display:flex;flex-direction:column;gap:0.125rem;
+  text-decoration:none;color:var(--btn-color);
+  transition:color .15s,background .15s;
+  padding:var(--space-xs) 0;
+}
+.list-intervention-link:hover{
+  color:var(--btn-color);
+  background:color-mix(in srgb,var(--slot-bg) 55%,transparent);
+}
+.list-intervention-link:hover .list-intervention-title{text-decoration:underline;}
+.list-intervention-title{
+  font-family:'Work Sans',sans-serif;font-weight:600;font-size:var(--text-base-sm);
+  color:var(--btn-color);line-height:1.35;
+}
+.list-intervention-ref{font-size:var(--text-sm);color:var(--muted);line-height:1.35;}
+.list-intervention-ref strong{color:var(--btn-color);font-weight:600;}
