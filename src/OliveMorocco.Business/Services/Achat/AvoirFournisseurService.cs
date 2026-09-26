@@ -134,7 +134,7 @@ public sealed class AvoirFournisseurService
                 l.Id,
                 l.AvoirFournisseurId,
                 l.IntrantId,
-                string.Empty,
+                AchatLineReference.FromIntrant(l.Intrant),
                 l.Designation,
                 l.Conditionnement,
                 l.Quantite,

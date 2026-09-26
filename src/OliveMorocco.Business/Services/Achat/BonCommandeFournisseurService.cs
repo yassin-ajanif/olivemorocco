@@ -111,7 +111,7 @@ public sealed class BonCommandeFournisseurService
 
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.BonCommandeFournisseurId == id,
-            [l => l.Intrant!],
+            [l => l.Intrant!, l => l.Service!],
             cancellationToken);
 
         var (_, _, ttc) = IBonCommandeFournisseurService.ComputeTotals(
@@ -137,7 +137,7 @@ public sealed class BonCommandeFournisseurService
                 l.BonCommandeFournisseurId,
                 l.IntrantId,
                 l.ServiceId,
-                string.Empty,
+                AchatLineReference.FromIntrantOrService(l.Intrant, l.Service),
                 l.Designation,
                 l.Conditionnement,
                 l.QuantiteCommandee,

@@ -159,7 +159,7 @@ public sealed class BonReceptionService
                 l.Id,
                 l.BRId,
                 l.IntrantId,
-                string.Empty,
+                AchatLineReference.FromIntrant(l.Intrant),
                 l.Designation,
                 l.QuantiteRecue,
                 l.PrixUnitaireHT,
