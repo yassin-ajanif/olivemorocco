@@ -7,24 +7,28 @@
       class="form-grid"
       id="intervention-form">
     @Html.AntiForgeryToken()
+    @* Note kept as hidden so edit saves don't wipe stored values — restore textarea when needed *@
+    <input type="hidden" asp-for="Note" />
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
-    <div class="form-field">
-        <label asp-for="SecteurId">Secteur</label>
-        <select asp-for="SecteurId" id="secteur-id">
-            <option value="">— Sélectionner —</option>
-            @foreach (var secteur in Model.Secteurs)
-            {
-                <option value="@secteur.Id">@secteur.Nom</option>
-            }
-        </select>
-        <span asp-validation-for="SecteurId" class="field-validation-error"></span>
-    </div>
+    <div class="ops-form-row-2">
+        <div class="form-field">
+            <label asp-for="SecteurId">Secteur</label>
+            <select asp-for="SecteurId" id="secteur-id">
+                <option value="">— Sélectionner —</option>
+                @foreach (var secteur in Model.Secteurs)
+                {
+                    <option value="@secteur.Id">@secteur.Nom</option>
+                }
+            </select>
+            <span asp-validation-for="SecteurId" class="field-validation-error"></span>
+        </div>
 
-    <div class="form-field">
-        <label asp-for="Date">Date</label>
-        <input asp-for="Date" type="date" />
-        <span asp-validation-for="Date" class="field-validation-error"></span>
+        <div class="form-field">
+            <label asp-for="Date">Date</label>
+            <input asp-for="Date" type="date" />
+            <span asp-validation-for="Date" class="field-validation-error"></span>
+        </div>
     </div>
 
     <div class="form-field form-field-full">
@@ -187,12 +191,6 @@
                 Aucune charge — ajoutez une ligne si nécessaire.
             </p>
         </div>
-    </div>
-
-    <div class="form-field">
-        <label asp-for="Note">Note</label>
-        <textarea asp-for="Note" rows="4"></textarea>
-        <span asp-validation-for="Note" class="field-validation-error"></span>
     </div>
 
     <div class="form-toolbar">
