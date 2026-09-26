@@ -200,7 +200,7 @@
                 intrantId: btn.dataset.intrantId || "",
                 designation: btn.dataset.nom || "",
                 unite: btn.dataset.unite || "",
-                prix: "0",
+                prix: btn.dataset.prix || "0",
                 tva: "20",
             });
 

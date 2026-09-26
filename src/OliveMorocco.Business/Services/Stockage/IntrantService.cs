@@ -59,7 +59,7 @@ public sealed class IntrantService : IIntrantService
         var (items, totalCount) = await _intrants.QueryPagedAsync(
             i => pattern == null || EF.Functions.ILike(i.Nom, pattern),
             query => query.OrderBy(i => i.Nom),
-            i => new IntrantListItemDto(i.Id, i.Nom, i.Unite),
+            i => new IntrantListItemDto(i.Id, i.Nom, i.Unite, i.PrixAchatHT),
             page,
             pageSize,
             cancellationToken);
@@ -111,7 +111,7 @@ public sealed class IntrantService : IIntrantService
     }
 
     private static IntrantDto ToDto(Intrant entity) =>
-        new(entity.Id, entity.Nom, entity.Unite);
+        new(entity.Id, entity.Nom, entity.Unite, entity.PrixAchatHT);
 
     private async Task EnsureNomUniqueAsync(
         string nom,

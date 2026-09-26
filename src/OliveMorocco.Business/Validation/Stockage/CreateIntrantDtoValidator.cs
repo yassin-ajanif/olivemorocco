@@ -14,5 +14,8 @@ public class CreateIntrantDtoValidator : AbstractValidator<CreateIntrantDto>
         RuleFor(x => x.Unite)
             .NotEmpty().WithMessage("L'unité est obligatoire.")
             .MaximumLength(16).WithMessage("L'unité ne doit pas dépasser 16 caractères.");
+
+        RuleFor(x => x.PrixAchatHT)
+            .GreaterThanOrEqualTo(0).WithMessage("Le PU HT doit être positif ou nul.");
     }
 }

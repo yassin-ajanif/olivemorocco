@@ -8,5 +8,7 @@ public sealed class IntrantFormViewModel
 
     public string Unite { get; set; } = string.Empty;
 
+    public decimal PrixAchatHT { get; set; }
+
     public bool IsEdit => Id.HasValue;
 }

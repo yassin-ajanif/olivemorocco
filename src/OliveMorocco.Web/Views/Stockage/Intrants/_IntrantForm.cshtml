@@ -19,6 +19,12 @@
         <span asp-validation-for="Unite" class="field-validation-error"></span>
     </div>
 
+    <div class="form-field">
+        <label for="PrixAchatHT">PU HT (DH)</label>
+        <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
+        <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
+    </div>
+
     <div class="form-toolbar">
         <button type="submit" class="btn btn-primary">Enregistrer</button>
         <a asp-action="Index" class="btn">Annuler</a>

@@ -1,6 +1,7 @@
 @model IntrantListViewModel
+@using System.Globalization
 @{
-    const string cols = "2fr 1fr auto";
+    const string cols = "2fr 1fr 1fr auto";
     const string emptyMessage = "Aucun intrant — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -34,6 +35,7 @@
     <div class="list-header" style="grid-template-columns:@cols">
         <span>Nom</span>
         <span>Unité</span>
+        <span>PU HT</span>
         <span>Actions</span>
     </div>
     <div class="list-body">
@@ -50,6 +52,7 @@
                         <a asp-action="Edit" asp-route-id="@intrant.Id" class="list-link">@intrant.Nom</a>
                     </span>
                     <span data-label="Unité">@intrant.Unite</span>
+                    <span data-label="PU HT">@intrant.PrixAchatHT.ToString("N2", CultureInfo.GetCultureInfo("fr-FR")) DH</span>
                     <span class="list-row-actions" data-label="Actions">
                         <a asp-action="Edit"
                            asp-route-id="@intrant.Id"

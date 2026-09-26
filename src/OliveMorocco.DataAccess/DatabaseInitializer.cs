@@ -98,6 +98,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Nom = "Engrais NPK 15-15-15",
                 Unite = "sac 25 kg",
+                PrixAchatHT = 185m,
                 CreatedAt = now,
                 UpdatedAt = now,
             },
@@ -105,6 +106,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Nom = "Compost organique",
                 Unite = "tonne",
+                PrixAchatHT = 450m,
                 CreatedAt = now,
                 UpdatedAt = now,
             },
@@ -112,6 +114,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Nom = "Phytosanitaire cuivre",
                 Unite = "L",
+                PrixAchatHT = 95m,
                 CreatedAt = now,
                 UpdatedAt = now,
             },
@@ -119,6 +122,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             {
                 Nom = "Irrigation — tuyaux PE",
                 Unite = "m",
+                PrixAchatHT = 12m,
                 CreatedAt = now,
                 UpdatedAt = now,
             });

@@ -133,13 +133,14 @@ public sealed class IntrantsController(IIntrantService intrants) : Controller
             Id = intrant.Id,
             Nom = intrant.Nom,
             Unite = intrant.Unite,
+            PrixAchatHT = intrant.PrixAchatHT,
         };
 
     private static CreateIntrantDto ToCreateDto(IntrantFormViewModel model) =>
-        new(model.Nom.Trim(), model.Unite.Trim());
+        new(model.Nom.Trim(), model.Unite.Trim(), model.PrixAchatHT);
 
     private static UpdateIntrantDto ToUpdateDto(IntrantFormViewModel model) =>
-        new(model.Nom.Trim(), model.Unite.Trim());
+        new(model.Nom.Trim(), model.Unite.Trim(), model.PrixAchatHT);
 
     private static string? Normalize(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

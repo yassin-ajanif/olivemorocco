@@ -69,6 +69,7 @@ public class IntrantConfiguration : IEntityTypeConfiguration<Intrant>
 
         builder.Property(i => i.Nom).HasMaxLength(128).IsRequired();
         builder.Property(i => i.Unite).HasMaxLength(16).IsRequired();
+        builder.Property(i => i.PrixAchatHT).HasPrecision(18, 2);
     }
 }
 

@@ -218,6 +218,7 @@ Catalog of agricultural inputs applied to the land: fertilizers (*engrais*), soi
 | Id | INT | NO | identity | PK |
 | Nom | NVARCHAR(128) | NO | | Input name (e.g. `NPK 15-15-15`, `Compost organique`) |
 | Unite | NVARCHAR(16) | NO | | Unit of measure: `kg`, `L`, `tonne`, `sac`, etc. |
+| PrixAchatHT | DECIMAL(18,2) | NO | 0 | Default purchase unit price (PU HT) for achat documents |
 | CreatedAt | DATETIME | NO | | |
 | UpdatedAt | DATETIME | NO | | |
 | CreatedByUserId | INT | YES | | |

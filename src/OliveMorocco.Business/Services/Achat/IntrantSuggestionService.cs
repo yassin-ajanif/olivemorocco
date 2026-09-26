@@ -17,7 +17,7 @@ public sealed class IntrantSuggestionService(IRepository<Intrant> intrants) : II
         var result = await intrants.QueryPagedAsync(
             i => pattern == null || EF.Functions.ILike(i.Nom, pattern),
             query => query.OrderBy(i => i.Nom),
-            i => new IntrantSuggestionDto(i.Id, i.Nom, i.Unite),
+            i => new IntrantSuggestionDto(i.Id, i.Nom, i.Unite, i.PrixAchatHT),
             page: 1,
             pageSize: 30,
             cancellationToken);
