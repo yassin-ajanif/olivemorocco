@@ -8,6 +8,10 @@ public static class FacturePaiementHelper
         IEnumerable<CreateFacturePaiementDto>? paiements) =>
         (paiements ?? [])
             .Where(p => p.Montant > 0)
+            .Select(p => p with
+            {
+                Reference = string.IsNullOrWhiteSpace(p.Reference) ? string.Empty : p.Reference.Trim(),
+            })
             .ToList();
 
     public static bool ComputeEstPayee(decimal totalTtc, IEnumerable<CreateFacturePaiementDto> paiements)

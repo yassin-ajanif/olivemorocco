@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Common;
 using OliveMorocco.Business.DTOs.Vente;
-using OliveMorocco.Business.Services.Common;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Vente;
@@ -83,7 +82,7 @@ public sealed class FactureClientService
     {
         var entity = await Repo.GetByIdWithNavigationsAsync(
             id,
-            [f => f.Client, f => f.Lignes],
+            [f => f.Client, f => f.Lignes, f => f.Paiements],
             cancellationToken);
 
         if (entity is null)
@@ -92,10 +91,6 @@ public sealed class FactureClientService
         var ligneDtos = await _lignes.FindWithIncludesAsync(
             l => l.FactureClientId == id,
             [l => l.Produit!],
-            cancellationToken);
-
-        var paiementRows = await _paiements.FindAsync(
-            p => p.FactureClientId == id,
             cancellationToken);
 
         return new FactureClientDto(
@@ -122,7 +117,7 @@ public sealed class FactureClientService
                 l.PrixUnitaireHT,
                 l.Remise,
                 l.TauxTVA)).ToList(),
-            paiementRows
+            entity.Paiements
                 .OrderByDescending(p => p.Date)
                 .ThenByDescending(p => p.Id)
                 .Select(p => new FacturePaiementDto(
@@ -146,16 +141,16 @@ public sealed class FactureClientService
             ? await GenerateNumeroAsync(cancellationToken)
             : dto.Numero.Trim();
 
-        var (_, _, ttc) = IFactureClientService.ComputeTotals(dto.Lignes, dto.RemiseGlobale);
+        var prepared = FactureClientDtoPreparer.PrepareCreate(dto, numero);
 
-        var entity = Mapper.Map<FactureClient>(dto with { Numero = numero, TotalTtc = ttc, EstPayee = false });
-        entity.Note = dto.Note ?? string.Empty;
-        entity.BonCommandeReference = dto.BonCommandeReference ?? string.Empty;
-        entity.EstPayee = false;
-        NormalizeLines(entity.Lignes);
+        var entity = Mapper.Map<FactureClient>(prepared);
 
-        await Repo.AddAsync(entity, cancellationToken);
-        await LinkBonsLivraisonAsync(entity.Id, dto.ClientId, dto.Lignes, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await Repo.AddAsync(entity, ct);
+            await LinkBonsLivraisonAsync(entity.Id, prepared.ClientId, prepared.Lignes, ct);
+        }, cancellationToken);
+
         return (await GetFactureByIdAsync(entity.Id, cancellationToken))!;
     }
 
@@ -167,18 +162,18 @@ public sealed class FactureClientService
         await EnsureClientExistsAsync(dto.ClientId, cancellationToken);
         await ValidateAsync(UpdateValidator, dto, cancellationToken);
 
-        var (_, _, ttc) = IFactureClientService.ComputeTotals(dto.Lignes, dto.RemiseGlobale);
-        var paiements = FacturePaiementHelper.Normalize(dto.Paiements);
+        var (prepared, estPayee) = FactureClientDtoPreparer.PrepareUpdate(dto);
 
-        var entity = await Repo.GetByIdWithNavigationsAsync(id, [f => f.Lignes], cancellationToken)
+        var entity = await Repo.GetByIdWithNavigationsAsync(
+            id,
+            [f => f.Lignes, f => f.Paiements],
+            cancellationToken)
             ?? throw new KeyNotFoundException($"Facture {id} introuvable.");
 
         entity.Lignes.Clear();
-        Mapper.Map(dto with { TotalTtc = ttc }, entity);
-        entity.Note = dto.Note ?? string.Empty;
-        entity.BonCommandeReference = dto.BonCommandeReference ?? string.Empty;
-        entity.EstPayee = FacturePaiementHelper.ComputeEstPayee(ttc, paiements);
-        NormalizeLines(entity.Lignes);
+        entity.Paiements.Clear();
+        Mapper.Map(prepared, entity);
+        entity.EstPayee = estPayee;
 
         foreach (var line in entity.Lignes)
         {
@@ -187,7 +182,6 @@ public sealed class FactureClientService
         }
 
         await Repo.UpdateAsync(entity, cancellationToken);
-        await ReplacePaiementsAsync(id, paiements, cancellationToken);
     }
 
     public async Task DeleteFactureAsync(int id, CancellationToken cancellationToken = default)
@@ -214,12 +208,6 @@ public sealed class FactureClientService
             .Max() + 1;
 
         return $"{prefix}{next:D4}";
-    }
-
-    private static void NormalizeLines(IEnumerable<FactureClientLigne> lignes)
-    {
-        foreach (var line in lignes)
-            line.Conditionnement = string.IsNullOrWhiteSpace(line.Conditionnement) ? string.Empty : line.Conditionnement.Trim();
     }
 
     private async Task EnsureClientExistsAsync(int clientId, CancellationToken cancellationToken)
@@ -273,31 +261,6 @@ public sealed class FactureClientService
 
             bl.FactureId = factureId;
             await _bonsLivraison.UpdateAsync(bl, cancellationToken);
-        }
-    }
-
-    private async Task ReplacePaiementsAsync(
-        int factureId,
-        IReadOnlyList<CreateFacturePaiementDto> paiements,
-        CancellationToken cancellationToken)
-    {
-        var existing = await _paiements.FindAsync(p => p.FactureClientId == factureId, cancellationToken);
-        foreach (var old in existing)
-            await _paiements.DeleteAsync(old.Id, cancellationToken);
-
-        foreach (var dto in paiements)
-        {
-            var entity = new PaiementClient
-            {
-                FactureClientId = factureId,
-                Date = dto.Date,
-                Montant = dto.Montant,
-                Mode = dto.Mode,
-                Reference = dto.Reference?.Trim() ?? string.Empty,
-                EstEncaisse = dto.EstEncaisse,
-            };
-
-            await _paiements.AddAsync(entity, cancellationToken);
         }
     }
 

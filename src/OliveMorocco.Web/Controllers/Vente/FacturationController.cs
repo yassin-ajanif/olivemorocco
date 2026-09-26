@@ -316,7 +316,7 @@ public sealed class FacturationController(
             false,
             Normalize(model.Note) ?? string.Empty,
             ToLineDtos(model.Lignes),
-            []);
+            ToPaiementDtos(model.Paiements));
 
     private static UpdateFactureClientDto ToUpdateDto(FactureFormViewModel model) =>
         new(

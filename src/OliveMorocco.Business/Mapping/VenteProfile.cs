@@ -1,4 +1,5 @@
 using AutoMapper;
+using OliveMorocco.Business.DTOs.Common;
 using OliveMorocco.Business.DTOs.Vente;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Vente;
@@ -92,11 +93,15 @@ public class VenteProfile : Profile
             .ForMember(d => d.Produit, o => o.Ignore())
             .ForMember(d => d.Conditionnement, o => o.MapFrom(s => s.Conditionnement ?? string.Empty));
 
+        CreateMap<CreateFacturePaiementDto, PaiementClient>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.FactureClientId, o => o.Ignore())
+            .ForMember(d => d.FactureClient, o => o.Ignore());
+
         CreateMap<CreateFactureClientDto, FactureClient>()
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.Client, o => o.Ignore())
             .ForMember(d => d.Devis, o => o.Ignore())
-            .ForMember(d => d.Paiements, o => o.Ignore())
             .ForMember(d => d.BonsCommandeClient, o => o.Ignore())
             .ForMember(d => d.BonsLivraisonClient, o => o.Ignore())
             .ForMember(d => d.AvoirsClient, o => o.Ignore())
@@ -108,7 +113,7 @@ public class VenteProfile : Profile
             .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Client, o => o.Ignore())
             .ForMember(d => d.Devis, o => o.Ignore())
-            .ForMember(d => d.Paiements, o => o.Ignore())
+            .ForMember(d => d.EstPayee, o => o.Ignore())
             .ForMember(d => d.BonsCommandeClient, o => o.Ignore())
             .ForMember(d => d.BonsLivraisonClient, o => o.Ignore())
             .ForMember(d => d.AvoirsClient, o => o.Ignore())

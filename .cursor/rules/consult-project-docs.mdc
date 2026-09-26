@@ -17,13 +17,14 @@ Before implementing features, refactors, or schema/UI changes, **read the releva
 | Dashboard CSS split + Tailwind-first | `.cursor/rules/dashboard-css.mdc` |
 | Branches, PRs, merge flow | `docs/GIT-WORKFLOW.md` |
 | Unit tests (MSTest, DataAccess, Business) | `docs/UNIT-TESTING.md` |
+| Business services — no DbContext, use repos | `.cursor/rules/business-no-dbcontext.mdc` |
 
 ## Required behavior
 
 1. **Start non-trivial work** by skimming the matching doc(s) — especially for new modules, EF entities, or dashboard sections.
 2. **Follow documented conventions** (Clean Architecture layers; entity folders **Operationnel / Vente / Achat** + `Common/` for shared refs; DTO vs ViewModel; URL sections matching sidebar; ZAHO tokens; no Bon de Préparation).
 3. **If the plan must change**, update the relevant `docs/*.md` in the same change (or propose the doc update before coding).
-4. **Do not** introduce patterns contradicting `ARCHITECTURE.md` (e.g. DbContext in controllers, entities in views, new accent colors without `DESIGN-SYSTEM.md`).
+4. **Do not** introduce patterns contradicting `ARCHITECTURE.md` (e.g. `AppDbContext` in Business services or controllers, entities in views, new accent colors without `DESIGN-SYSTEM.md`).
 
 ## Quick alignment checks
 

@@ -1,0 +1,38 @@
+---
+description: Business layer — IRepository only, never inject AppDbContext
+globs: src/OliveMorocco.Business/**/*.cs
+alwaysApply: false
+---
+
+# Business layer — no DbContext
+
+`OliveMorocco.Business` services **must not** inject or use `AppDbContext`, `DbSet<T>`, or EF APIs directly.
+
+## Use instead
+
+| Need | Use |
+|------|-----|
+| CRUD / queries | `IRepository<T>` (injected per entity) |
+| Multi-step atomic save | `IRepository<T>.ExecuteInTransactionAsync(...)` — all repos share the scoped context |
+| DTO mapping | AutoMapper profiles in `Business/Mapping/` |
+| Rules | FluentValidation in `Business/Validation/` |
+
+EF Core and `AppDbContext` live in **DataAccess** only (`docs/ARCHITECTURE.md`).
+
+## Do not
+
+- `private readonly AppDbContext _db` in a service
+- `_db.Database.BeginTransactionAsync` in Business — call `Repo.ExecuteInTransactionAsync`
+- `DbSet`, `Include`, `SaveChanges` in Business — extend the repository if a query pattern is missing
+
+## Cross-aggregate example (facture + bon de livraison link)
+
+```csharp
+await Repo.ExecuteInTransactionAsync(async ct =>
+{
+    await Repo.AddAsync(entity, ct);
+    await LinkBonsLivraisonAsync(entity.Id, prepared.ClientId, prepared.Lignes, ct);
+}, cancellationToken);
+```
+
+If a repository method is missing, add it to `IRepository<T>` / `Repository<T>` in DataAccess — do not bypass with DbContext in Business.

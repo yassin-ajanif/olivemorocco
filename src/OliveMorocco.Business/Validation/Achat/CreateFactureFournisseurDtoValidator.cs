@@ -1,5 +1,6 @@
 using FluentValidation;
 using OliveMorocco.Business.DTOs.Achat;
+using OliveMorocco.Business.Validation.Common;
 
 namespace OliveMorocco.Business.Validation.Achat;
 
@@ -29,5 +30,8 @@ public sealed class CreateFactureFournisseurDtoValidator : AbstractValidator<Cre
 
         RuleForEach(x => x.Lignes)
             .SetValidator(new CreateFactureFournisseurLigneDtoValidator());
+
+        RuleForEach(x => x.Paiements)
+            .SetValidator(new CreateFacturePaiementDtoValidator());
     }
 }

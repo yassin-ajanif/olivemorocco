@@ -27,4 +27,12 @@ public interface IRepository<T> where T : BaseEntity
     Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Runs <paramref name="action"/> inside a DB transaction (shared scoped <see cref="AppDbContext"/>).
+    /// Rolls back on any exception.
+    /// </summary>
+    Task ExecuteInTransactionAsync(
+        Func<CancellationToken, Task> action,
+        CancellationToken cancellationToken = default);
 }

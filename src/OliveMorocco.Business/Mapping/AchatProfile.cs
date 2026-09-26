@@ -1,5 +1,6 @@
 using AutoMapper;
 using OliveMorocco.Business.DTOs.Achat;
+using OliveMorocco.Business.DTOs.Common;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Common;
 
@@ -91,12 +92,17 @@ public class AchatProfile : Profile
             .ForMember(d => d.TotalTtc, o => o.Ignore())
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
 
+        CreateMap<CreateFacturePaiementDto, PaiementFournisseur>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.FactureFournisseurId, o => o.Ignore())
+            .ForMember(d => d.FactureFournisseur, o => o.Ignore());
+
         CreateMap<CreateFactureFournisseurDto, FactureFournisseur>()
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
-            .ForMember(d => d.Paiements, o => o.Ignore())
             .ForMember(d => d.BonsReception, o => o.Ignore())
             .ForMember(d => d.Pressages, o => o.Ignore())
+            .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty))
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
 
         CreateMap<CreateFactureFournisseurLigneDto, FactureFournisseurLigne>()
@@ -105,15 +111,17 @@ public class AchatProfile : Profile
             .ForMember(d => d.FactureFournisseur, o => o.Ignore())
             .ForMember(d => d.BonReception, o => o.Ignore())
             .ForMember(d => d.Intrant, o => o.Ignore())
+            .ForMember(d => d.Service, o => o.Ignore())
             .ForMember(d => d.Conditionnement, o => o.MapFrom(s => s.Conditionnement ?? string.Empty));
 
         CreateMap<UpdateFactureFournisseurDto, FactureFournisseur>()
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
-            .ForMember(d => d.Paiements, o => o.Ignore())
+            .ForMember(d => d.EstPayee, o => o.Ignore())
             .ForMember(d => d.BonsReception, o => o.Ignore())
             .ForMember(d => d.Pressages, o => o.Ignore())
+            .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty))
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
 
         CreateMap<CreateAvoirFournisseurDto, AvoirFournisseur>()

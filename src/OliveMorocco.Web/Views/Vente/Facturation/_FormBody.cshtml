@@ -140,10 +140,7 @@
     </div>
 </div>
 
-@if (Model.IsEdit)
-{
-    <partial name="_DocPaiementsSection" model="Model.Paiements" />
-}
+<partial name="_DocPaiementsSection" model="Model.Paiements" />
 
 <div class="doc-footer">
     <div class="doc-notes-wrap">
@@ -164,21 +161,18 @@
             <span>Total TTC</span>
             <span id="total-ttc">0,00 DH</span>
         </div>
-        @if (Model.IsEdit)
-        {
-            <div class="doc-totals-row doc-totals-divider">
-                <span>Payé (encaissé)</span>
-                <span id="total-encaisse">0,00 DH</span>
-            </div>
-            <div class="doc-totals-row">
-                <span>Reste dû</span>
-                <span id="total-reste">0,00 DH</span>
-            </div>
-            <div class="doc-totals-row doc-totals-statut">
-                <span>Statut</span>
-                <span id="paiement-statut" class="badge badge-warn">Non payée</span>
-            </div>
-        }
+        <div class="doc-totals-row doc-totals-divider">
+            <span>Payé (encaissé)</span>
+            <span id="total-encaisse">0,00 DH</span>
+        </div>
+        <div class="doc-totals-row">
+            <span>Reste dû</span>
+            <span id="total-reste">0,00 DH</span>
+        </div>
+        <div class="doc-totals-row doc-totals-statut">
+            <span>Statut</span>
+            <span id="paiement-statut" class="badge badge-warn">Non payée</span>
+        </div>
     </div>
 </div>
 

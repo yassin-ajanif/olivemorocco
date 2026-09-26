@@ -311,7 +311,7 @@ public sealed class FacturesFournisseursController(
             false,
             Normalize(model.Note) ?? string.Empty,
             ToLineDtos(model.Lignes),
-            []);
+            ToPaiementDtos(model.Paiements));
 
     private static UpdateFactureFournisseurDto ToUpdateDto(FactureFournisseurFormViewModel model) =>
         new(model.FournisseurId,
