@@ -1,3 +1,5 @@
+using OliveMorocco.Business.DTOs.Common;
+
 namespace OliveMorocco.Business.DTOs.Achat;
 
 public record FactureFournisseurLigneDto(
@@ -35,7 +37,8 @@ public record FactureFournisseurDto(
     decimal TotalTtc,
     bool EstPayee,
     string Note,
-    IReadOnlyList<FactureFournisseurLigneDto> Lignes);
+    IReadOnlyList<FactureFournisseurLigneDto> Lignes,
+    IReadOnlyList<FacturePaiementDto> Paiements);
 
 public record CreateFactureFournisseurDto(
     string Numero,
@@ -46,7 +49,8 @@ public record CreateFactureFournisseurDto(
     decimal TotalTtc,
     bool EstPayee,
     string Note,
-    IReadOnlyList<CreateFactureFournisseurLigneDto> Lignes);
+    IReadOnlyList<CreateFactureFournisseurLigneDto> Lignes,
+    IReadOnlyList<CreateFacturePaiementDto> Paiements);
 
 public record UpdateFactureFournisseurDto(
     int FournisseurId,
@@ -54,9 +58,9 @@ public record UpdateFactureFournisseurDto(
     DateTime DateEcheance,
     decimal RemiseGlobale,
     decimal TotalTtc,
-    bool EstPayee,
     string Note,
-    IReadOnlyList<CreateFactureFournisseurLigneDto> Lignes);
+    IReadOnlyList<CreateFactureFournisseurLigneDto> Lignes,
+    IReadOnlyList<CreateFacturePaiementDto> Paiements);
 
 public record FactureFournisseurListItemDto(
     int Id,

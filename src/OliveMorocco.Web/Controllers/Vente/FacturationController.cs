@@ -1,7 +1,9 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using OliveMorocco.Business.DTOs.Common;
 using OliveMorocco.Business.DTOs.Vente;
 using OliveMorocco.Business.Services.Vente;
+using OliveMorocco.Web.Models.Shared;
 using OliveMorocco.Web.Models.Vente.Facturation;
 using OliveMorocco.Web.Routing;
 
@@ -254,8 +256,8 @@ public sealed class FacturationController(
             DateEcheance = dto.DateEcheance.Date,
             BonCommandeReference = dto.BonCommandeReference,
             RemiseGlobale = dto.RemiseGlobale,
-            EstPayee = dto.EstPayee,
             Note = dto.Note,
+            Paiements = dto.Paiements.Select(ToPaiementViewModel).ToList(),
             Lignes = dto.Lignes.Select(l => new FactureLigneViewModel
             {
                 BonLivraisonId = l.BonLivraisonId,
@@ -311,9 +313,10 @@ public sealed class FacturationController(
             Normalize(model.BonCommandeReference) ?? string.Empty,
             model.RemiseGlobale,
             0,
-            model.EstPayee,
+            false,
             Normalize(model.Note) ?? string.Empty,
-            ToLineDtos(model.Lignes));
+            ToLineDtos(model.Lignes),
+            []);
 
     private static UpdateFactureClientDto ToUpdateDto(FactureFormViewModel model) =>
         new(
@@ -324,9 +327,30 @@ public sealed class FacturationController(
             Normalize(model.BonCommandeReference) ?? string.Empty,
             model.RemiseGlobale,
             0,
-            model.EstPayee,
             Normalize(model.Note) ?? string.Empty,
-            ToLineDtos(model.Lignes));
+            ToLineDtos(model.Lignes),
+            ToPaiementDtos(model.Paiements));
+
+    private static FacturePaiementViewModel ToPaiementViewModel(FacturePaiementDto dto) =>
+        new()
+        {
+            Date = dto.Date.Date,
+            Montant = dto.Montant,
+            Mode = dto.Mode,
+            Reference = dto.Reference,
+            EstEncaisse = dto.EstEncaisse,
+        };
+
+    private static List<CreateFacturePaiementDto> ToPaiementDtos(IEnumerable<FacturePaiementViewModel> paiements) =>
+        paiements
+            .Where(p => p.Montant > 0)
+            .Select(p => new CreateFacturePaiementDto(
+                p.Date.Date,
+                p.Montant,
+                p.Mode,
+                Normalize(p.Reference) ?? string.Empty,
+                p.EstEncaisse))
+            .ToList();
 
     private static List<CreateFactureClientLigneDto> ToLineDtos(IEnumerable<FactureLigneViewModel> lignes) =>
         lignes

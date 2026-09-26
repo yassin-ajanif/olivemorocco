@@ -288,7 +288,7 @@ public class PaiementClientConfiguration : IEntityTypeConfiguration<PaiementClie
     {
         builder.ToTable("Paiements", t => t.HasCheckConstraint(
             "CK_Paiements_Mode",
-            "\"Mode\" IN ('Credit','Cheque','Especes','TPE','Virement','Effet')"));
+            "\"Mode\" IN ('Cheque','Especes','TPE','Virement','Effet')"));
 
         builder.HasIndex(p => p.FactureClientId);
 

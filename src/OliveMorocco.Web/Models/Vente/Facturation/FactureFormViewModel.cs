@@ -1,3 +1,5 @@
+using OliveMorocco.Web.Models.Shared;
+
 namespace OliveMorocco.Web.Models.Vente.Facturation;
 
 public sealed class FactureFormViewModel
@@ -18,11 +20,11 @@ public sealed class FactureFormViewModel
 
     public decimal RemiseGlobale { get; set; }
 
-    public bool EstPayee { get; set; }
-
     public string? Note { get; set; }
 
     public List<FactureLigneViewModel> Lignes { get; set; } = [];
+
+    public List<FacturePaiementViewModel> Paiements { get; set; } = [];
 
     public List<LinkedBonLivraisonViewModel> LinkedBonsLivraison { get; set; } = [];
 

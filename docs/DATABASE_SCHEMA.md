@@ -52,12 +52,11 @@ Most line tables share: `ProduitId`, `Designation`, `Conditionnement`, `Quantite
 
 | Value | Name |
 |-------|------|
-| 0 | Credit |
-| 1 | Cheque |
-| 2 | Especes |
-| 3 | TPE |
-| 4 | Virement |
-| 5 | Effet |
+| 0 | Cheque |
+| 1 | Especes |
+| 2 | TPE |
+| 3 | Virement |
+| 4 | Effet |
 
 ### `MouvementStock.OrigineType` (polymorphic reference)
 

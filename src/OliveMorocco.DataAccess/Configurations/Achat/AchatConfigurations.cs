@@ -244,7 +244,7 @@ public class PaiementFournisseurConfiguration : IEntityTypeConfiguration<Paiemen
     {
         builder.ToTable("PaiementsFournisseurs", t => t.HasCheckConstraint(
             "CK_PaiementsFournisseurs_Mode",
-            "\"Mode\" IN ('Credit','Cheque','Especes','TPE','Virement','Effet')"));
+            "\"Mode\" IN ('Cheque','Especes','TPE','Virement','Effet')"));
 
         builder.HasIndex(p => p.FactureFournisseurId);
 

@@ -1,0 +1,141 @@
+@model IList<FacturePaiementViewModel>
+@using System.Globalization
+@using OliveMorocco.Domain.Enums
+
+<div class="doc-payments-section form-field form-field-full">
+    <div class="doc-payments-toolbar">
+        <label>Paiements</label>
+        <button type="button" id="add-paiement-line" class="btn btn-sm">Ajouter un paiement</button>
+    </div>
+    <div class="doc-payments-wrap">
+        <table class="doc-payments-table" id="paiements-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Montant</th>
+                    <th>Mode</th>
+                    <th>Référence</th>
+                    <th class="col-center">Encaissé</th>
+                    <th class="col-actions"></th>
+                </tr>
+            </thead>
+            <tbody id="paiements-body">
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    var paiement = Model[i];
+                    <tr class="paiement-line">
+                        <td data-label="Date">
+                            <input name="Paiements[@i].Date"
+                                   value="@paiement.Date.ToString("yyyy-MM-dd")"
+                                   type="date"
+                                   class="line-paiement-date" />
+                        </td>
+                        <td data-label="Montant">
+                            <input name="Paiements[@i].Montant"
+                                   value="@(paiement.Montant > 0 ? paiement.Montant.ToString(CultureInfo.InvariantCulture) : "")"
+                                   type="number"
+                                   step="1"
+                                   min="0"
+                                   class="line-paiement-montant" />
+                        </td>
+                        <td data-label="Mode">
+                            <select name="Paiements[@i].Mode" class="line-paiement-mode">
+                                @foreach (ModePaiement mode in Enum.GetValues<ModePaiement>())
+                                {
+                                    if (paiement.Mode == mode)
+                                    {
+                                        <option value="@mode" selected>@ModePaiementLabels.Label(mode)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@mode">@ModePaiementLabels.Label(mode)</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td data-label="Référence">
+                            <input name="Paiements[@i].Reference"
+                                   value="@paiement.Reference"
+                                   type="text"
+                                   class="line-paiement-ref"
+                                   placeholder="N° chèque, virement…" />
+                        </td>
+                        <td data-label="Encaissé" class="col-center">
+                            <input type="hidden" name="Paiements[@i].EstEncaisse" value="false" />
+                            <input name="Paiements[@i].EstEncaisse"
+                                   value="true"
+                                   type="checkbox"
+                                   class="line-paiement-encaisse"
+                                   @(paiement.EstEncaisse ? "checked" : null) />
+                        </td>
+                        <td class="col-actions" data-label="">
+                            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement">Supprimer</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="doc-payments-summary">
+                        Total encaissé : <strong id="paiements-encaisse">0,00 DH</strong>
+                        <span class="doc-payments-summary-sep">·</span>
+                        En attente : <strong id="paiements-attente">0,00 DH</strong>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <p id="paiements-empty" class="list-empty @(Model.Count > 0 ? "hidden" : "")">
+            Aucun paiement — ajoutez une ligne pour enregistrer un règlement.
+        </p>
+    </div>
+</div>
+
+<template id="paiement-line-template">
+    <tr class="paiement-line">
+        <td data-label="Date">
+            <input name="Paiements[__index__].Date"
+                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                   type="date"
+                   class="line-paiement-date" />
+        </td>
+        <td data-label="Montant">
+            <input name="Paiements[__index__].Montant"
+                   type="number"
+                   step="1"
+                   min="0"
+                   class="line-paiement-montant" />
+        </td>
+        <td data-label="Mode">
+            <select name="Paiements[__index__].Mode" class="line-paiement-mode">
+                @foreach (ModePaiement mode in Enum.GetValues<ModePaiement>())
+                {
+                    if (mode == ModePaiement.Virement)
+                    {
+                        <option value="@mode" selected>@ModePaiementLabels.Label(mode)</option>
+                    }
+                    else
+                    {
+                        <option value="@mode">@ModePaiementLabels.Label(mode)</option>
+                    }
+                }
+            </select>
+        </td>
+        <td data-label="Référence">
+            <input name="Paiements[__index__].Reference"
+                   type="text"
+                   class="line-paiement-ref"
+                   placeholder="N° chèque, virement…" />
+        </td>
+        <td data-label="Encaissé" class="col-center">
+            <input type="hidden" name="Paiements[__index__].EstEncaisse" value="false" />
+            <input name="Paiements[__index__].EstEncaisse"
+                   value="true"
+                   type="checkbox"
+                   class="line-paiement-encaisse"
+                   checked />
+        </td>
+        <td class="col-actions" data-label="">
+            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement">Supprimer</button>
+        </td>
+    </tr>
+</template>

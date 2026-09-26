@@ -44,4 +44,8 @@ else
     <script src="~/js/document-totals.js" asp-append-version="true"></script>
     <script src="~/js/achat-document-form.js" asp-append-version="true"></script>
     <script src="~/js/factures-fournisseur-form.js" asp-append-version="true"></script>
+    @if (Model.IsEdit)
+    {
+        <script src="~/js/doc-paiements.js" asp-append-version="true"></script>
+    }
 }

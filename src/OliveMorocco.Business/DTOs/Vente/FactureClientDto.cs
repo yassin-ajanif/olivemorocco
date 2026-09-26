@@ -1,3 +1,5 @@
+using OliveMorocco.Business.DTOs.Common;
+
 namespace OliveMorocco.Business.DTOs.Vente;
 
 public record FactureClientLigneDto(
@@ -35,7 +37,8 @@ public record FactureClientDto(
     decimal TotalTtc,
     bool EstPayee,
     string Note,
-    IReadOnlyList<FactureClientLigneDto> Lignes);
+    IReadOnlyList<FactureClientLigneDto> Lignes,
+    IReadOnlyList<FacturePaiementDto> Paiements);
 
 public record CreateFactureClientDto(
     string Numero,
@@ -48,7 +51,8 @@ public record CreateFactureClientDto(
     decimal TotalTtc,
     bool EstPayee,
     string Note,
-    IReadOnlyList<CreateFactureClientLigneDto> Lignes);
+    IReadOnlyList<CreateFactureClientLigneDto> Lignes,
+    IReadOnlyList<CreateFacturePaiementDto> Paiements);
 
 public record UpdateFactureClientDto(
     int ClientId,
@@ -58,9 +62,9 @@ public record UpdateFactureClientDto(
     string BonCommandeReference,
     decimal RemiseGlobale,
     decimal TotalTtc,
-    bool EstPayee,
     string Note,
-    IReadOnlyList<CreateFactureClientLigneDto> Lignes);
+    IReadOnlyList<CreateFactureClientLigneDto> Lignes,
+    IReadOnlyList<CreateFacturePaiementDto> Paiements);
 
 public record FactureClientListItemDto(
     int Id,
