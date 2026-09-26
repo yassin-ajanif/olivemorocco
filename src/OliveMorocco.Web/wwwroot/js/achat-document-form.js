@@ -20,47 +20,25 @@
         const showError = (message) => window.Zaho?.FormValidation?.show(form ?? document, message);
         const clearErrors = () => window.Zaho?.FormValidation?.clear(form ?? document);
 
-        const debounce = (fn, ms) => {
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => fn(...args), ms);
-            };
-        };
-
-        const showSuggestions = (container, html) => {
-            if (!container)
-                return;
-            container.innerHTML = html;
-            container.hidden = !html.trim();
-        };
-
-        const fetchSuggestions = debounce(async (url, query, container) => {
-            const params = new URLSearchParams();
-            if (query)
-                params.set("search", query);
-
-            try {
-                const response = await fetch(`${url}?${params.toString()}`, {
-                    headers: { "X-Requested-With": "XMLHttpRequest" },
-                });
-                if (!response.ok)
-                    return;
-                showSuggestions(container, await response.text());
-            } catch {
-                /* ignore network errors while typing */
-            }
-        }, 300);
-
         const fournisseurLocked = fournisseurSearchInput?.hasAttribute("readonly") ?? false;
 
-        fournisseurSearchInput?.addEventListener("input", () => {
-            if (fournisseurLocked)
-                return;
-            if (fournisseurIdInput)
-                fournisseurIdInput.value = "";
-            fetchSuggestions("/Achat/Suggestions/Fournisseurs", fournisseurSearchInput.value.trim(), fournisseurSuggestions);
-        });
+        const { showSuggestions, hideSuggestions } = window.Zaho.initDocSuggest([
+            {
+                input: fournisseurSearchInput,
+                container: fournisseurSuggestions,
+                url: "/Achat/Suggestions/Fournisseurs",
+                isLocked: () => fournisseurLocked,
+                onBeforeFetch: () => {
+                    if (fournisseurIdInput)
+                        fournisseurIdInput.value = "";
+                },
+            },
+            {
+                input: intrantSearchInput,
+                container: intrantSuggestions,
+                url: "/Achat/Suggestions/Intrants",
+            },
+        ]);
 
         fournisseurSuggestions?.addEventListener("click", (event) => {
             const btn = event.target.closest(".fournisseur-suggestion");
@@ -71,19 +49,8 @@
                 fournisseurIdInput.value = btn.dataset.fournisseurId || "";
             if (fournisseurSearchInput)
                 fournisseurSearchInput.value = btn.dataset.fournisseurNom || "";
-            showSuggestions(fournisseurSuggestions, "");
+            hideSuggestions(fournisseurSuggestions);
             clearErrors();
-        });
-
-        intrantSearchInput?.addEventListener("input", () => {
-            fetchSuggestions("/Achat/Suggestions/Intrants", intrantSearchInput.value.trim(), intrantSuggestions);
-        });
-
-        document.addEventListener("click", (event) => {
-            if (!event.target.closest(".doc-suggest-wrap")) {
-                showSuggestions(fournisseurSuggestions, "");
-                showSuggestions(intrantSuggestions, "");
-            }
         });
 
         if (!body || !template)
@@ -239,7 +206,7 @@
 
             if (intrantSearchInput)
                 intrantSearchInput.value = "";
-            showSuggestions(intrantSuggestions, "");
+            hideSuggestions(intrantSuggestions);
         });
 
         document.getElementById(config.removeLineButtonId ?? "remove-selected-line")?.addEventListener("click", () => {

@@ -20,47 +20,25 @@
         const showError = (message) => window.Zaho?.FormValidation?.show(form ?? document, message);
         const clearErrors = () => window.Zaho?.FormValidation?.clear(form ?? document);
 
-        const debounce = (fn, ms) => {
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => fn(...args), ms);
-            };
-        };
+        const clientLocked = clientSearchInput?.hasAttribute("readonly") ?? false;
 
-        const showSuggestions = (container, html) => {
-            if (!container)
-                return;
-            container.innerHTML = html;
-            container.hidden = !html.trim();
-        };
-
-        const fetchSuggestions = debounce(async (url, query, container) => {
-            const params = new URLSearchParams();
-            if (query)
-                params.set("search", query);
-
-            try {
-                const response = await fetch(`${url}?${params.toString()}`, {
-                    headers: { "X-Requested-With": "XMLHttpRequest" },
-                });
-                if (!response.ok)
-                    return;
-                showSuggestions(container, await response.text());
-            } catch {
-                /* ignore network errors while typing */
-            }
-        }, 300);
-
-    const clientLocked = clientSearchInput?.hasAttribute("readonly") ?? false;
-
-    clientSearchInput?.addEventListener("input", () => {
-        if (clientLocked)
-            return;
-        if (clientIdInput)
-            clientIdInput.value = "";
-        fetchSuggestions("/Vente/Suggestions/Clients", clientSearchInput.value.trim(), clientSuggestions);
-    });
+        const { showSuggestions, hideSuggestions } = window.Zaho.initDocSuggest([
+            {
+                input: clientSearchInput,
+                container: clientSuggestions,
+                url: "/Vente/Suggestions/Clients",
+                isLocked: () => clientLocked,
+                onBeforeFetch: () => {
+                    if (clientIdInput)
+                        clientIdInput.value = "";
+                },
+            },
+            {
+                input: articleSearchInput,
+                container: articleSuggestions,
+                url: "/Vente/Suggestions/Articles",
+            },
+        ]);
 
         clientSuggestions?.addEventListener("click", (event) => {
             const btn = event.target.closest(".client-suggestion");
@@ -71,19 +49,8 @@
                 clientIdInput.value = btn.dataset.clientId || "";
             if (clientSearchInput)
                 clientSearchInput.value = btn.dataset.clientNom || "";
-            showSuggestions(clientSuggestions, "");
+            hideSuggestions(clientSuggestions);
             clearErrors();
-        });
-
-        articleSearchInput?.addEventListener("input", () => {
-            fetchSuggestions("/Vente/Suggestions/Articles", articleSearchInput.value.trim(), articleSuggestions);
-        });
-
-        document.addEventListener("click", (event) => {
-            if (!event.target.closest(".doc-suggest-wrap")) {
-                showSuggestions(clientSuggestions, "");
-                showSuggestions(articleSuggestions, "");
-            }
         });
 
         if (!body || !template)
@@ -242,7 +209,7 @@
 
             if (articleSearchInput)
                 articleSearchInput.value = "";
-            showSuggestions(articleSuggestions, "");
+            hideSuggestions(articleSuggestions);
         });
 
         document.getElementById(config.removeLineButtonId ?? "remove-selected-line")?.addEventListener("click", () => {
