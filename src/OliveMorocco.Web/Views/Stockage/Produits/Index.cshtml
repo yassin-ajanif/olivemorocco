@@ -36,7 +36,7 @@
         <span>Désignation</span>
         <span>Variété</span>
         <span>Unité</span>
-        <span class="cell-bold">P. vente HT</span>
+        <span class="cell-bold cell-center">P. vente HT</span>
         <span>Stock</span>
         <span>Statut</span>
         <span>Actions</span>
@@ -57,7 +57,7 @@
                     <span data-label="Désignation">@produit.Designation</span>
                     <span data-label="Variété">@produit.VarieteNom</span>
                     <span data-label="Unité">@produit.Unite</span>
-                    <span data-label="P. vente HT" class="cell-bold">@produit.PrixVenteHT.ToString("N2") DH</span>
+                    <span data-label="P. vente HT" class="cell-bold cell-center">@produit.PrixVenteHT.ToString("N2") DH</span>
                     <span data-label="Stock">
                         @produit.StockActuel.ToString("N0")
                         @if (produit.StockBas)
