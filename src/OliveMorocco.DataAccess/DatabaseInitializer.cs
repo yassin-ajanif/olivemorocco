@@ -295,8 +295,9 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
         var picholine = await db.Varietes
             .FirstOrDefaultAsync(v => v.Code == "PICH", cancellationToken)
             ?? await db.Varietes.OrderBy(v => v.Id).FirstOrDefaultAsync(cancellationToken);
+        var typeCharge = await db.TypesCharge.OrderBy(t => t.Id).FirstOrDefaultAsync(cancellationToken);
 
-        if (huilerie is null || picholine is null)
+        if (huilerie is null || picholine is null || typeCharge is null)
             return;
 
         var now = DateTime.UtcNow;
@@ -310,6 +311,16 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             QuantiteHuile = 560,
             CreatedAt = now,
             UpdatedAt = now,
+            Charge = new Charge
+            {
+                TypeChargeId = typeCharge.Id,
+                Libelle = "Pressage — huilerie Atlas",
+                Date = new DateTime(2026, 11, 20),
+                MontantTtc = 4800,
+                Note = string.Empty,
+                CreatedAt = now,
+                UpdatedAt = now,
+            },
         };
         db.Pressages.Add(pressage);
         await db.SaveChangesAsync(cancellationToken);

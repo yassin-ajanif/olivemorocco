@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OliveMorocco.Business.DTOs.Operationnel;
+using OliveMorocco.Business.Services.Achat;
 using OliveMorocco.Business.Services.Operationnel;
 using OliveMorocco.Web.Models.Operationnel.Pressages;
 using OliveMorocco.Web.Routing;
@@ -8,7 +9,9 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Operationnel;
 
 [Route(AppSections.Operationnel + "/[controller]")]
-public sealed class PressagesController(IPressageService pressages) : Controller
+public sealed class PressagesController(
+    IPressageService pressages,
+    IChargeService charges) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
@@ -128,19 +131,23 @@ public sealed class PressagesController(IPressageService pressages) : Controller
     {
         var fournisseurs = await pressages.GetFournisseursForSelectAsync(cancellationToken);
         var varietes = await pressages.GetVarietesForSelectAsync(cancellationToken);
+        var typeCharges = await charges.GetActiveTypesAsync(cancellationToken);
 
         if (model is null)
         {
             return new PressageFormViewModel
             {
                 Date = DateTime.Today,
+                ChargeDate = DateTime.Today,
                 Fournisseurs = fournisseurs,
                 Varietes = varietes,
+                TypeCharges = typeCharges,
             };
         }
 
         model.Fournisseurs = fournisseurs;
         model.Varietes = varietes;
+        model.TypeCharges = typeCharges;
 
         return model;
     }

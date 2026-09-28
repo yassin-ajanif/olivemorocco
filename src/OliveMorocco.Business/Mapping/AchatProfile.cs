@@ -101,7 +101,6 @@ public class AchatProfile : Profile
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
             .ForMember(d => d.BonsReception, o => o.Ignore())
-            .ForMember(d => d.Pressages, o => o.Ignore())
             .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty))
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
 
@@ -120,7 +119,6 @@ public class AchatProfile : Profile
             .ForMember(d => d.Fournisseur, o => o.Ignore())
             .ForMember(d => d.EstPayee, o => o.Ignore())
             .ForMember(d => d.BonsReception, o => o.Ignore())
-            .ForMember(d => d.Pressages, o => o.Ignore())
             .ForMember(d => d.Note, o => o.MapFrom(s => s.Note ?? string.Empty))
             .ForMember(d => d.Lignes, o => o.MapFrom(s => s.Lignes));
 

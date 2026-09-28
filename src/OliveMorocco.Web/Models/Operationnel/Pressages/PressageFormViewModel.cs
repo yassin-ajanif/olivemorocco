@@ -1,3 +1,4 @@
+using OliveMorocco.Business.DTOs.Achat;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.DTOs.Stockage;
 
@@ -30,6 +31,8 @@ public sealed class PressageFormViewModel
     public IReadOnlyList<FournisseurSelectItemDto> Fournisseurs { get; set; } = [];
 
     public IReadOnlyList<VarieteSelectItemDto> Varietes { get; set; } = [];
+
+    public IReadOnlyList<TypeChargeSelectItemDto> TypeCharges { get; set; } = [];
 
     public bool IsEdit => Id.HasValue;
 }

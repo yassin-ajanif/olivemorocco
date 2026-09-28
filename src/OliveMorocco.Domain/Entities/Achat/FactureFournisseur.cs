@@ -19,5 +19,4 @@ public class FactureFournisseur : BaseEntity
     public ICollection<FactureFournisseurLigne> Lignes { get; set; } = new List<FactureFournisseurLigne>();
     public ICollection<PaiementFournisseur> Paiements { get; set; } = new List<PaiementFournisseur>();
     public ICollection<BonReception> BonsReception { get; set; } = new List<BonReception>();
-    public ICollection<Pressage> Pressages { get; set; } = new List<Pressage>();
 }
