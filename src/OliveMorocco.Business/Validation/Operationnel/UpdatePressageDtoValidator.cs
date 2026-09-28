@@ -23,5 +23,14 @@ public class UpdatePressageDtoValidator : AbstractValidator<UpdatePressageDto>
         RuleFor(x => x.QuantiteHuile)
             .GreaterThanOrEqualTo(0).When(x => x.QuantiteHuile.HasValue)
             .WithMessage("La quantité d'huile ne peut pas être négative.");
+
+        RuleFor(x => x.TypeChargeId)
+            .GreaterThan(0).WithMessage("Sélectionnez un type de charge.");
+
+        RuleFor(x => x.Libelle)
+            .NotEmpty().WithMessage("Le libellé de la charge est requis.");
+
+        RuleFor(x => x.MontantTtc)
+            .GreaterThanOrEqualTo(0).WithMessage("Le montant de la charge ne peut pas être négatif.");
     }
 }

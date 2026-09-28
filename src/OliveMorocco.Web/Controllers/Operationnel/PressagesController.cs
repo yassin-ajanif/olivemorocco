@@ -131,7 +131,7 @@ public sealed class PressagesController(
     {
         var fournisseurs = await pressages.GetFournisseursForSelectAsync(cancellationToken);
         var varietes = await pressages.GetVarietesForSelectAsync(cancellationToken);
-        var typeCharges = await charges.GetActiveTypesAsync(cancellationToken);
+        var typeCharges = await charges.GetTypesAsync(cancellationToken);
 
         if (model is null)
         {
@@ -169,6 +169,12 @@ public sealed class PressagesController(
             QuantiteOlives = pressage.QuantiteOlives,
             Rendement = pressage.Rendement,
             QuantiteHuile = pressage.QuantiteHuile,
+            ChargeId = pressage.ChargeId,
+            TypeChargeId = pressage.TypeChargeId,
+            Libelle = pressage.Libelle,
+            ChargeDate = pressage.ChargeDate,
+            MontantTtc = pressage.MontantTtc,
+            Note = pressage.Note,
         };
 
     private static CreatePressageDto ToCreateDto(PressageFormViewModel model) =>
@@ -192,7 +198,12 @@ public sealed class PressagesController(
             model.Date,
             model.QuantiteOlives,
             model.Rendement,
-            model.QuantiteHuile);
+            model.QuantiteHuile,
+            model.TypeChargeId,
+            model.Libelle,
+            model.ChargeDate,
+            model.MontantTtc,
+            model.Note);
 
     private static string? Normalize(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

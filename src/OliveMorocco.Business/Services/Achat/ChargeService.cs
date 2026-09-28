@@ -118,10 +118,10 @@ public sealed class ChargeService : IChargeService
         await _charges.DeleteAsync(id, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TypeChargeSelectItemDto>> GetActiveTypesAsync(
+    public async Task<IReadOnlyList<TypeChargeSelectItemDto>> GetTypesAsync(
         CancellationToken cancellationToken = default)
     {
-        var types = await _types.FindAsync(t => t.Actif, cancellationToken);
+        var types = await _types.GetAllAsync(cancellationToken);
         return types
             .OrderBy(t => t.Nom)
             .Select(t => new TypeChargeSelectItemDto(t.Id, t.Nom))
@@ -182,11 +182,11 @@ public sealed class ChargeService : IChargeService
 
     private async Task EnsureTypeExistsAsync(int typeChargeId, CancellationToken cancellationToken)
     {
-        if (!await _types.AnyAsync(t => t.Id == typeChargeId && t.Actif, cancellationToken))
+        if (!await _types.AnyAsync(t => t.Id == typeChargeId, cancellationToken))
         {
             throw new ValidationException([
                 new ValidationFailure(nameof(CreateChargeDto.TypeChargeId),
-                    "Le type de charge sélectionné est invalide ou inactif."),
+                    "Le type de charge sélectionné est invalide."),
             ]);
         }
     }

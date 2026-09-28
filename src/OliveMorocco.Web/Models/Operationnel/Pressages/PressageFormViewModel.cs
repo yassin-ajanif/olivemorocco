@@ -28,6 +28,9 @@ public sealed class PressageFormViewModel
     public decimal MontantTtc { get; set; }
     public string? Note { get; set; }
 
+    /// <summary>Id of the charge created with this pressage (edit only — used to link back to Achat).</summary>
+    public int? ChargeId { get; set; }
+
     public IReadOnlyList<FournisseurSelectItemDto> Fournisseurs { get; set; } = [];
 
     public IReadOnlyList<VarieteSelectItemDto> Varietes { get; set; } = [];

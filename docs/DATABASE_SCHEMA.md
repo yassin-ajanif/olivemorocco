@@ -894,7 +894,6 @@ Catalog of **purchasable services** (pressage, transport, analysis, etc.). Used 
 |--------|------|------|-------|
 | Id | INT | NO | PK |
 | Nom | NVARCHAR(128) | NO | **Unique** |
-| Actif | BIT | NO | |
 | CreatedAt | DATETIME | NO | |
 | UpdatedAt | DATETIME | NO | |
 | CreatedByUserId | INT | YES | |

@@ -131,7 +131,7 @@ public sealed class ChargesController(IChargeService charges) : Controller
         ChargeFormViewModel? model = null,
         CancellationToken cancellationToken = default)
     {
-        var types = await charges.GetActiveTypesAsync(cancellationToken);
+        var types = await charges.GetTypesAsync(cancellationToken);
 
         if (model is null)
         {

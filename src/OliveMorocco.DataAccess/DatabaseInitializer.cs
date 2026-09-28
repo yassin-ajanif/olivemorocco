@@ -239,10 +239,10 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
 
         var now = DateTime.UtcNow;
         db.TypesCharge.AddRange(
-            new TypeCharge { Nom = "Main d'œuvre", Actif = true, CreatedAt = now, UpdatedAt = now },
-            new TypeCharge { Nom = "Matériel", Actif = true, CreatedAt = now, UpdatedAt = now },
-            new TypeCharge { Nom = "Transport", Actif = true, CreatedAt = now, UpdatedAt = now },
-            new TypeCharge { Nom = "Autre", Actif = true, CreatedAt = now, UpdatedAt = now });
+            new TypeCharge { Nom = "Main d'œuvre", CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Matériel", CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Transport", CreatedAt = now, UpdatedAt = now },
+            new TypeCharge { Nom = "Autre", CreatedAt = now, UpdatedAt = now });
 
         await db.SaveChangesAsync(cancellationToken);
     }

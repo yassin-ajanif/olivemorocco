@@ -3,8 +3,10 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
+using OliveMorocco.Business.DTOs.Achat;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.DTOs.Stockage;
+using OliveMorocco.Business.Services.Achat;
 using OliveMorocco.Business.Services.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
@@ -22,6 +24,7 @@ public sealed class PressageService : IPressageService
     private readonly IRepository<FactureFournisseur> _factures;
     private readonly IRepository<MouvementStockVariete> _mouvementsHuile;
     private readonly IRepository<Charge> _charges;
+    private readonly IChargeService _chargeService;
     private readonly IMapper _mapper;
     private readonly IValidator<CreatePressageDto>? _createValidator;
     private readonly IValidator<UpdatePressageDto>? _updateValidator;
@@ -33,6 +36,7 @@ public sealed class PressageService : IPressageService
         IRepository<FactureFournisseur> factures,
         IRepository<MouvementStockVariete> mouvementsHuile,
         IRepository<Charge> charges,
+        IChargeService chargeService,
         IMapper mapper,
         IEnumerable<IValidator<CreatePressageDto>> createValidators,
         IEnumerable<IValidator<UpdatePressageDto>> updateValidators)
@@ -43,6 +47,7 @@ public sealed class PressageService : IPressageService
         _factures = factures;
         _mouvementsHuile = mouvementsHuile;
         _charges = charges;
+        _chargeService = chargeService;
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -88,7 +93,12 @@ public sealed class PressageService : IPressageService
             [p => p.Fournisseur, p => p.Variete],
             cancellationToken);
 
-        return entity is null ? null : ToDto(entity);
+        if (entity is null)
+            return null;
+
+        var charge = await GetLinkedChargeAsync(entity.ChargeId, cancellationToken);
+
+        return ToDto(entity, charge);
     }
 
     public async Task<PressageDto> CreatePressageAsync(
@@ -160,6 +170,16 @@ public sealed class PressageService : IPressageService
             }
 
             await _pressages.UpdateAsync(entity, ct);
+
+            await _chargeService.UpdateChargeAsync(
+                entity.ChargeId,
+                new UpdateChargeDto(
+                    dto.TypeChargeId,
+                    dto.Libelle,
+                    dto.ChargeDate,
+                    dto.MontantTtc,
+                    dto.Note ?? string.Empty),
+                ct);
         }, cancellationToken);
     }
 
@@ -203,7 +223,7 @@ public sealed class PressageService : IPressageService
             .ToList();
     }
 
-    private static PressageDto ToDto(Pressage entity) =>
+    private static PressageDto ToDto(Pressage entity, Charge? charge) =>
         new(
             entity.Id,
             entity.Numero,
@@ -214,7 +234,20 @@ public sealed class PressageService : IPressageService
             entity.Date,
             entity.QuantiteOlives,
             entity.Rendement,
-            entity.QuantiteHuile);
+            entity.QuantiteHuile,
+            entity.ChargeId,
+            charge?.TypeChargeId ?? 0,
+            charge?.Libelle ?? string.Empty,
+            charge?.Date ?? entity.Date,
+            charge?.MontantTtc ?? 0m,
+            charge?.Note ?? string.Empty);
+
+    private async Task<Charge?> GetLinkedChargeAsync(int chargeId, CancellationToken cancellationToken)
+    {
+        var charges = await _charges.FindAsync(c => c.Id == chargeId, cancellationToken);
+
+        return charges.FirstOrDefault();
+    }
 
     private async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken)
     {

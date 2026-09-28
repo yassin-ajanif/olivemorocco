@@ -25,7 +25,7 @@ public interface IChargeService
 
     Task DeleteChargeAsync(int id, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<TypeChargeSelectItemDto>> GetActiveTypesAsync(
+    Task<IReadOnlyList<TypeChargeSelectItemDto>> GetTypesAsync(
         CancellationToken cancellationToken = default);
 
     Task AddChargesForInterventionAsync(

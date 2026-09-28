@@ -122,7 +122,7 @@ public sealed class InterventionsController(
     {
         var secteurs = await interventions.GetSecteursForSelectAsync(cancellationToken);
         var intrants = await interventions.GetIntrantsForSelectAsync(cancellationToken);
-        var typeCharges = await charges.GetActiveTypesAsync(cancellationToken);
+        var typeCharges = await charges.GetTypesAsync(cancellationToken);
 
         if (model is null)
         {
