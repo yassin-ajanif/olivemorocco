@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Stockage;
@@ -8,8 +9,22 @@ using OliveMorocco.Domain.Enums;
 
 namespace OliveMorocco.Business.Services.Stockage;
 
+/// <summary>
+/// Owns the bulk-oil ledger of <see cref="Variete.StockHuile"/>: reads the per-variété stock,
+/// lists <see cref="MouvementStockVariete"/> entries and applies the movements produced by
+/// manual adjustments, pressages and remplissages (single writer of the ledger).
+/// </summary>
 public sealed class StockHuileService : IStockHuileService
 {
+    /// <summary>Oil produced by a pressage (in), or its correction / reversal on edit / delete.</summary>
+    public const string OriginePressage = "Pressage";
+
+    /// <summary>Manual adjustment of bulk oil stock.</summary>
+    public const string OrigineImport = "Import";
+
+    /// <summary>Oil filled into bottles (out), or its correction / reversal on edit / delete.</summary>
+    public const string OrigineRemplissage = "Remplissage";
+
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<MouvementStockVariete> _mouvements;
     private readonly IValidator<CreateAjustementStockDto>? _ajustementValidator;
@@ -83,7 +98,7 @@ public sealed class StockHuileService : IStockHuileService
                 m.Type == TypeMouvement.Sortie ? m.StockAvant - m.Quantite : m.StockAvant + m.Quantite,
                 m.OrigineType,
                 m.OrigineId,
-                StockHuileMouvements.FormatOrigineLabel(m.OrigineType, m.OrigineId),
+                FormatOrigineLabel(m.OrigineType, m.OrigineId),
                 m.Note),
             page,
             pageSize,
@@ -104,18 +119,86 @@ public sealed class StockHuileService : IStockHuileService
                 throw new ValidationException(result.Errors);
         }
 
-        var variete = await _varietes.GetByIdAsync(varieteId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Variété {varieteId} introuvable.");
-
-        var mouvement = StockHuileMouvements.Apply(
-            variete,
+        await ApplyVarieteMouvementAsync(
+            varieteId,
             dto.Variation,
-            StockHuileMouvements.OrigineImport,
+            OrigineImport,
             origineId: null,
             dto.Note,
             nameof(CreateAjustementStockDto.Variation),
-            "Le stock d'huile ne peut pas devenir négatif.");
+            cancellationToken);
+    }
+
+    public async Task ApplyVarieteMouvementAsync(
+        int varieteId,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName,
+        CancellationToken cancellationToken = default)
+    {
+        if (variation == 0)
+            return;
+
+        var variete = await _varietes.GetByIdAsync(varieteId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Variété {varieteId} introuvable.");
+
+        var mouvement = BuildMouvement(
+            variete,
+            variation,
+            origineType,
+            origineId,
+            note,
+            errorPropertyName);
 
         await _mouvements.AddAsync(mouvement, cancellationToken);
     }
+
+    /// <summary>
+    /// Builds the movement and keeps <see cref="Variete.StockHuile"/> in sync.
+    /// The caller persists the returned movement (which also saves the tracked variété).
+    /// </summary>
+    private static MouvementStockVariete BuildMouvement(
+        Variete variete,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName)
+    {
+        var stockAvant = variete.StockHuile;
+        var nouveauStock = stockAvant + variation;
+
+        if (nouveauStock < 0)
+        {
+            throw new ValidationException([
+                new ValidationFailure(
+                    errorPropertyName,
+                    $"Stock d'huile insuffisant pour « {variete.Nom} » : {stockAvant:N2} L disponibles, {Math.Abs(variation):N2} L requis."),
+            ]);
+        }
+
+        variete.StockHuile = nouveauStock;
+
+        return new MouvementStockVariete
+        {
+            VarieteId = variete.Id,
+            Type = variation > 0 ? TypeMouvement.Entree : TypeMouvement.Sortie,
+            Quantite = Math.Abs(variation),
+            StockAvant = stockAvant,
+            OrigineType = origineType,
+            OrigineId = origineId,
+            Note = note?.Trim() ?? string.Empty,
+        };
+    }
+
+    private static string FormatOrigineLabel(string origineType, int? origineId) =>
+        origineType switch
+        {
+            OriginePressage => origineId.HasValue ? $"Pressage #{origineId}" : "Pressage",
+            OrigineRemplissage => origineId.HasValue ? $"Remplissage #{origineId}" : "Remplissage",
+            OrigineImport => "Ajustement manuel",
+            _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
+        };
 }

@@ -19,8 +19,8 @@ public sealed class RemplissageService : IRemplissageService
     private readonly IRepository<Remplissage> _remplissages;
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<Produit> _produits;
-    private readonly IRepository<MouvementStockVariete> _mouvementsHuile;
     private readonly IRepository<MouvementStock> _mouvementsProduit;
+    private readonly IStockHuileService _stockHuile;
     private readonly IValidator<CreateRemplissageDto>? _createValidator;
     private readonly IValidator<UpdateRemplissageDto>? _updateValidator;
 
@@ -28,16 +28,16 @@ public sealed class RemplissageService : IRemplissageService
         IRepository<Remplissage> remplissages,
         IRepository<Variete> varietes,
         IRepository<Produit> produits,
-        IRepository<MouvementStockVariete> mouvementsHuile,
         IRepository<MouvementStock> mouvementsProduit,
+        IStockHuileService stockHuile,
         IEnumerable<IValidator<CreateRemplissageDto>> createValidators,
         IEnumerable<IValidator<UpdateRemplissageDto>> updateValidators)
     {
         _remplissages = remplissages;
         _varietes = varietes;
         _produits = produits;
-        _mouvementsHuile = mouvementsHuile;
         _mouvementsProduit = mouvementsProduit;
+        _stockHuile = stockHuile;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
     }
@@ -128,11 +128,9 @@ public sealed class RemplissageService : IRemplissageService
     {
         await ValidateAsync(_createValidator, dto, cancellationToken);
 
-        var variete = await GetVarieteAsync(dto.VarieteId, cancellationToken);
+        await EnsureVarieteExistsAsync(dto.VarieteId, cancellationToken);
         var lignes = await BuildLignesAsync(dto.VarieteId, dto.Lignes, cancellationToken);
         var quantiteHuile = lignes.Sum(l => l.Litres) + dto.Perte;
-
-        EnsureStockHuileSuffisant(variete, quantiteHuile);
 
         var entity = new Remplissage
         {
@@ -148,7 +146,7 @@ public sealed class RemplissageService : IRemplissageService
         await _remplissages.ExecuteInTransactionAsync(async ct =>
         {
             await _remplissages.AddAsync(entity, ct);
-            await ApplyHuileAsync(variete, -quantiteHuile, entity.Id, string.Empty, ct);
+            await ApplyHuileAsync(dto.VarieteId, -quantiteHuile, entity.Id, string.Empty, ct);
 
             foreach (var ligne in lignes)
                 await ApplyProduitAsync(ligne.ProduitId, ligne.Quantite, entity.Id, string.Empty, ct);
@@ -167,7 +165,7 @@ public sealed class RemplissageService : IRemplissageService
         var entity = await _remplissages.GetByIdWithNavigationsAsync(id, [r => r.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Remplissage {id} introuvable.");
 
-        var nouvelleVariete = await GetVarieteAsync(dto.VarieteId, cancellationToken);
+        await EnsureVarieteExistsAsync(dto.VarieteId, cancellationToken);
         var nouvellesLignes = await BuildLignesAsync(dto.VarieteId, dto.Lignes, cancellationToken);
         var nouvelleHuile = nouvellesLignes.Sum(l => l.Litres) + dto.Perte;
 
@@ -184,13 +182,12 @@ public sealed class RemplissageService : IRemplissageService
         {
             if (ancienneVarieteId == dto.VarieteId)
             {
-                await ApplyHuileAsync(nouvelleVariete, ancienneHuile - nouvelleHuile, id, NoteModification, ct);
+                await ApplyHuileAsync(ancienneVarieteId, ancienneHuile - nouvelleHuile, id, NoteModification, ct);
             }
             else
             {
-                var ancienneVariete = await GetVarieteAsync(ancienneVarieteId, ct);
-                await ApplyHuileAsync(ancienneVariete, ancienneHuile, id, NoteModification, ct);
-                await ApplyHuileAsync(nouvelleVariete, -nouvelleHuile, id, NoteModification, ct);
+                await ApplyHuileAsync(ancienneVarieteId, ancienneHuile, id, NoteModification, ct);
+                await ApplyHuileAsync(dto.VarieteId, -nouvelleHuile, id, NoteModification, ct);
             }
 
             foreach (var (produitId, delta) in produitDeltas)
@@ -220,8 +217,7 @@ public sealed class RemplissageService : IRemplissageService
 
         await _remplissages.ExecuteInTransactionAsync(async ct =>
         {
-            var variete = await GetVarieteAsync(entity.VarieteId, ct);
-            await ApplyHuileAsync(variete, entity.QuantiteHuile, id, NoteSuppression, ct);
+            await ApplyHuileAsync(entity.VarieteId, entity.QuantiteHuile, id, NoteSuppression, ct);
 
             foreach (var ligne in entity.Lignes)
                 await ApplyProduitAsync(ligne.ProduitId, -ligne.Quantite, id, NoteSuppression, ct);
@@ -272,12 +268,14 @@ public sealed class RemplissageService : IRemplissageService
         return $"{prefix}{next:D4}";
     }
 
-    private async Task<Variete> GetVarieteAsync(int varieteId, CancellationToken cancellationToken)
+    private async Task EnsureVarieteExistsAsync(int varieteId, CancellationToken cancellationToken)
     {
-        return await _varietes.GetByIdAsync(varieteId, cancellationToken)
-            ?? throw new ValidationException([
-                new ValidationFailure(nameof(CreateRemplissageDto.VarieteId), "Variété introuvable."),
-            ]);
+        if (await _varietes.AnyAsync(v => v.Id == varieteId, cancellationToken))
+            return;
+
+        throw new ValidationException([
+            new ValidationFailure(nameof(CreateRemplissageDto.VarieteId), "Variété introuvable."),
+        ]);
     }
 
     private async Task<List<RemplissageLigne>> BuildLignesAsync(
@@ -311,38 +309,21 @@ public sealed class RemplissageService : IRemplissageService
         return result;
     }
 
-    private static void EnsureStockHuileSuffisant(Variete variete, decimal quantiteHuile)
-    {
-        if (variete.StockHuile >= quantiteHuile)
-            return;
-
-        throw new ValidationException([
-            new ValidationFailure(
-                nameof(CreateRemplissageDto.Lignes),
-                $"Stock d'huile insuffisant pour « {variete.Nom} » : {variete.StockHuile:N2} L disponibles, {quantiteHuile:N2} L requis."),
-        ]);
-    }
-
     private async Task ApplyHuileAsync(
-        Variete variete,
+        int varieteId,
         decimal variation,
         int remplissageId,
         string note,
         CancellationToken cancellationToken)
     {
-        if (variation == 0)
-            return;
-
-        var mouvement = StockHuileMouvements.Apply(
-            variete,
+        await _stockHuile.ApplyVarieteMouvementAsync(
+            varieteId,
             variation,
-            StockHuileMouvements.OrigineRemplissage,
+            StockHuileService.OrigineRemplissage,
             remplissageId,
             note,
             nameof(CreateRemplissageDto.Lignes),
-            $"Stock d'huile insuffisant pour « {variete.Nom} » : {variete.StockHuile:N2} L disponibles, {-variation:N2} L requis.");
-
-        await _mouvementsHuile.AddAsync(mouvement, cancellationToken);
+            cancellationToken);
     }
 
     private async Task ApplyProduitAsync(

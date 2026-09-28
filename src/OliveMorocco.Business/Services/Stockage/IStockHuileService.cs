@@ -25,4 +25,19 @@ public interface IStockHuileService
         int varieteId,
         CreateAjustementStockDto dto,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Applies a bulk-oil movement to the variété ledger: rejects a negative resulting stock,
+    /// keeps <c>Variete.StockHuile</c> in sync and persists the <c>MouvementStockVariete</c>.
+    /// Used by the operational flows (pressage, remplissage) so the ledger has a single writer.
+    /// </summary>
+    /// <param name="errorPropertyName">Validation property the "insufficient stock" failure is attached to.</param>
+    Task ApplyVarieteMouvementAsync(
+        int varieteId,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName,
+        CancellationToken cancellationToken = default);
 }

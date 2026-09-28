@@ -22,7 +22,7 @@ public sealed class PressageService : IPressageService
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<FactureFournisseur> _factures;
-    private readonly IRepository<MouvementStockVariete> _mouvementsHuile;
+    private readonly IStockHuileService _stockHuile;
     private readonly IRepository<Charge> _charges;
     private readonly IChargeService _chargeService;
     private readonly IMapper _mapper;
@@ -34,7 +34,7 @@ public sealed class PressageService : IPressageService
         IRepository<Tiers> tiers,
         IRepository<Variete> varietes,
         IRepository<FactureFournisseur> factures,
-        IRepository<MouvementStockVariete> mouvementsHuile,
+        IStockHuileService stockHuile,
         IRepository<Charge> charges,
         IChargeService chargeService,
         IMapper mapper,
@@ -45,7 +45,7 @@ public sealed class PressageService : IPressageService
         _tiers = tiers;
         _varietes = varietes;
         _factures = factures;
-        _mouvementsHuile = mouvementsHuile;
+        _stockHuile = stockHuile;
         _charges = charges;
         _chargeService = chargeService;
         _mapper = mapper;
@@ -279,22 +279,14 @@ public sealed class PressageService : IPressageService
         string note,
         CancellationToken cancellationToken)
     {
-        if (variation == 0)
-            return;
-
-        var variete = await _varietes.GetByIdAsync(varieteId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Variété {varieteId} introuvable.");
-
-        var mouvement = StockHuileMouvements.Apply(
-            variete,
+        await _stockHuile.ApplyVarieteMouvementAsync(
+            varieteId,
             variation,
-            StockHuileMouvements.OriginePressage,
+            StockHuileService.OriginePressage,
             pressageId,
             note,
             nameof(CreatePressageDto.QuantiteHuile),
-            $"Stock d'huile insuffisant pour « {variete.Nom} » : cette huile a déjà été utilisée ou ajustée.");
-
-        await _mouvementsHuile.AddAsync(mouvement, cancellationToken);
+            cancellationToken);
     }
 
     private async Task EnsureReferencesValidAsync(
