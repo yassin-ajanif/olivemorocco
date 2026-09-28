@@ -17,4 +17,7 @@ public sealed class ListPaginationViewModel
 
     /// <summary>Stock list filter — preserve « stock bas uniquement » across pages.</summary>
     public bool StockBasOnly { get; init; }
+
+    /// <summary>Stock list tab (e.g. « huile ») — preserved across pages.</summary>
+    public string? Vue { get; init; }
 }

@@ -1,6 +1,6 @@
 @model VarieteListViewModel
 @{
-    const string cols = "2fr 1fr 1.5fr auto";
+    const string cols = "2fr 1fr 1.5fr 1fr auto";
     const string emptyMessage = "Aucune variété — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -35,6 +35,7 @@
         <span>Nom</span>
         <span>Code</span>
         <span>Région d'origine</span>
+        <span class="cell-bold cell-center">Stock huile (L)</span>
         <span>Actions</span>
     </div>
     <div class="list-body">
@@ -52,6 +53,9 @@
                     </span>
                     <span data-label="Code">@(variete.Code ?? "—")</span>
                     <span data-label="Région">@(variete.RegionOrigine ?? "—")</span>
+                    <span data-label="Stock huile (L)" class="cell-bold cell-center">
+                        <a href="/@OliveMorocco.Web.Routing.AppSections.Stockage/Stock/Huile/@variete.Id" class="list-link">@variete.StockHuile.ToString("N2")</a>
+                    </span>
                     <span class="list-row-actions" data-label="Actions">
                         <a asp-action="Edit"
                            asp-route-id="@variete.Id"

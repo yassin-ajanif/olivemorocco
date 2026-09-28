@@ -200,7 +200,7 @@ Same pattern as FaturatiWeb: controllers use **route prefixes** matching the das
 |---------|------------|----------|
 | Public site | `/`, `/Home` | ZAHO marketing page |
 | Dashboard | `/Dashboard` | Gestion shell (today) |
-| Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Varietes`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock`, `/Stockage/HuileVrac` |
+| Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Varietes`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock` (tabs: produits / `?vue=huile` bulk oil per variety; `/Stockage/Stock/Huile/{varieteId}` oil history) |
 | Vente | `/Vente/...` | `/Vente/Clients`, `/Vente/Devis` |
 | Achat | `/Achat/...` | `/Achat/Fournisseurs`, `/Achat/BonsReception` |
 | Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Pressages`, `/Operationnel/Recoltes` |
@@ -213,7 +213,7 @@ Organized under the **three domains** (mirrors Business services):
 
 ```
 Controllers/
-├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController, HuileVracController)
+├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController)
 ├── Operationnel/      (InterventionsController, PressagesController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)

@@ -59,7 +59,7 @@ public sealed class VarieteService : IVarieteService
                  || (v.Code != null && EF.Functions.ILike(v.Code, pattern))
                  || (v.RegionOrigine != null && EF.Functions.ILike(v.RegionOrigine, pattern)),
             query => query.OrderBy(v => v.Nom),
-            v => new VarieteListItemDto(v.Id, v.Nom, v.Code, v.RegionOrigine),
+            v => new VarieteListItemDto(v.Id, v.Nom, v.Code, v.RegionOrigine, v.StockHuile),
             page,
             pageSize,
             cancellationToken);

@@ -8,16 +8,35 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Stockage;
 
 [Route(AppSections.Stockage + "/[controller]")]
-public sealed class StockController(IStockService stock) : Controller
+public sealed class StockController(IStockService stock, IStockHuileService stockHuile) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
         string? search,
+        string? vue,
         bool stockBasOnly = false,
         int page = 1,
         CancellationToken cancellationToken = default)
     {
         page = Math.Max(1, page);
+
+        if (string.Equals(vue, StockListViewModel.VueHuile, StringComparison.OrdinalIgnoreCase))
+        {
+            var huile = await stockHuile.GetStockHuileAsync(
+                search,
+                page,
+                StockListViewModel.DefaultPageSize,
+                cancellationToken);
+
+            return View(new StockListViewModel
+            {
+                Vue = StockListViewModel.VueHuile,
+                HuileItems = huile.Items,
+                Search = Normalize(search),
+                Page = page,
+                TotalCount = huile.TotalCount,
+            });
+        }
 
         var result = await stock.GetStockEtatAsync(
             search,
@@ -120,6 +139,81 @@ public sealed class StockController(IStockService stock) : Controller
         return View(nameof(Detail), new StockDetailViewModel
         {
             Produit = produit,
+            Mouvements = mouvements.Items,
+            MouvementPage = page,
+            MouvementTotalCount = mouvements.TotalCount,
+            Ajustement = formState,
+        });
+    }
+
+    [HttpGet("Huile/{id:int}")]
+    public async Task<IActionResult> Huile(
+        int id,
+        int page = 1,
+        CancellationToken cancellationToken = default)
+        => await HuileViewAsync(id, Math.Max(1, page), new StockAjustementViewModel(), cancellationToken);
+
+    [HttpPost("Huile/{id:int}/Ajustement")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HuileAjustement(
+        int id,
+        [Bind(Prefix = "Ajustement")] StockAjustementViewModel model,
+        int page = 1,
+        CancellationToken cancellationToken = default)
+    {
+        page = Math.Max(1, page);
+        const string prefix = "Ajustement";
+
+        if (!model.Variation.HasValue)
+        {
+            ModelState.AddModelError(
+                $"{prefix}.{nameof(StockAjustementViewModel.Variation)}",
+                "La variation est requise.");
+        }
+
+        if (!ModelState.IsValid)
+            return await HuileViewAsync(id, page, model, cancellationToken);
+
+        try
+        {
+            await stockHuile.CreateAjustementAsync(
+                id,
+                new CreateAjustementStockDto(model.Variation!.Value, model.Note),
+                cancellationToken);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (ValidationException exception)
+        {
+            AddValidationErrors(exception, prefix);
+            return await HuileViewAsync(id, page, model, cancellationToken);
+        }
+
+        TempData["Success"] = "Stock d'huile ajusté avec succès.";
+        return RedirectToAction(nameof(Huile), new { id, page = 1 });
+    }
+
+    private async Task<IActionResult> HuileViewAsync(
+        int id,
+        int page,
+        StockAjustementViewModel formState,
+        CancellationToken cancellationToken)
+    {
+        var variete = await stockHuile.GetDetailAsync(id, cancellationToken);
+        if (variete is null)
+            return NotFound();
+
+        var mouvements = await stockHuile.GetMouvementsAsync(
+            id,
+            page,
+            StockHuileDetailViewModel.DefaultMouvementPageSize,
+            cancellationToken);
+
+        return View(nameof(Huile), new StockHuileDetailViewModel
+        {
+            Variete = variete,
             Mouvements = mouvements.Items,
             MouvementPage = page,
             MouvementTotalCount = mouvements.TotalCount,

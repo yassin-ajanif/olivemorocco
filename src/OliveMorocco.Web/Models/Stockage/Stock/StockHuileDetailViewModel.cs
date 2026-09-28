@@ -1,9 +1,8 @@
 using OliveMorocco.Business.DTOs.Stockage;
-using OliveMorocco.Web.Models.Stockage.Stock;
 
-namespace OliveMorocco.Web.Models.Stockage.HuileVrac;
+namespace OliveMorocco.Web.Models.Stockage.Stock;
 
-public sealed class HuileVracDetailViewModel
+public sealed class StockHuileDetailViewModel
 {
     public const int DefaultMouvementPageSize = 15;
 

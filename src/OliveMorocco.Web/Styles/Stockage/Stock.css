@@ -1,5 +1,16 @@
 /* Stockage · État du stock */
 
+.stock-view-switch{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  margin-bottom:var(--space-md);
+}
+
+.stock-view-switch .btn + .btn{
+  margin-left:-1px;
+}
+
 .stock-toolbar{
   flex-wrap:wrap;
   gap:var(--space-md);

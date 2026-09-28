@@ -1,4 +1,4 @@
-@model HuileVracDetailViewModel
+@model StockHuileDetailViewModel
 @{
     var v = Model.Variete;
     const string cols = "1.1fr 0.75fr 0.8fr 0.8fr 0.8fr 1fr minmax(0,1.2fr)";
@@ -22,7 +22,7 @@
     <p class="module-section">
         Stock actuel : <strong>@v.StockHuile.ToString("N2") L</strong>@(v.Code is null ? "" : $" · {v.Code}")
     </p>
-    <a asp-action="Index" class="btn btn-sm">← Retour à la liste</a>
+    <a asp-action="Index" asp-route-vue="huile" class="btn btn-sm">← Retour à la liste</a>
 </div>
 
 <div class="dash-panel stock-ajustement-panel@(ajustementOpen ? " is-open" : "")"
@@ -38,7 +38,7 @@
          id="stockAjustementBody"
          @(!ajustementOpen ? "hidden" : null)>
         <p class="stock-panel-hint">Entrez une variation en litres : positive (entrée) ou négative (sortie).</p>
-        <form asp-action="Ajustement"
+        <form asp-action="HuileAjustement"
               asp-route-id="@v.VarieteId"
               asp-route-page="@Model.MouvementPage"
               method="post"

@@ -24,4 +24,5 @@ public record VarieteListItemDto(
     int Id,
     string Nom,
     string? Code,
-    string? RegionOrigine);
+    string? RegionOrigine,
+    decimal StockHuile);
