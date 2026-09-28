@@ -7,6 +7,8 @@ public sealed class PressageFormViewModel
 {
     public int? Id { get; set; }
 
+    public string? Numero { get; set; }
+
     public int FournisseurId { get; set; }
 
     public int VarieteId { get; set; }

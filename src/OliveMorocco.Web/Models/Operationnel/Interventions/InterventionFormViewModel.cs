@@ -7,6 +7,8 @@ public sealed class InterventionFormViewModel
 {
     public int? Id { get; set; }
 
+    public string? Numero { get; set; }
+
     public int SecteurId { get; set; }
 
     public DateTime Date { get; set; } = DateTime.Today;

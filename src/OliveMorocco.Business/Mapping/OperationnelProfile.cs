@@ -11,6 +11,7 @@ public class OperationnelProfile : Profile
     {
         CreateMap<CreateInterventionDto, Intervention>()
             .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Secteur, o => o.Ignore())
             .ForMember(d => d.Charges, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
@@ -29,6 +30,7 @@ public class OperationnelProfile : Profile
 
         CreateMap<UpdateInterventionDto, Intervention>()
             .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Secteur, o => o.Ignore())
             .ForMember(d => d.Charges, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
@@ -49,6 +51,7 @@ public class OperationnelProfile : Profile
 
         CreateMap<CreatePressageDto, Pressage>()
             .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
             .ForMember(d => d.Variete, o => o.Ignore())
             .ForMember(d => d.FactureFournisseur, o => o.Ignore())
@@ -59,6 +62,7 @@ public class OperationnelProfile : Profile
 
         CreateMap<UpdatePressageDto, Pressage>()
             .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Numero, o => o.Ignore())
             .ForMember(d => d.Fournisseur, o => o.Ignore())
             .ForMember(d => d.Variete, o => o.Ignore())
             .ForMember(d => d.FactureFournisseur, o => o.Ignore())

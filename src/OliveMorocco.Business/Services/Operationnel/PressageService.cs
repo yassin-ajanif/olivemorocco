@@ -65,6 +65,7 @@ public sealed class PressageService : IPressageService
             query => query.OrderByDescending(p => p.Date).ThenByDescending(p => p.Id),
             p => new PressageListItemDto(
                 p.Id,
+                p.Numero,
                 p.Date,
                 p.Fournisseur.Nom,
                 p.Variete.Nom,
@@ -97,6 +98,7 @@ public sealed class PressageService : IPressageService
         await EnsureReferencesValidAsync(dto.FournisseurId, dto.VarieteId, dto.FactureFournisseurId, cancellationToken);
 
         var entity = _mapper.Map<Pressage>(dto);
+        entity.Numero = await GenerateNumeroAsync(cancellationToken);
         entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
 
         await _pressages.ExecuteInTransactionAsync(async ct =>
@@ -210,6 +212,7 @@ public sealed class PressageService : IPressageService
     private static PressageDto ToDto(Pressage entity) =>
         new(
             entity.Id,
+            entity.Numero,
             entity.FournisseurId,
             entity.Fournisseur.Nom,
             entity.VarieteId,
@@ -220,6 +223,18 @@ public sealed class PressageService : IPressageService
             entity.QuantiteHuile,
             entity.FactureFournisseurId,
             entity.FactureFournisseur?.Numero);
+
+    private async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken)
+    {
+        var prefix = $"PRS-{DateTime.Today.Year}-";
+        var existing = await _pressages.FindAsync(p => p.Numero.StartsWith(prefix), cancellationToken);
+        var next = existing
+            .Select(p => int.TryParse(p.Numero[prefix.Length..], out var n) ? n : 0)
+            .DefaultIfEmpty(0)
+            .Max() + 1;
+
+        return $"{prefix}{next:D4}";
+    }
 
     private static decimal? ResolveQuantiteHuile(
         decimal quantiteOlives,

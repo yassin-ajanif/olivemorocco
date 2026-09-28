@@ -5,6 +5,7 @@ namespace OliveMorocco.Domain.Entities.Operationnel;
 
 public class Intervention : BaseEntity
 {
+    public string Numero { get; set; } = string.Empty;
     public int SecteurId { get; set; }
     public DateTime Date { get; set; }
     public decimal? QuantiteEau { get; set; }

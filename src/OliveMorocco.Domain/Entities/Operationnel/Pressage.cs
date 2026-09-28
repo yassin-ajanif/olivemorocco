@@ -6,6 +6,7 @@ namespace OliveMorocco.Domain.Entities.Operationnel;
 
 public class Pressage : BaseEntity
 {
+    public string Numero { get; set; } = string.Empty;
     public int FournisseurId { get; set; }
     public int VarieteId { get; set; }
     public DateTime Date { get; set; }

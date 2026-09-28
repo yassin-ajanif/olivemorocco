@@ -63,6 +63,7 @@ public sealed class InterventionService : IInterventionService
             query => query.OrderByDescending(i => i.Date).ThenByDescending(i => i.Id),
             i => new InterventionListItemDto(
                 i.Id,
+                i.Numero,
                 i.SecteurId,
                 i.Secteur.Nom,
                 i.Date,
@@ -179,6 +180,7 @@ public sealed class InterventionService : IInterventionService
         CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<Intervention>(dto);
+        entity.Numero = await GenerateNumeroAsync(cancellationToken);
         NormalizeOptionalFields(entity);
 
         await _interventions.AddAsync(entity, cancellationToken);
@@ -238,6 +240,7 @@ public sealed class InterventionService : IInterventionService
 
         return new InterventionDto(
             entity.Id,
+            entity.Numero,
             entity.SecteurId,
             entity.Secteur.Nom,
             entity.Date,
@@ -246,6 +249,18 @@ public sealed class InterventionService : IInterventionService
             charges.Sum(c => c.MontantTtc),
             lignes,
             charges);
+    }
+
+    private async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken)
+    {
+        var prefix = $"INT-{DateTime.Today.Year}-";
+        var existing = await _interventions.FindAsync(i => i.Numero.StartsWith(prefix), cancellationToken);
+        var next = existing
+            .Select(i => int.TryParse(i.Numero[prefix.Length..], out var n) ? n : 0)
+            .DefaultIfEmpty(0)
+            .Max() + 1;
+
+        return $"{prefix}{next:D4}";
     }
 
     private static void NormalizeOptionalFields(Intervention entity)

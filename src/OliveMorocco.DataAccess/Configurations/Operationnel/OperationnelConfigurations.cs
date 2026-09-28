@@ -101,9 +101,11 @@ public class InterventionConfiguration : IEntityTypeConfiguration<Intervention>
     {
         builder.ToTable("Interventions");
 
+        builder.HasIndex(i => i.Numero).IsUnique();
         builder.HasIndex(i => i.SecteurId);
         builder.HasIndex(i => i.Date);
 
+        builder.Property(i => i.Numero).HasMaxLength(32).IsRequired();
         builder.Property(i => i.QuantiteEau).HasPrecision(12, 4);
 
         builder.HasOne(i => i.Secteur)
@@ -172,11 +174,13 @@ public class PressageConfiguration : IEntityTypeConfiguration<Pressage>
     {
         builder.ToTable("Pressages");
 
+        builder.HasIndex(p => p.Numero).IsUnique();
         builder.HasIndex(p => p.FournisseurId);
         builder.HasIndex(p => p.VarieteId);
         builder.HasIndex(p => p.Date);
         builder.HasIndex(p => p.FactureFournisseurId);
 
+        builder.Property(p => p.Numero).HasMaxLength(32).IsRequired();
         builder.Property(p => p.QuantiteOlives).HasPrecision(12, 4);
         builder.Property(p => p.Rendement).HasPrecision(5, 2);
         builder.Property(p => p.QuantiteHuile).HasPrecision(12, 4);

@@ -167,6 +167,7 @@ public sealed class PressagesController(IPressageService pressages) : Controller
         new()
         {
             Id = pressage.Id,
+            Numero = pressage.Numero,
             FournisseurId = pressage.FournisseurId,
             VarieteId = pressage.VarieteId,
             Date = pressage.Date,

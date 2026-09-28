@@ -151,6 +151,7 @@ public sealed class InterventionsController(
         new()
         {
             Id = intervention.Id,
+            Numero = intervention.Numero,
             SecteurId = intervention.SecteurId,
             SecteurNom = intervention.SecteurNom,
             Date = intervention.Date,

@@ -34,6 +34,7 @@ public record InterventionChargeListItemDto(
 
 public record InterventionDto(
     int Id,
+    string Numero,
     int SecteurId,
     string SecteurNom,
     DateTime Date,
@@ -61,6 +62,7 @@ public record UpdateInterventionDto(
 
 public record InterventionListItemDto(
     int Id,
+    string Numero,
     int SecteurId,
     string SecteurNom,
     DateTime Date,

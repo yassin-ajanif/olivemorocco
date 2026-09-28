@@ -6,6 +6,7 @@ public record FactureFournisseurSelectItemDto(int Id, string Numero, DateTime Da
 
 public record PressageDto(
     int Id,
+    string Numero,
     int FournisseurId,
     string FournisseurNom,
     int VarieteId,
@@ -37,6 +38,7 @@ public record UpdatePressageDto(
 
 public record PressageListItemDto(
     int Id,
+    string Numero,
     DateTime Date,
     string FournisseurNom,
     string VarieteNom,
