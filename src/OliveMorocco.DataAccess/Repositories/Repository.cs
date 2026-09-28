@@ -61,7 +61,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         Expression<Func<T, TResult>> selector,
         int page,
         int pageSize,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        Expression<Func<T, object>>[]? includes = null)
     {
         if (page < 1)
             page = 1;
@@ -69,6 +70,9 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
             pageSize = 15;
 
         IQueryable<T> query = Set.AsNoTracking();
+        if (includes is not null)
+            foreach (var include in includes)
+                query = query.Include(include);
         if (predicate is not null)
             query = query.Where(predicate);
 

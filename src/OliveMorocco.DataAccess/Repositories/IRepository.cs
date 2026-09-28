@@ -23,7 +23,8 @@ public interface IRepository<T> where T : BaseEntity
         Expression<Func<T, TResult>> selector,
         int page,
         int pageSize,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        Expression<Func<T, object>>[]? includes = null);
     Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);

@@ -60,7 +60,8 @@ public sealed class StockService : IStockService
                 ComputeStock(p) <= 0),
             page,
             pageSize,
-            cancellationToken);
+            cancellationToken,
+            [p => p.MouvementsStock]);
 
         return new PagedResult<StockEtatListItemDto>(items, totalCount);
     }

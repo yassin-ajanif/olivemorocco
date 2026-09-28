@@ -82,7 +82,8 @@ public sealed class ProduitService : IProduitService
                 ComputeStock(p) <= p.StockMinimum),
             page,
             pageSize,
-            cancellationToken);
+            cancellationToken,
+            [p => p.MouvementsStock]);
 
         return new PagedResult<ProduitListItemDto>(items, totalCount);
     }
