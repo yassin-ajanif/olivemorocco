@@ -118,7 +118,8 @@ public sealed class StockService : IStockService
     {
         await ValidateAsync(_ajustementValidator, dto, cancellationToken);
 
-        var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+        var produit = await _produits.GetByIdWithNavigationsAsync(
+            produitId, [p => p.MouvementsStock], cancellationToken)
             ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
         var stockAvant = ComputeStock(produit);
@@ -164,7 +165,8 @@ public sealed class StockService : IStockService
             if (quantiteLivree <= 0)
                 continue;
 
-            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+            var produit = await _produits.GetByIdWithNavigationsAsync(
+                produitId, [p => p.MouvementsStock], cancellationToken)
                 ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
             var mouvement = StockProduitMouvements.Apply(
@@ -190,7 +192,8 @@ public sealed class StockService : IStockService
             if (delta == 0)
                 continue;
 
-            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+            var produit = await _produits.GetByIdWithNavigationsAsync(
+                produitId, [p => p.MouvementsStock], cancellationToken)
                 ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
             var mouvement = StockProduitMouvements.Apply(
@@ -216,7 +219,8 @@ public sealed class StockService : IStockService
             if (quantiteLivree <= 0)
                 continue;
 
-            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+            var produit = await _produits.GetByIdWithNavigationsAsync(
+                produitId, [p => p.MouvementsStock], cancellationToken)
                 ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
             var mouvement = StockProduitMouvements.Apply(
