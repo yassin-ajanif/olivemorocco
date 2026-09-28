@@ -181,7 +181,6 @@ public sealed class ProduitsController(IProduitService produits) : Controller
             PrixAchatHT = produit.PrixAchatHT,
             PrixVenteHT = produit.PrixVenteHT,
             TauxTVA = produit.TauxTVA,
-            StockActuel = produit.StockActuel,
             StockMinimum = produit.StockMinimum,
             Actif = produit.Actif,
             ContenanceLitres = produit.ContenanceLitres,

@@ -14,7 +14,6 @@ public class Produit : BaseEntity
     public decimal PrixAchatHT { get; set; }
     public decimal PrixVenteHT { get; set; }
     public decimal TauxTVA { get; set; }
-    public decimal StockActuel { get; set; }
     public decimal StockMinimum { get; set; }
     public bool Actif { get; set; } = true;
     public byte[]? ImageData { get; set; }

@@ -7,6 +7,7 @@ using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
+using OliveMorocco.Domain.Enums;
 
 namespace OliveMorocco.Business.Services.Stockage;
 
@@ -75,10 +76,10 @@ public sealed class ProduitService : IProduitService
                 p.Variete.Nom,
                 p.Unite,
                 p.PrixVenteHT,
-                p.StockActuel,
+                ComputeStock(p),
                 p.StockMinimum,
                 p.Actif,
-                p.StockActuel <= p.StockMinimum),
+                ComputeStock(p) <= p.StockMinimum),
             page,
             pageSize,
             cancellationToken);
@@ -119,7 +120,6 @@ public sealed class ProduitService : IProduitService
         await EnsureVarieteExistsAsync(dto.VarieteId, cancellationToken);
 
         var entity = _mapper.Map<Produit>(dto);
-        entity.StockActuel = dto.StockInitial;
 
         await _produits.AddAsync(entity, cancellationToken);
         return (await GetProduitByIdAsync(entity.Id, cancellationToken))!;
@@ -172,10 +172,13 @@ public sealed class ProduitService : IProduitService
             entity.PrixAchatHT,
             entity.PrixVenteHT,
             entity.TauxTVA,
-            entity.StockActuel,
+            ComputeStock(entity),
             entity.StockMinimum,
             entity.Actif,
             entity.ContenanceLitres);
+
+    private static decimal ComputeStock(Produit produit) =>
+        produit.MouvementsStock.Sum(m => m.Type == TypeMouvement.Entree ? m.Quantite : -m.Quantite);
 
     private async Task EnsureReferenceUniqueAsync(
         string reference,

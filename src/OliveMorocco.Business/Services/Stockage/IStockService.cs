@@ -26,4 +26,19 @@ public interface IStockService
         int produitId,
         CreateAjustementStockDto dto,
         CancellationToken cancellationToken = default);
+
+    Task ApplyBonLivraisonSortieAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal QuantiteLivree)> lignes,
+        CancellationToken cancellationToken = default);
+
+    Task ApplyBonLivraisonAjustementAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default);
+
+    Task ReverseBonLivraisonAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal QuantiteLivree)> lignes,
+        CancellationToken cancellationToken = default);
 }

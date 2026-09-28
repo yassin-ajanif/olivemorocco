@@ -88,7 +88,6 @@ public class StockageProfile : Profile
 
         CreateMap<CreateProduitDto, Produit>()
             .ForMember(d => d.Id, o => o.Ignore())
-            .ForMember(d => d.StockActuel, o => o.Ignore())
             .ForMember(d => d.Variete, o => o.Ignore())
             .ForMember(d => d.ImageData, o => o.Ignore())
             .ForMember(d => d.MouvementsStock, o => o.Ignore())
@@ -105,7 +104,6 @@ public class StockageProfile : Profile
 
         CreateMap<UpdateProduitDto, Produit>()
             .ForMember(d => d.Id, o => o.Ignore())
-            .ForMember(d => d.StockActuel, o => o.Ignore())
             .ForMember(d => d.Variete, o => o.Ignore())
             .ForMember(d => d.ImageData, o => o.Ignore())
             .ForMember(d => d.MouvementsStock, o => o.Ignore())

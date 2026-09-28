@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
@@ -42,11 +43,9 @@ public sealed class StockService : IStockService
             p => (pattern == null
                   || EF.Functions.ILike(p.Reference, pattern)
                   || EF.Functions.ILike(p.Designation, pattern)
-                  || (p.CodeBarre != null && EF.Functions.ILike(p.CodeBarre, pattern)))
-                 && (!stockBasOnly || p.StockActuel <= p.StockMinimum),
+                  || (p.CodeBarre != null && EF.Functions.ILike(p.CodeBarre, pattern))),
             query => query
-                .OrderByDescending(p => p.StockActuel <= p.StockMinimum)
-                .ThenBy(p => p.Designation)
+                .OrderBy(p => p.Designation)
                 .ThenBy(p => p.Reference),
             p => new StockEtatListItemDto(
                 p.Id,
@@ -54,11 +53,11 @@ public sealed class StockService : IStockService
                 p.Designation,
                 p.Variete.Nom,
                 p.Unite,
-                p.StockActuel,
+                ComputeStock(p),
                 p.StockMinimum,
                 p.Actif,
-                p.StockActuel <= p.StockMinimum,
-                p.StockActuel <= 0),
+                ComputeStock(p) <= p.StockMinimum,
+                ComputeStock(p) <= 0),
             page,
             pageSize,
             cancellationToken);
@@ -121,7 +120,7 @@ public sealed class StockService : IStockService
         var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
             ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
-        var stockAvant = produit.StockActuel;
+        var stockAvant = ComputeStock(produit);
         var nouveauStock = stockAvant + dto.Variation;
 
         if (nouveauStock < 0)
@@ -149,10 +148,87 @@ public sealed class StockService : IStockService
             UpdatedAt = now,
         };
 
-        produit.StockActuel = nouveauStock;
         produit.UpdatedAt = now;
 
         await _mouvements.AddAsync(mouvement, cancellationToken);
+    }
+
+    public async Task ApplyBonLivraisonSortieAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal QuantiteLivree)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (produitId, quantiteLivree) in lignes)
+        {
+            if (quantiteLivree <= 0)
+                continue;
+
+            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
+
+            var mouvement = StockProduitMouvements.Apply(
+                produit,
+                -quantiteLivree,
+                StockProduitMouvements.OrigineBonLivraison,
+                bonLivraisonId,
+                string.Empty,
+                nameof(DTOs.Vente.CreateBonLivraisonClientDto.Lignes),
+                $"Stock insuffisant pour « {produit.Reference} » : {ComputeStock(produit):N0} en stock, {quantiteLivree:N0} demandés.");
+
+            await _mouvements.AddAsync(mouvement, cancellationToken);
+        }
+    }
+
+    public async Task ApplyBonLivraisonAjustementAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (produitId, delta) in deltas)
+        {
+            if (delta == 0)
+                continue;
+
+            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
+
+            var mouvement = StockProduitMouvements.Apply(
+                produit,
+                delta,
+                StockProduitMouvements.OrigineBonLivraison,
+                bonLivraisonId,
+                "Modification du bon de livraison",
+                nameof(DTOs.Vente.UpdateBonLivraisonClientDto.Lignes),
+                $"Stock insuffisant pour « {produit.Reference} » : {ComputeStock(produit):N0} en stock, {-delta:N0} demandés.");
+
+            await _mouvements.AddAsync(mouvement, cancellationToken);
+        }
+    }
+
+    public async Task ReverseBonLivraisonAsync(
+        int bonLivraisonId,
+        IEnumerable<(int ProduitId, decimal QuantiteLivree)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (produitId, quantiteLivree) in lignes)
+        {
+            if (quantiteLivree <= 0)
+                continue;
+
+            var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
+
+            var mouvement = StockProduitMouvements.Apply(
+                produit,
+                quantiteLivree,
+                StockProduitMouvements.OrigineBonLivraison,
+                bonLivraisonId,
+                "Suppression du bon de livraison",
+                string.Empty,
+                string.Empty);
+
+            await _mouvements.AddAsync(mouvement, cancellationToken);
+        }
     }
 
     private static StockProduitDetailDto ToDetailDto(Produit entity) =>
@@ -162,10 +238,13 @@ public sealed class StockService : IStockService
             entity.Designation,
             entity.Variete.Nom,
             entity.Unite,
-            entity.StockActuel,
+            ComputeStock(entity),
             entity.StockMinimum,
-            entity.StockActuel <= entity.StockMinimum,
-            entity.StockActuel <= 0);
+            ComputeStock(entity) <= entity.StockMinimum,
+            ComputeStock(entity) <= 0);
+
+    private static decimal ComputeStock(Produit produit) =>
+        produit.MouvementsStock.Sum(m => m.Type == TypeMouvement.Entree ? m.Quantite : -m.Quantite);
 
     private static decimal ComputeStockApres(TypeMouvement type, decimal stockAvant, decimal quantite) =>
         type switch

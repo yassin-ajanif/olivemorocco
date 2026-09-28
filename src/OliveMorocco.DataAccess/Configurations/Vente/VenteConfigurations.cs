@@ -22,7 +22,6 @@ public class ProduitConfiguration : IEntityTypeConfiguration<Produit>
         builder.Property(p => p.PrixAchatHT).HasPrecision(18, 2);
         builder.Property(p => p.PrixVenteHT).HasPrecision(18, 2);
         builder.Property(p => p.TauxTVA).HasPrecision(18, 2);
-        builder.Property(p => p.StockActuel).HasPrecision(12, 4);
         builder.Property(p => p.StockMinimum).HasPrecision(12, 4);
         builder.Property(p => p.ContenanceLitres).HasPrecision(8, 3);
 

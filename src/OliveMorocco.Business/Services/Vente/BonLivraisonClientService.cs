@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.Services.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Vente;
@@ -19,6 +20,7 @@ public sealed class BonLivraisonClientService
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<FactureClientLigne> _factureLignes;
     private readonly IRepository<FactureClient> _factures;
+    private readonly IStockService _stockService;
 
     public BonLivraisonClientService(
         IRepository<BonLivraisonClient> bons,
@@ -26,6 +28,7 @@ public sealed class BonLivraisonClientService
         IRepository<Tiers> tiers,
         IRepository<FactureClientLigne> factureLignes,
         IRepository<FactureClient> factures,
+        IStockService stockService,
         IMapper mapper,
         IEnumerable<IValidator<CreateBonLivraisonClientDto>> createValidators,
         IEnumerable<IValidator<UpdateBonLivraisonClientDto>> updateValidators)
@@ -35,6 +38,7 @@ public sealed class BonLivraisonClientService
         _tiers = tiers;
         _factureLignes = factureLignes;
         _factures = factures;
+        _stockService = stockService;
     }
 
     public async Task<PagedResult<BonLivraisonClientListItemDto>> GetBonsLivraisonAsync(
@@ -187,7 +191,15 @@ public sealed class BonLivraisonClientService
         var entity = Mapper.Map<BonLivraisonClient>(dto with { Numero = numero });
         entity.Note = dto.Note ?? string.Empty;
 
-        await Repo.AddAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await Repo.AddAsync(entity, ct);
+            await _stockService.ApplyBonLivraisonSortieAsync(
+                entity.Id,
+                entity.Lignes.Select(l => (l.ProduitId, l.QuantiteLivree)),
+                ct);
+        }, cancellationToken);
+
         return (await GetBonLivraisonByIdAsync(entity.Id, cancellationToken))!;
     }
 
@@ -202,6 +214,15 @@ public sealed class BonLivraisonClientService
         var entity = await Repo.GetByIdWithNavigationsAsync(id, [b => b.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Bon de livraison {id} introuvable.");
 
+        var anciennesLignes = entity.Lignes.ToList();
+        var nouvellesLignes = dto.Lignes;
+
+        var produitDeltas = new Dictionary<int, decimal>();
+        foreach (var ligne in anciennesLignes)
+            produitDeltas[ligne.ProduitId] = produitDeltas.GetValueOrDefault(ligne.ProduitId) + ligne.QuantiteLivree;
+        foreach (var ligne in nouvellesLignes)
+            produitDeltas[ligne.ProduitId] = produitDeltas.GetValueOrDefault(ligne.ProduitId) - ligne.QuantiteLivree;
+
         entity.Lignes.Clear();
         Mapper.Map(dto, entity);
         entity.Note = dto.Note ?? string.Empty;
@@ -212,16 +233,33 @@ public sealed class BonLivraisonClientService
             line.BLId = entity.Id;
         }
 
-        await Repo.UpdateAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockService.ApplyBonLivraisonAjustementAsync(
+                entity.Id,
+                produitDeltas.Select(d => (d.Key, d.Value)),
+                ct);
+
+            await Repo.UpdateAsync(entity, ct);
+        }, cancellationToken);
     }
 
     public async Task DeleteBonLivraisonAsync(int id, CancellationToken cancellationToken = default)
     {
-        _ = await GetBonLivraisonByIdAsync(id, cancellationToken)
+        var entity = await Repo.GetByIdWithNavigationsAsync(id, [b => b.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Bon de livraison {id} introuvable.");
 
         await EnsureCanDeleteAsync(id, cancellationToken);
-        await DeleteAsync(id, cancellationToken);
+
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockService.ReverseBonLivraisonAsync(
+                entity.Id,
+                entity.Lignes.Select(l => (l.ProduitId, l.QuantiteLivree)),
+                ct);
+
+            await Repo.DeleteAsync(id, ct);
+        }, cancellationToken);
     }
 
     public async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken = default)

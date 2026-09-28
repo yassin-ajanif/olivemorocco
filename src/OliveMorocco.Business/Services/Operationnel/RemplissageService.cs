@@ -256,7 +256,7 @@ public sealed class RemplissageService : IRemplissageService
                 p.Designation,
                 p.Unite,
                 p.ContenanceLitres!.Value,
-                p.StockActuel))
+                StockProduitMouvements.ComputeStock(p)))
             .ToList();
     }
 
@@ -358,27 +358,16 @@ public sealed class RemplissageService : IRemplissageService
         var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
             ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
-        var stockAvant = produit.StockActuel;
-        var nouveauStock = stockAvant + variation;
+        var mouvement = StockProduitMouvements.Apply(
+            produit,
+            variation,
+            StockProduitMouvements.OrigineRemplissage,
+            remplissageId,
+            note,
+            nameof(CreateRemplissageDto.Lignes),
+            $"Stock insuffisant pour « {produit.Reference} » : {StockProduitMouvements.ComputeStock(produit):N0} en stock, ces unités ont déjà été vendues ou ajustées.");
 
-        if (nouveauStock < 0)
-        {
-            throw LigneError(
-                $"Stock insuffisant pour « {produit.Reference} » : {stockAvant:N0} en stock, ces unités ont déjà été vendues ou ajustées.");
-        }
-
-        produit.StockActuel = nouveauStock;
-
-        await _mouvementsProduit.AddAsync(new MouvementStock
-        {
-            ProduitId = produit.Id,
-            Type = variation > 0 ? TypeMouvement.Entree : TypeMouvement.Sortie,
-            Quantite = Math.Abs(variation),
-            StockAvant = stockAvant,
-            OrigineType = StockHuileMouvements.OrigineRemplissage,
-            OrigineId = remplissageId,
-            Note = note,
-        }, cancellationToken);
+        await _mouvementsProduit.AddAsync(mouvement, cancellationToken);
     }
 
     private static ValidationException LigneError(string message) =>

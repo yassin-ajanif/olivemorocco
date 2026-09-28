@@ -26,8 +26,6 @@ public sealed class ProduitFormViewModel
 
     public decimal StockInitial { get; set; }
 
-    public decimal? StockActuel { get; set; }
-
     public decimal StockMinimum { get; set; }
 
     public bool Actif { get; set; } = true;
