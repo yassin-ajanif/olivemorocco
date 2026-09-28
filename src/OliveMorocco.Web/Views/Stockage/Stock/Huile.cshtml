@@ -118,6 +118,10 @@
                             {
                                 <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Pressages/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
                             }
+                            else if (m.OrigineType == "Remplissage" && m.OrigineId.HasValue)
+                            {
+                                <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Remplissages/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
+                            }
                             else
                             {
                                 @m.OrigineLabel

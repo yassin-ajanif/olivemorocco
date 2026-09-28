@@ -1,0 +1,16 @@
+@model RemplissageFormViewModel
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Opérationnel · Remplissages</p>
+    <h1>Nouveau remplissage</h1>
+</div>
+
+<div class="form-panel form-panel-ops">
+    <partial name="_RemplissageForm" model="Model" />
+</div>
+
+@section Scripts {
+    <script src="~/js/remplissage-form.js" asp-append-version="true"></script>
+}

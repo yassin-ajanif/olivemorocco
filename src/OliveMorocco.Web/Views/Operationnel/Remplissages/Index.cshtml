@@ -1,0 +1,76 @@
+@model RemplissageListViewModel
+@{
+    const string cols = "1fr 0.9fr 1fr 2fr 0.9fr 0.8fr auto";
+    const string emptyMessage = "Aucun remplissage — cliquez sur Nouveau pour commencer.";
+    var pagination = new ListPaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        HasPrevious = Model.HasPrevious,
+        HasNext = Model.HasNext,
+        Search = Model.Search
+    };
+}
+
+<partial name="_DashboardAlerts" />
+
+<div class="page-head">
+    <p class="eyebrow">Opérationnel</p>
+    <h1>Remplissages</h1>
+    <p class="module-section">Mise en bouteille — l'huile en vrac d'une variété passe dans le stock des produits</p>
+</div>
+
+<form method="get" asp-action="Index" class="list-toolbar">
+    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <input type="search"
+           class="list-search"
+           name="search"
+           value="@Model.Search"
+           placeholder="Rechercher par numéro, variété ou produit…"
+           autocomplete="off" />
+</form>
+
+<div class="list-wrap">
+    <div class="list-header" style="grid-template-columns:@cols">
+        <span>Numéro</span>
+        <span>Date</span>
+        <span>Variété</span>
+        <span>Produits</span>
+        <span class="cell-bold">Huile (L)</span>
+        <span class="cell-bold">Perte (L)</span>
+        <span>Actions</span>
+    </div>
+    <div class="list-body">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_ListEmpty" model="emptyMessage" />
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                <div class="list-row" style="grid-template-columns:@cols">
+                    <span data-label="Numéro">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
+                    </span>
+                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Variété">@item.VarieteNom</span>
+                    <span data-label="Produits">@item.ProduitsResume</span>
+                    <span data-label="Huile (L)" class="cell-bold">@item.QuantiteHuile.ToString("N2")</span>
+                    <span data-label="Perte (L)" class="cell-bold">@item.Perte.ToString("N2")</span>
+                    <span class="list-row-actions" data-label="Actions">
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-icon"
+                           title="Modifier"
+                           aria-label="Modifier">
+                            <partial name="~/Views/Shared/Icons/Edit.cshtml" />
+                        </a>
+                    </span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<partial name="_ListPagination" model="pagination" />

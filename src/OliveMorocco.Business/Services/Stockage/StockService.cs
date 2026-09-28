@@ -182,6 +182,7 @@ public sealed class StockService : IStockService
             "BR" => origineId.HasValue ? $"BR #{origineId}" : "Bon de réception",
             "Avoir" => origineId.HasValue ? $"Avoir #{origineId}" : "Avoir client",
             "AvoirFournisseur" => origineId.HasValue ? $"Avoir fourn. #{origineId}" : "Avoir fournisseur",
+            "Remplissage" => origineId.HasValue ? $"Remplissage #{origineId}" : "Remplissage",
             "Import" => "Ajustement manuel",
             _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
         };

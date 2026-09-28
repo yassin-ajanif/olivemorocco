@@ -1,0 +1,189 @@
+@model RemplissageFormViewModel
+@using System.Globalization
+@{
+    string Inv(decimal value) => value.ToString(CultureInfo.InvariantCulture);
+}
+
+<form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
+      asp-route-id="@Model.Id"
+      method="post"
+      class="form-grid"
+      id="remplissage-form"
+      data-variete-initiale="@Model.VarieteIdInitiale"
+      data-huile-initiale="@Inv(Model.QuantiteHuileInitiale)">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+
+    <div class="ops-form-row-3">
+        <div class="form-field">
+            <label asp-for="VarieteId">Variété</label>
+            <select asp-for="VarieteId" id="remplissage-variete">
+                <option value="">— Sélectionner —</option>
+                @foreach (var variete in Model.Varietes)
+                {
+                    <option value="@variete.Id" data-stock="@Inv(variete.StockHuile)">@variete.Nom (@variete.StockHuile.ToString("N2") L)</option>
+                }
+            </select>
+            <span asp-validation-for="VarieteId" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="Date">Date</label>
+            <input asp-for="Date" type="date" />
+            <span asp-validation-for="Date" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="Perte">Perte (L)</label>
+            <input asp-for="Perte"
+                   id="remplissage-perte"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   value="@Inv(Model.Perte)" />
+            <p class="form-field-hint">Huile perdue pendant le remplissage (fond de cuve, débordement).</p>
+            <span asp-validation-for="Perte" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="form-field form-field-full">
+        <div class="ops-lines-toolbar">
+            <label>Produits remplis</label>
+            <button type="button" id="add-remplissage-line" class="btn btn-sm">Ajouter une ligne</button>
+        </div>
+        <div class="ops-lines-wrap">
+            <table class="ops-lines-table remplissage-lines-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Unités</th>
+                        <th class="col-num">Contenance</th>
+                        <th class="col-num">Litres</th>
+                        <th class="col-actions"></th>
+                    </tr>
+                </thead>
+                <tbody id="remplissage-lignes-body">
+                    @for (var i = 0; i < Model.Lignes.Count; i++)
+                    {
+                        var line = Model.Lignes[i];
+                        <tr class="remplissage-line">
+                            <td data-label="Produit">
+                                <select name="Lignes[@i].ProduitId" class="line-produit-id">
+                                    <option value="">— Sélectionner —</option>
+                                    @foreach (var produit in Model.Produits)
+                                    {
+                                        if (line.ProduitId == produit.Id)
+                                        {
+                                            <option value="@produit.Id" data-variete="@produit.VarieteId" data-contenance="@Inv(produit.ContenanceLitres)" data-unite="@produit.Unite" selected>@produit.Reference — @produit.Designation</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@produit.Id" data-variete="@produit.VarieteId" data-contenance="@Inv(produit.ContenanceLitres)" data-unite="@produit.Unite">@produit.Reference — @produit.Designation</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td data-label="Unités">
+                                <div class="ops-qty-field">
+                                    <input name="Lignes[@i].Quantite"
+                                           value="@(line.Quantite > 0 ? Inv(decimal.Truncate(line.Quantite)) : "")"
+                                           type="number"
+                                           step="1"
+                                           min="1"
+                                           class="line-quantite" />
+                                    <span class="line-unite-hint"></span>
+                                </div>
+                            </td>
+                            <td class="col-num line-contenance" data-label="Contenance">—</td>
+                            <td class="col-num line-litres" data-label="Litres">—</td>
+                            <td class="col-actions" data-label="">
+                                <button type="button" class="btn btn-sm remove-remplissage-line" aria-label="Supprimer la ligne">Supprimer</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p id="remplissage-lines-empty" class="list-empty @(Model.Lignes.Count > 0 ? "hidden" : "")">
+                Aucun produit — choisissez une variété puis ajoutez une ligne.
+            </p>
+        </div>
+        <p class="form-field-hint">
+            Seuls les produits actifs de la variété choisie, avec une contenance (L) renseignée dans la fiche produit, sont proposés.
+        </p>
+    </div>
+
+    <div class="form-field form-field-full">
+        <div class="remplissage-summary" id="remplissage-summary">
+            <div class="remplissage-summary-item">
+                <span class="lbl">Huile disponible</span>
+                <span class="val" id="summary-disponible">—</span>
+            </div>
+            <div class="remplissage-summary-item">
+                <span class="lbl">Litres en bouteilles</span>
+                <span class="val" id="summary-litres">0,00 L</span>
+            </div>
+            <div class="remplissage-summary-item">
+                <span class="lbl">Huile utilisée (avec perte)</span>
+                <span class="val" id="summary-total">0,00 L</span>
+            </div>
+            <div class="remplissage-summary-item">
+                <span class="lbl">Reste en vrac</span>
+                <span class="val" id="summary-reste">—</span>
+            </div>
+        </div>
+        <p class="remplissage-summary-warning hidden" id="summary-warning">
+            Stock d'huile insuffisant pour cette variété.
+        </p>
+    </div>
+
+    <div class="form-field form-field-full">
+        <label asp-for="Note">Note</label>
+        <textarea asp-for="Note" rows="2" maxlength="500"></textarea>
+        <span asp-validation-for="Note" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
+        @if (Model.IsEdit)
+        {
+            <button type="submit"
+                    formaction="@Url.Action("Delete", new { id = Model.Id })"
+                    formmethod="post"
+                    formnovalidate
+                    class="btn btn-danger"
+                    onclick="return confirm('Supprimer ce remplissage ? L\'huile retourne en vrac et les unités sont retirées du stock produit.');">
+                Supprimer
+            </button>
+        }
+    </div>
+</form>
+
+<template id="remplissage-line-template">
+    <tr class="remplissage-line">
+        <td data-label="Produit">
+            <select name="Lignes[__index__].ProduitId" class="line-produit-id">
+                <option value="">— Sélectionner —</option>
+                @foreach (var produit in Model.Produits)
+                {
+                    <option value="@produit.Id" data-variete="@produit.VarieteId" data-contenance="@Inv(produit.ContenanceLitres)" data-unite="@produit.Unite">@produit.Reference — @produit.Designation</option>
+                }
+            </select>
+        </td>
+        <td data-label="Unités">
+            <div class="ops-qty-field">
+                <input name="Lignes[__index__].Quantite"
+                       type="number"
+                       step="1"
+                       min="1"
+                       class="line-quantite" />
+                <span class="line-unite-hint"></span>
+            </div>
+        </td>
+        <td class="col-num line-contenance" data-label="Contenance">—</td>
+        <td class="col-num line-litres" data-label="Litres">—</td>
+        <td class="col-actions" data-label="">
+            <button type="button" class="btn btn-sm remove-remplissage-line" aria-label="Supprimer la ligne">Supprimer</button>
+        </td>
+    </tr>
+</template>

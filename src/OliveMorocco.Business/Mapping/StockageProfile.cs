@@ -18,6 +18,7 @@ public class StockageProfile : Profile
             .ForMember(d => d.Produits, o => o.Ignore())
             .ForMember(d => d.Recoltes, o => o.Ignore())
             .ForMember(d => d.Pressages, o => o.Ignore())
+            .ForMember(d => d.Remplissages, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore());
@@ -31,6 +32,7 @@ public class StockageProfile : Profile
             .ForMember(d => d.Produits, o => o.Ignore())
             .ForMember(d => d.Recoltes, o => o.Ignore())
             .ForMember(d => d.Pressages, o => o.Ignore())
+            .ForMember(d => d.Remplissages, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore());
@@ -95,6 +97,7 @@ public class StockageProfile : Profile
             .ForMember(d => d.BonLivraisonClientLignes, o => o.Ignore())
             .ForMember(d => d.FactureClientLignes, o => o.Ignore())
             .ForMember(d => d.AvoirClientLignes, o => o.Ignore())
+            .ForMember(d => d.RemplissageLignes, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore())
@@ -111,6 +114,7 @@ public class StockageProfile : Profile
             .ForMember(d => d.BonLivraisonClientLignes, o => o.Ignore())
             .ForMember(d => d.FactureClientLignes, o => o.Ignore())
             .ForMember(d => d.AvoirClientLignes, o => o.Ignore())
+            .ForMember(d => d.RemplissageLignes, o => o.Ignore())
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore())

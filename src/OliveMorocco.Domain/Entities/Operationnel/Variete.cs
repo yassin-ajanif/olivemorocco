@@ -15,4 +15,5 @@ public class Variete : BaseEntity
     public ICollection<Recolte> Recoltes { get; set; } = new List<Recolte>();
     public ICollection<Pressage> Pressages { get; set; } = new List<Pressage>();
     public ICollection<MouvementStockVariete> MouvementsStock { get; set; } = new List<MouvementStockVariete>();
+    public ICollection<Remplissage> Remplissages { get; set; } = new List<Remplissage>();
 }

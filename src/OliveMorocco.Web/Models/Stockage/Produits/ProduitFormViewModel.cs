@@ -14,6 +14,8 @@ public sealed class ProduitFormViewModel
 
     public string Unite { get; set; } = string.Empty;
 
+    public decimal? ContenanceLitres { get; set; }
+
     public string? CodeBarre { get; set; }
 
     public decimal PrixAchatHT { get; set; }

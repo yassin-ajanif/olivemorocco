@@ -13,6 +13,7 @@ internal static class StockHuileMouvements
 {
     public const string OriginePressage = "Pressage";
     public const string OrigineImport = "Import";
+    public const string OrigineRemplissage = "Remplissage";
 
     public static MouvementStockVariete Apply(
         Variete variete,
@@ -51,6 +52,7 @@ internal static class StockHuileMouvements
         origineType switch
         {
             OriginePressage => origineId.HasValue ? $"Pressage #{origineId}" : "Pressage",
+            OrigineRemplissage => origineId.HasValue ? $"Remplissage #{origineId}" : "Remplissage",
             OrigineImport => "Ajustement manuel",
             _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
         };

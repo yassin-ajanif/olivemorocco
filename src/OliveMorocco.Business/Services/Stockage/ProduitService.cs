@@ -174,7 +174,8 @@ public sealed class ProduitService : IProduitService
             entity.TauxTVA,
             entity.StockActuel,
             entity.StockMinimum,
-            entity.Actif);
+            entity.Actif,
+            entity.ContenanceLitres);
 
     private async Task EnsureReferenceUniqueAsync(
         string reference,

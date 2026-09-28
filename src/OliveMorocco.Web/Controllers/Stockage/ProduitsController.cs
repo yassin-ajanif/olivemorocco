@@ -184,6 +184,7 @@ public sealed class ProduitsController(IProduitService produits) : Controller
             StockActuel = produit.StockActuel,
             StockMinimum = produit.StockMinimum,
             Actif = produit.Actif,
+            ContenanceLitres = produit.ContenanceLitres,
         };
 
     private static CreateProduitDto ToCreateDto(ProduitFormViewModel model) =>
@@ -198,7 +199,8 @@ public sealed class ProduitsController(IProduitService produits) : Controller
             model.TauxTVA,
             model.StockInitial,
             model.StockMinimum,
-            model.Actif);
+            model.Actif,
+            model.ContenanceLitres);
 
     private static UpdateProduitDto ToUpdateDto(ProduitFormViewModel model) =>
         new(
@@ -211,7 +213,8 @@ public sealed class ProduitsController(IProduitService produits) : Controller
             model.PrixVenteHT,
             model.TauxTVA,
             model.StockMinimum,
-            model.Actif);
+            model.Actif,
+            model.ContenanceLitres);
 
     private static string? NormalizeOptional(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

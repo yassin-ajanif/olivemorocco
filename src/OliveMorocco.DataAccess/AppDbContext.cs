@@ -28,6 +28,8 @@ public class AppDbContext : DbContext
     public DbSet<InterventionLigne> InterventionLignes => Set<InterventionLigne>();
     public DbSet<Recolte> Recoltes => Set<Recolte>();
     public DbSet<Pressage> Pressages => Set<Pressage>();
+    public DbSet<Remplissage> Remplissages => Set<Remplissage>();
+    public DbSet<RemplissageLigne> RemplissageLignes => Set<RemplissageLigne>();
 
     // Vente
     public DbSet<Produit> Produits => Set<Produit>();

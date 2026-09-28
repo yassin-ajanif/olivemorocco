@@ -74,7 +74,8 @@ OliveMorocco.sln
 │   │   │   │   ├── Intrant.cs
 │   │   │   │   ├── Intervention.cs
 │   │   │   │   ├── Recolte.cs
-│   │   │   │   └── Pressage.cs
+│   │   │   │   ├── Pressage.cs
+│   │   │   │   └── Remplissage.cs + RemplissageLigne.cs
 │   │   │   ├── Vente/                     (sidebar Vente)
 │   │   │   │   ├── Produit.cs
 │   │   │   │   ├── MouvementStock.cs
@@ -170,7 +171,7 @@ Code, DTOs, services, EF configurations, and controllers are grouped into **thre
 | Domain | Folder (all layers) | Sidebar | Main entities |
 |--------|---------------------|---------|---------------|
 | **Stockage** | `Stockage/` (Web UI); entities split across `Vente/` + `Operationnel/` | Stockage | `Produit`, `MouvementStock`, `Intrant`, `Secteur`, `Variete`, `SecteurVariete`, `MouvementStockVariete` (bulk oil) |
-| **Opérationnel** | `Operationnel/` | Opérationnel | `Intervention`, `Recolte`, `Pressage` (+ field ops using secteurs / intrants) |
+| **Opérationnel** | `Operationnel/` | Opérationnel | `Intervention`, `Recolte`, `Pressage`, `Remplissage` (+ field ops using secteurs / intrants) |
 | **Vente** | `Vente/` | Vente | devis / BC / BL / factures / avoirs **client** + lignes, paiements client |
 | **Achat** | `Achat/` | Achat | `Service`, `TypeCharge`, `Charge`, BC / BR / factures / avoirs **fournisseur** + lignes, paiements fournisseur |
 
@@ -185,6 +186,7 @@ Code, DTOs, services, EF configurations, and controllers are grouped into **thre
 **Cross-domain flows** (services may call across folders; entities stay in their domain):
 
 - **Pressage:** `Recolte` → `Pressage` (Opérationnel) → `FactureFournisseur` (Achat, service line via `Services`)
+- **Remplissage:** `Pressage` → `Varietes.StockHuile` (bulk L) → `Remplissage` (Opérationnel) → `Produits.StockActuel` (bottles, `MouvementStock` in Vente)
 - **Intervention costs:** `Intervention` (Opérationnel) → `Charge` (Achat) via `Charges.InterventionId`
 - **Stock:** `MouvementStock` (Vente) triggered from BL / BR / avoirs
 
@@ -203,7 +205,7 @@ Same pattern as FaturatiWeb: controllers use **route prefixes** matching the das
 | Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Varietes`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock` (tabs: produits / `?vue=huile` bulk oil per variety; `/Stockage/Stock/Huile/{varieteId}` oil history) |
 | Vente | `/Vente/...` | `/Vente/Clients`, `/Vente/Devis` |
 | Achat | `/Achat/...` | `/Achat/Fournisseurs`, `/Achat/BonsReception` |
-| Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Pressages`, `/Operationnel/Recoltes` |
+| Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Pressages`, `/Operationnel/Remplissages`, `/Operationnel/Recoltes` |
 
 Defined in `Web/Routing/AppSections.cs` (to be created).
 
@@ -214,7 +216,7 @@ Organized under the **three domains** (mirrors Business services):
 ```
 Controllers/
 ├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController)
-├── Operationnel/      (InterventionsController, PressagesController, RecoltesController, …)
+├── Operationnel/      (InterventionsController, PressagesController, RemplissagesController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)
 ```

@@ -22,6 +22,11 @@ public class CreateProduitDtoValidator : AbstractValidator<CreateProduitDto>
             .NotEmpty().WithMessage("L'unité est obligatoire.")
             .MaximumLength(32).WithMessage("L'unité ne doit pas dépasser 32 caractères.");
 
+        RuleFor(x => x.ContenanceLitres)
+            .GreaterThan(0).WithMessage("La contenance doit être supérieure à 0.")
+            .LessThan(100000).WithMessage("La contenance est trop grande.")
+            .When(x => x.ContenanceLitres.HasValue);
+
         RuleFor(x => x.CodeBarre)
             .MaximumLength(64)
             .When(x => !string.IsNullOrWhiteSpace(x.CodeBarre));

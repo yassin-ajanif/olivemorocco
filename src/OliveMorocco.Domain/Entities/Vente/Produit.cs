@@ -9,6 +9,7 @@ public class Produit : BaseEntity
     public string Designation { get; set; } = string.Empty;
     public int VarieteId { get; set; }
     public string Unite { get; set; } = string.Empty;
+    public decimal? ContenanceLitres { get; set; }
     public string? CodeBarre { get; set; }
     public decimal PrixAchatHT { get; set; }
     public decimal PrixVenteHT { get; set; }
@@ -25,4 +26,5 @@ public class Produit : BaseEntity
     public ICollection<BonLivraisonClientLigne> BonLivraisonClientLignes { get; set; } = new List<BonLivraisonClientLigne>();
     public ICollection<FactureClientLigne> FactureClientLignes { get; set; } = new List<FactureClientLigne>();
     public ICollection<AvoirClientLigne> AvoirClientLignes { get; set; } = new List<AvoirClientLigne>();
+    public ICollection<RemplissageLigne> RemplissageLignes { get; set; } = new List<RemplissageLigne>();
 }

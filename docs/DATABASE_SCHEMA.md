@@ -67,15 +67,15 @@ Most line tables share: `ProduitId`, `Designation`, `Conditionnement`, `Quantite
 | `Avoir` | Avoir client |
 | `AvoirFournisseur` | Avoir fournisseur |
 | `Import` | Product import / manual adjustment |
+| `Remplissage` | Bottles produced by a remplissage (in), or its correction / reversal on edit / delete |
 
 ### `MouvementStockVariete.OrigineType` (bulk oil ledger)
 
 | Code | Source |
 |------|--------|
 | `Pressage` | Oil produced by a pressage (in), or its correction / reversal on edit / delete |
+| `Remplissage` | Oil filled into bottles (out), or its correction / reversal on edit / delete |
 | `Import` | Manual adjustment of bulk oil stock |
-
-> **Planned:** `Remplissage` (filling bulk oil into bottled `Produits`) — not implemented yet.
 
 > **Note:** The source app also uses `BP` (Bon de Préparation). That origin type is omitted here because the preparation module is excluded.
 
@@ -113,6 +113,9 @@ erDiagram
     Variete ||--o{ Pressage : "pressed"
     Pressage }o--o| FactureFournisseur : "FactureFournisseurId"
     Variete ||--o{ MouvementStockVariete : "bulk oil ledger"
+    Variete ||--o{ Remplissage : "bottled"
+    Remplissage ||--|{ RemplissageLigne : "lines"
+    Produit ||--o{ RemplissageLigne : "filled as"
 
     Service ||--o{ FactureFournisseurLigne : "billed as"
     Service ||--o{ BonCommandeLigne : "ordered as"
@@ -336,6 +339,45 @@ Olive pressing (*pressage*) at an external mill (*huilerie*). One batch = one **
 |-------------|---------|------|-------------|-----------|-----------|---------|
 | Huilerie Atlas | Picholine | 2026-11-20 | 3200 | 17.5 | 560 | FF-2026-0042 |
 
+#### `Remplissages`
+
+Bottling session (*remplissage*): bulk oil of **one variety** is filled into one or more bottled `Produits` of that same variety.
+
+| Column | Type | Null | Default | Notes |
+|--------|------|------|---------|-------|
+| Id | INT | NO | identity | PK |
+| Numero | NVARCHAR(32) | NO | | **Unique**. Auto-generated `RMP-yyyy-0001` |
+| VarieteId | INT | NO | | FK → `Varietes.Id` (Restrict) |
+| Date | DATETIME | NO | | Filling date |
+| QuantiteHuile | DECIMAL(12,4) | NO | | Total liters taken from bulk stock = `SUM(Lignes.Litres) + Perte` |
+| Perte | DECIMAL(12,4) | NO | 0 | Liters lost during filling (spill, sediment) |
+| Note | NVARCHAR(500) | YES | | |
+| CreatedAt | DATETIME | NO | | |
+| UpdatedAt | DATETIME | NO | | |
+| CreatedByUserId | INT | YES | | |
+
+**Indexes:** unique on `Numero`; `VarieteId`; `Date`.
+
+#### `RemplissageLignes`
+
+| Column | Type | Null | Default | Notes |
+|--------|------|------|---------|-------|
+| Id | INT | NO | identity | PK |
+| RemplissageId | INT | NO | | FK → `Remplissages.Id` (Cascade) |
+| ProduitId | INT | NO | | FK → `Produits.Id` (Restrict). Must belong to the header's `VarieteId` and have `ContenanceLitres` |
+| Quantite | DECIMAL(12,4) | NO | | Bottles filled (whole number, > 0) |
+| ContenanceLitres | DECIMAL(8,3) | NO | | Snapshot of `Produits.ContenanceLitres` at filling time |
+| Litres | DECIMAL(12,4) | NO | | `Quantite × ContenanceLitres` |
+| CreatedAt | DATETIME | NO | | |
+| UpdatedAt | DATETIME | NO | | |
+| CreatedByUserId | INT | YES | | |
+
+**Indexes:** `RemplissageId`; `ProduitId`; unique `(RemplissageId, ProduitId)`.
+
+**Stock impact:** in one transaction, a remplissage writes one `MouvementsStockVariete` **Sortie** of `QuantiteHuile` liters (`OrigineType = 'Remplissage'`) and one `MouvementsStock` **Entree** per line of `Quantite` bottles (`OrigineType = 'Remplissage'`), updating `Varietes.StockHuile` and `Produits.StockActuel`. Creation is refused if the variety does not have enough bulk oil. Editing reverses the old movements and applies the new ones; deleting reverses them. Both are refused if a product's stock would go negative (bottles already sold).
+
+**Example:** Picholine has 560 L. `RMP-2026-0001`: HVO-1L × 200 (200 L) + HVO-500 × 300 (150 L) + Perte 2 L → 352 L out; Picholine keeps 208 L; HVO-1L +200, HVO-500 +300.
+
 ---
 
 ### 3. Stock (Products, Services & Inventory)
@@ -386,6 +428,7 @@ Ledger of bulk oil movements per variety (liters). Same shape as `MouvementsStoc
 | Designation | NVARCHAR | NO | |
 | VarieteId | INT | NO | FK → `Varietes.Id` (Restrict on delete). Classifies oil by olive variety |
 | Unite | NVARCHAR | NO | Unit of measure |
+| ContenanceLitres | DECIMAL(8,3) | YES | Oil volume per unit in liters (e.g. `0.5`, `1`, `5`). Required to fill the product in a `Remplissage` |
 | CodeBarre | NVARCHAR | YES | Barcode |
 | PrixAchatHT | DECIMAL | NO | Purchase price |
 | PrixVenteHT | DECIMAL | NO | Sale price |
@@ -944,11 +987,12 @@ AvoirFournisseur (supplier credit note)
 ```
 Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (service line via Services)
                          ↘ MouvementsStockVariete (Entree L) → Varietes.StockHuile
+Remplissage (bulk L out) → MouvementsStockVariete (Sortie L) + MouvementsStock (Entree bottles) → Produits.StockActuel
 ```
 
 ---
 
-## Table Inventory (36 tables)
+## Table Inventory (38 tables)
 
 | # | Table | Domain |
 |---|-------|--------|
@@ -960,6 +1004,8 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 | 5b | InterventionLignes | Estate |
 | 6 | Recoltes | Estate |
 | 7 | Pressages | Estate |
+| 7b | Remplissages | Estate |
+| 7c | RemplissageLignes | Estate |
 | 8 | Varietes | Stock |
 | 9 | Produits | Stock |
 | 10 | Services | Stock |
@@ -1005,5 +1051,6 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 10. **Services:** Purchasable services catalog (pressage, transport, etc.). Not stocked. Document lines use `ServiceId` instead of `ProduitId`.
 11. **Intrant vs service lines:** On `BonCommandeLignes` and `FactureFournisseurLignes`, enforce exactly one of `IntrantId` or `ServiceId` (check constraint or validation). `BonReceptionLignes` and `AvoirFournisseurLignes` are intrant-only (purchased inputs, not finished products).
 12. **Pressages:** Production record for milling. Bill the mill with `FacturesFournisseurs` + `ServiceId` on the line; set `Pressages.FactureFournisseurId` to link operation and invoice. `QuantiteHuile` feeds the variety's bulk oil stock via `MouvementsStockVariete`.
-12b. **Bulk oil stock:** `Varietes.StockHuile` (liters) is the cached balance of `MouvementsStockVariete`. Bottling (`Remplissage`, moving liters into `Produits` stock) is planned but not implemented.
+12b. **Bulk oil stock:** `Varietes.StockHuile` (liters) is the cached balance of `MouvementsStockVariete`.
+12c. **Remplissages:** Bottling moves liters out of `Varietes.StockHuile` into bottles on `Produits.StockActuel`. Only products of the same variety with `ContenanceLitres` set can be filled. No packaging (bottles, caps) consumption is tracked.
 13. **AppSettings:** Review which desktop-only fields (backup, virtual keyboard) belong in the web backend vs. admin UI.

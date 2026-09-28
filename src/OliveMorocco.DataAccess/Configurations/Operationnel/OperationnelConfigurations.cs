@@ -197,3 +197,51 @@ public class PressageConfiguration : IEntityTypeConfiguration<Pressage>
             .OnDelete(DeleteBehavior.SetNull);
     }
 }
+
+public class RemplissageConfiguration : IEntityTypeConfiguration<Remplissage>
+{
+    public void Configure(EntityTypeBuilder<Remplissage> builder)
+    {
+        builder.ToTable("Remplissages");
+
+        builder.HasIndex(r => r.Numero).IsUnique();
+        builder.HasIndex(r => r.VarieteId);
+        builder.HasIndex(r => r.Date);
+
+        builder.Property(r => r.Numero).HasMaxLength(32).IsRequired();
+        builder.Property(r => r.QuantiteHuile).HasPrecision(12, 4);
+        builder.Property(r => r.Perte).HasPrecision(12, 4).HasDefaultValue(0m);
+        builder.Property(r => r.Note).HasMaxLength(500);
+
+        builder.HasOne(r => r.Variete)
+            .WithMany(v => v.Remplissages)
+            .HasForeignKey(r => r.VarieteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(r => r.Lignes)
+            .WithOne(l => l.Remplissage)
+            .HasForeignKey(l => l.RemplissageId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class RemplissageLigneConfiguration : IEntityTypeConfiguration<RemplissageLigne>
+{
+    public void Configure(EntityTypeBuilder<RemplissageLigne> builder)
+    {
+        builder.ToTable("RemplissageLignes");
+
+        builder.HasIndex(l => l.RemplissageId);
+        builder.HasIndex(l => l.ProduitId);
+        builder.HasIndex(l => new { l.RemplissageId, l.ProduitId }).IsUnique();
+
+        builder.Property(l => l.Quantite).HasPrecision(12, 4);
+        builder.Property(l => l.ContenanceLitres).HasPrecision(8, 3);
+        builder.Property(l => l.Litres).HasPrecision(12, 4);
+
+        builder.HasOne(l => l.Produit)
+            .WithMany(p => p.RemplissageLignes)
+            .HasForeignKey(l => l.ProduitId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

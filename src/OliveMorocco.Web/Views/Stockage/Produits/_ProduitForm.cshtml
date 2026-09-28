@@ -54,6 +54,18 @@
     </div>
 
     <div class="form-field">
+        <label for="ContenanceLitres">Contenance (L)</label>
+        <input asp-for="ContenanceLitres"
+               type="number"
+               step="0.001"
+               min="0"
+               placeholder="0.5, 1, 5…"
+               value="@(Model.ContenanceLitres?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
+        <p class="produit-form-hint">Litres d'huile par unité — requis pour le remplissage.</p>
+        <span asp-validation-for="ContenanceLitres" class="field-validation-error"></span>
+    </div>
+
+    <div class="form-field">
         <label for="TauxTVA">Taux TVA (%)</label>
         <input asp-for="TauxTVA" type="number" step="1" min="0" />
         <span asp-validation-for="TauxTVA" class="field-validation-error"></span>
