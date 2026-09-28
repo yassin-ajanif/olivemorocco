@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.DTOs.Stockage;
+using OliveMorocco.Business.Services.Stockage;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Common;
@@ -19,6 +20,7 @@ public sealed class PressageService : IPressageService
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<FactureFournisseur> _factures;
+    private readonly IRepository<MouvementStockVariete> _mouvementsHuile;
     private readonly IMapper _mapper;
     private readonly IValidator<CreatePressageDto>? _createValidator;
     private readonly IValidator<UpdatePressageDto>? _updateValidator;
@@ -28,6 +30,7 @@ public sealed class PressageService : IPressageService
         IRepository<Tiers> tiers,
         IRepository<Variete> varietes,
         IRepository<FactureFournisseur> factures,
+        IRepository<MouvementStockVariete> mouvementsHuile,
         IMapper mapper,
         IEnumerable<IValidator<CreatePressageDto>> createValidators,
         IEnumerable<IValidator<UpdatePressageDto>> updateValidators)
@@ -36,6 +39,7 @@ public sealed class PressageService : IPressageService
         _tiers = tiers;
         _varietes = varietes;
         _factures = factures;
+        _mouvementsHuile = mouvementsHuile;
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -95,7 +99,16 @@ public sealed class PressageService : IPressageService
         var entity = _mapper.Map<Pressage>(dto);
         entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
 
-        await _pressages.AddAsync(entity, cancellationToken);
+        await _pressages.ExecuteInTransactionAsync(async ct =>
+        {
+            await _pressages.AddAsync(entity, ct);
+            await ApplyHuileAsync(
+                entity.VarieteId,
+                entity.QuantiteHuile ?? 0m,
+                entity.Id,
+                string.Empty,
+                ct);
+        }, cancellationToken);
 
         return (await GetPressageByIdAsync(entity.Id, cancellationToken))!;
     }
@@ -111,18 +124,46 @@ public sealed class PressageService : IPressageService
         var entity = await _pressages.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Pressage {id} introuvable.");
 
+        var ancienneVarieteId = entity.VarieteId;
+        var ancienneHuile = entity.QuantiteHuile ?? 0m;
+
         _mapper.Map(dto, entity);
         entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
+        var nouvelleHuile = entity.QuantiteHuile ?? 0m;
 
-        await _pressages.UpdateAsync(entity, cancellationToken);
+        await _pressages.ExecuteInTransactionAsync(async ct =>
+        {
+            const string note = "Modification du pressage";
+
+            if (ancienneVarieteId == entity.VarieteId)
+            {
+                await ApplyHuileAsync(entity.VarieteId, nouvelleHuile - ancienneHuile, id, note, ct);
+            }
+            else
+            {
+                await ApplyHuileAsync(ancienneVarieteId, -ancienneHuile, id, note, ct);
+                await ApplyHuileAsync(entity.VarieteId, nouvelleHuile, id, note, ct);
+            }
+
+            await _pressages.UpdateAsync(entity, ct);
+        }, cancellationToken);
     }
 
     public async Task DeletePressageAsync(int id, CancellationToken cancellationToken = default)
     {
-        _ = await _pressages.GetByIdAsync(id, cancellationToken)
+        var entity = await _pressages.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Pressage {id} introuvable.");
 
-        await _pressages.DeleteAsync(id, cancellationToken);
+        await _pressages.ExecuteInTransactionAsync(async ct =>
+        {
+            await ApplyHuileAsync(
+                entity.VarieteId,
+                -(entity.QuantiteHuile ?? 0m),
+                id,
+                "Suppression du pressage",
+                ct);
+            await _pressages.DeleteAsync(id, ct);
+        }, cancellationToken);
     }
 
     public async Task<IReadOnlyList<FournisseurSelectItemDto>> GetFournisseursForSelectAsync(
@@ -189,6 +230,31 @@ public sealed class PressageService : IPressageService
             return quantiteHuile;
 
         return Math.Round(quantiteOlives * rendement / 100m, 4);
+    }
+
+    private async Task ApplyHuileAsync(
+        int varieteId,
+        decimal variation,
+        int pressageId,
+        string note,
+        CancellationToken cancellationToken)
+    {
+        if (variation == 0)
+            return;
+
+        var variete = await _varietes.GetByIdAsync(varieteId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Variété {varieteId} introuvable.");
+
+        var mouvement = StockHuileMouvements.Apply(
+            variete,
+            variation,
+            StockHuileMouvements.OriginePressage,
+            pressageId,
+            note,
+            nameof(CreatePressageDto.QuantiteHuile),
+            $"Stock d'huile insuffisant pour « {variete.Nom} » : cette huile a déjà été utilisée ou ajustée.");
+
+        await _mouvementsHuile.AddAsync(mouvement, cancellationToken);
     }
 
     private async Task EnsureReferencesValidAsync(

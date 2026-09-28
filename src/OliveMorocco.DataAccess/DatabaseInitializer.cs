@@ -300,7 +300,7 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             return;
 
         var now = DateTime.UtcNow;
-        db.Pressages.Add(new Pressage
+        var pressage = new Pressage
         {
             FournisseurId = huilerie.Id,
             VarieteId = picholine.Id,
@@ -310,7 +310,22 @@ public sealed class DatabaseInitializer(IServiceProvider services) : IAppDatabas
             QuantiteHuile = 560,
             CreatedAt = now,
             UpdatedAt = now,
+        };
+        db.Pressages.Add(pressage);
+        await db.SaveChangesAsync(cancellationToken);
+
+        db.MouvementsStockVariete.Add(new MouvementStockVariete
+        {
+            VarieteId = picholine.Id,
+            Type = TypeMouvement.Entree,
+            Quantite = pressage.QuantiteHuile.Value,
+            StockAvant = picholine.StockHuile,
+            OrigineType = "Pressage",
+            OrigineId = pressage.Id,
+            CreatedAt = now,
+            UpdatedAt = now,
         });
+        picholine.StockHuile += pressage.QuantiteHuile.Value;
 
         await db.SaveChangesAsync(cancellationToken);
     }

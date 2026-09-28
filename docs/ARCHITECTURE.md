@@ -169,7 +169,7 @@ Code, DTOs, services, EF configurations, and controllers are grouped into **thre
 
 | Domain | Folder (all layers) | Sidebar | Main entities |
 |--------|---------------------|---------|---------------|
-| **Stockage** | `Stockage/` (Web UI); entities split across `Vente/` + `Operationnel/` | Stockage | `Produit`, `MouvementStock`, `Intrant`, `Secteur`, `Variete`, `SecteurVariete` |
+| **Stockage** | `Stockage/` (Web UI); entities split across `Vente/` + `Operationnel/` | Stockage | `Produit`, `MouvementStock`, `Intrant`, `Secteur`, `Variete`, `SecteurVariete`, `MouvementStockVariete` (bulk oil) |
 | **Opérationnel** | `Operationnel/` | Opérationnel | `Intervention`, `Recolte`, `Pressage` (+ field ops using secteurs / intrants) |
 | **Vente** | `Vente/` | Vente | devis / BC / BL / factures / avoirs **client** + lignes, paiements client |
 | **Achat** | `Achat/` | Achat | `Service`, `TypeCharge`, `Charge`, BC / BR / factures / avoirs **fournisseur** + lignes, paiements fournisseur |
@@ -200,7 +200,7 @@ Same pattern as FaturatiWeb: controllers use **route prefixes** matching the das
 |---------|------------|----------|
 | Public site | `/`, `/Home` | ZAHO marketing page |
 | Dashboard | `/Dashboard` | Gestion shell (today) |
-| Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Varietes`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock` |
+| Stockage | `/Stockage/...` | `/Stockage/Produits`, `/Stockage/Varietes`, `/Stockage/Intrants`, `/Stockage/Secteurs`, `/Stockage/Stock`, `/Stockage/HuileVrac` |
 | Vente | `/Vente/...` | `/Vente/Clients`, `/Vente/Devis` |
 | Achat | `/Achat/...` | `/Achat/Fournisseurs`, `/Achat/BonsReception` |
 | Opérationnel | `/Operationnel/...` | `/Operationnel/Interventions`, `/Operationnel/Pressages`, `/Operationnel/Recoltes` |
@@ -213,7 +213,7 @@ Organized under the **three domains** (mirrors Business services):
 
 ```
 Controllers/
-├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController)
+├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController, HuileVracController)
 ├── Operationnel/      (InterventionsController, PressagesController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)

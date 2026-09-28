@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<Secteur> Secteurs => Set<Secteur>();
     public DbSet<SecteurVariete> SecteurVarietes => Set<SecteurVariete>();
     public DbSet<Variete> Varietes => Set<Variete>();
+    public DbSet<MouvementStockVariete> MouvementsStockVariete => Set<MouvementStockVariete>();
     public DbSet<Intrant> Intrants => Set<Intrant>();
     public DbSet<Intervention> Interventions => Set<Intervention>();
     public DbSet<InterventionLigne> InterventionLignes => Set<InterventionLigne>();

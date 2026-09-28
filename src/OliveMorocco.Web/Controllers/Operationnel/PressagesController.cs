@@ -114,6 +114,12 @@ public sealed class PressagesController(IPressageService pressages) : Controller
         {
             return NotFound();
         }
+        catch (ValidationException exception)
+        {
+            TempData["ErrorTitle"] = "Suppression impossible";
+            TempData["Error"] = exception.Errors.FirstOrDefault()?.ErrorMessage ?? exception.Message;
+            return RedirectToAction(nameof(Edit), new { id });
+        }
     }
 
     [HttpGet("Factures")]

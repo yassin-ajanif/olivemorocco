@@ -12,6 +12,7 @@ public static class DashboardNav
         ["Intrants"] = new("stockage", "intrants", "Intrants", "intrant"),
         ["Secteurs"] = new("stockage", "secteurs", "Secteurs", "secteur"),
         ["Stock"] = new("stockage", "stock", "État du stock", "stock"),
+        ["HuileVrac"] = new("stockage", "huile-vrac", "Huile en vrac", "huile en vrac"),
         ["Clients"] = new("vente", "clients", "Clients", "client"),
         ["Devis"] = new("vente", "devis", "Devis", "devis"),
         ["BonsCommande"] = new("vente", "bons-commande", "Bons de commande", "bon de commande"),

@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IIntrantService, IntrantService>();
         services.AddScoped<ISecteurService, SecteurService>();
         services.AddScoped<IStockService, StockService>();
+        services.AddScoped<IStockHuileService, StockHuileService>();
         services.AddScoped<IInterventionService, InterventionService>();
         services.AddScoped<IPressageService, PressageService>();
 

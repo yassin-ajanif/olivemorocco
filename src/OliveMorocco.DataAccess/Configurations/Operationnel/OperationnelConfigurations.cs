@@ -56,6 +56,28 @@ public class VarieteConfiguration : IEntityTypeConfiguration<Variete>
         builder.Property(v => v.Nom).HasMaxLength(128).IsRequired();
         builder.Property(v => v.Code).HasMaxLength(32);
         builder.Property(v => v.RegionOrigine).HasMaxLength(128);
+        builder.Property(v => v.StockHuile).HasPrecision(12, 4);
+    }
+}
+
+public class MouvementStockVarieteConfiguration : IEntityTypeConfiguration<MouvementStockVariete>
+{
+    public void Configure(EntityTypeBuilder<MouvementStockVariete> builder)
+    {
+        builder.ToTable("MouvementsStockVariete");
+
+        builder.HasIndex(m => m.VarieteId);
+        builder.HasIndex(m => new { m.OrigineType, m.OrigineId });
+
+        builder.Property(m => m.Quantite).HasPrecision(12, 4);
+        builder.Property(m => m.StockAvant).HasPrecision(12, 4);
+        builder.Property(m => m.OrigineType).HasMaxLength(32).IsRequired();
+        builder.Property(m => m.Note).HasMaxLength(500).IsRequired();
+
+        builder.HasOne(m => m.Variete)
+            .WithMany(v => v.MouvementsStock)
+            .HasForeignKey(m => m.VarieteId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

@@ -68,6 +68,15 @@ Most line tables share: `ProduitId`, `Designation`, `Conditionnement`, `Quantite
 | `AvoirFournisseur` | Avoir fournisseur |
 | `Import` | Product import / manual adjustment |
 
+### `MouvementStockVariete.OrigineType` (bulk oil ledger)
+
+| Code | Source |
+|------|--------|
+| `Pressage` | Oil produced by a pressage (in), or its correction / reversal on edit / delete |
+| `Import` | Manual adjustment of bulk oil stock |
+
+> **Planned:** `Remplissage` (filling bulk oil into bottled `Produits`) — not implemented yet.
+
 > **Note:** The source app also uses `BP` (Bon de Préparation). That origin type is omitted here because the preparation module is excluded.
 
 ---
@@ -103,6 +112,7 @@ erDiagram
     Tiers ||--o{ Pressage : "huilerie"
     Variete ||--o{ Pressage : "pressed"
     Pressage }o--o| FactureFournisseur : "FactureFournisseurId"
+    Variete ||--o{ MouvementStockVariete : "bulk oil ledger"
 
     Service ||--o{ FactureFournisseurLigne : "billed as"
     Service ||--o{ BonCommandeLigne : "ordered as"
@@ -318,6 +328,8 @@ Olive pressing (*pressage*) at an external mill (*huilerie*). One batch = one **
 
 **Billing:** invoice the mill via `FacturesFournisseurs` with a line pointing to `Services` (e.g. Pressage huile). Link `Pressages.FactureFournisseurId` to that invoice. No `BonReception` for pressing.
 
+**Stock impact:** when `QuantiteHuile` is set, the pressage adds that many liters to `Varietes.StockHuile` through a `MouvementsStockVariete` row (`OrigineType = 'Pressage'`, `OrigineId = Pressages.Id`). Editing writes only the difference (or moves the oil between varieties if `VarieteId` changes); deleting reverses it. Both are refused if the bulk stock would become negative.
+
 **Example:**
 
 | Fournisseur | Variété | Date | Olives (kg) | Rendement | Huile (L) | Facture |
@@ -338,11 +350,32 @@ Olive tree varieties (*variétés*) used to classify products by the type of oli
 | Nom | NVARCHAR(128) | NO | | Variety name |
 | Code | NVARCHAR(32) | YES | | Short code for references (e.g. `PICH`, `HAOU`) — **unique** when set |
 | RegionOrigine | NVARCHAR(128) | YES | | Typical growing region (e.g. Fès-Meknès, Marrakech-Safi) |
+| StockHuile | DECIMAL(12,4) | NO | 0 | Current bulk oil in **liters** (not yet bottled). Running total kept in sync with `MouvementsStockVariete` |
 | CreatedAt | DATETIME | NO | | |
 | UpdatedAt | DATETIME | NO | | |
 | CreatedByUserId | INT | YES | | |
 
 **Indexes:** unique on `Nom`; unique on `Code`.
+
+#### `MouvementsStockVariete`
+
+Ledger of bulk oil movements per variety (liters). Same shape as `MouvementsStock`, but for oil stored before bottling.
+
+| Column | Type | Null | Default | Notes |
+|--------|------|------|---------|-------|
+| Id | INT | NO | identity | PK |
+| VarieteId | INT | NO | | FK → `Varietes.Id` (Restrict on delete) |
+| Type | INT | NO | | `TypeMouvement` (Entree / Sortie / Ajustement) |
+| Quantite | DECIMAL(12,4) | NO | | Liters moved (always positive; direction given by `Type`) |
+| StockAvant | DECIMAL(12,4) | NO | | `Varietes.StockHuile` before the movement |
+| OrigineType | NVARCHAR(32) | NO | | See `MouvementStockVariete.OrigineType` codes |
+| OrigineId | INT | YES | | Polymorphic source Id (e.g. `Pressages.Id`) |
+| Note | NVARCHAR(500) | NO | `''` | Free-text note |
+| CreatedAt | DATETIME | NO | | |
+| UpdatedAt | DATETIME | NO | | |
+| CreatedByUserId | INT | YES | | |
+
+**Indexes:** `VarieteId`; `(OrigineType, OrigineId)`.
 
 #### `Produits`
 
@@ -910,11 +943,12 @@ AvoirFournisseur (supplier credit note)
 
 ```
 Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (service line via Services)
+                         ↘ MouvementsStockVariete (Entree L) → Varietes.StockHuile
 ```
 
 ---
 
-## Table Inventory (35 tables)
+## Table Inventory (36 tables)
 
 | # | Table | Domain |
 |---|-------|--------|
@@ -930,6 +964,7 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 | 9 | Produits | Stock |
 | 10 | Services | Stock |
 | 11 | MouvementsStock | Stock |
+| 11b | MouvementsStockVariete | Stock |
 | 12 | Devis | Sales |
 | 13 | DevisLignes | Sales |
 | 14 | BonsCommandeClient | Sales |
@@ -969,5 +1004,6 @@ Recolte (olives kg) → Pressage (olives in, oil out) → FactureFournisseur (se
 9. **Recoltes:** One row per harvest on a single `Secteur` and single `Variete`. Quantity in kg. Validate that the variety exists on that sector via `SecteurVarietes`.
 10. **Services:** Purchasable services catalog (pressage, transport, etc.). Not stocked. Document lines use `ServiceId` instead of `ProduitId`.
 11. **Intrant vs service lines:** On `BonCommandeLignes` and `FactureFournisseurLignes`, enforce exactly one of `IntrantId` or `ServiceId` (check constraint or validation). `BonReceptionLignes` and `AvoirFournisseurLignes` are intrant-only (purchased inputs, not finished products).
-12. **Pressages:** Production record for milling. Bill the mill with `FacturesFournisseurs` + `ServiceId` on the line; set `Pressages.FactureFournisseurId` to link operation and invoice.
+12. **Pressages:** Production record for milling. Bill the mill with `FacturesFournisseurs` + `ServiceId` on the line; set `Pressages.FactureFournisseurId` to link operation and invoice. `QuantiteHuile` feeds the variety's bulk oil stock via `MouvementsStockVariete`.
+12b. **Bulk oil stock:** `Varietes.StockHuile` (liters) is the cached balance of `MouvementsStockVariete`. Bottling (`Remplissage`, moving liters into `Produits` stock) is planned but not implemented.
 13. **AppSettings:** Review which desktop-only fields (backup, virtual keyboard) belong in the web backend vs. admin UI.
