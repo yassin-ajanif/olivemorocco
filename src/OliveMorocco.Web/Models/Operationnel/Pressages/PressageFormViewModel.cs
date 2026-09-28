@@ -21,13 +21,15 @@ public sealed class PressageFormViewModel
 
     public decimal? QuantiteHuile { get; set; }
 
-    public int? FactureFournisseurId { get; set; }
+    public int TypeChargeId { get; set; }
+    public string Libelle { get; set; } = string.Empty;
+    public DateTime ChargeDate { get; set; } = DateTime.Today;
+    public decimal MontantTtc { get; set; }
+    public string? Note { get; set; }
 
     public IReadOnlyList<FournisseurSelectItemDto> Fournisseurs { get; set; } = [];
 
     public IReadOnlyList<VarieteSelectItemDto> Varietes { get; set; } = [];
-
-    public IReadOnlyList<FactureFournisseurSelectItemDto> Factures { get; set; } = [];
 
     public bool IsEdit => Id.HasValue;
 }

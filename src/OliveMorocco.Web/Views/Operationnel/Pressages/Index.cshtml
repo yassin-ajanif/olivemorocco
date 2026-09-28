@@ -1,6 +1,6 @@
 @model PressageListViewModel
 @{
-    const string cols = "1fr 1.2fr 1.4fr 1fr 0.9fr 0.8fr 0.8fr 0.9fr auto";
+    const string cols = "1fr 1.2fr 1.4fr 1fr 0.9fr 0.8fr 0.8fr auto";
     const string emptyMessage = "Aucun pressage — cliquez sur Nouveau pour commencer.";
     var pagination = new ListPaginationViewModel
     {
@@ -39,7 +39,6 @@
         <span class="cell-bold">Olives (kg)</span>
         <span class="cell-bold">Rendement</span>
         <span class="cell-bold">Huile (L)</span>
-        <span>Facture</span>
         <span>Actions</span>
     </div>
     <div class="list-body">
@@ -52,7 +51,6 @@
             foreach (var item in Model.Items)
             {
                 var huileLabel = item.QuantiteHuile.HasValue ? item.QuantiteHuile.Value.ToString("N2") : "—";
-                var factureLabel = string.IsNullOrWhiteSpace(item.FactureNumero) ? "—" : item.FactureNumero;
 
                 <div class="list-row" style="grid-template-columns:@cols">
                     <span data-label="Date">
@@ -64,7 +62,6 @@
                     <span data-label="Olives (kg)" class="cell-bold">@item.QuantiteOlives.ToString("N2")</span>
                     <span data-label="Rendement" class="cell-bold">@item.Rendement.ToString("N2") %</span>
                     <span data-label="Huile (L)" class="cell-bold">@huileLabel</span>
-                    <span data-label="Facture">@factureLabel</span>
                     <span class="list-row-actions" data-label="Actions">
                         <a asp-action="Edit"
                            asp-route-id="@item.Id"

@@ -13,9 +13,9 @@ public class Pressage : BaseEntity
     public decimal QuantiteOlives { get; set; }
     public decimal Rendement { get; set; }
     public decimal? QuantiteHuile { get; set; }
-    public int? FactureFournisseurId { get; set; }
+    public int ChargeId { get; set; }
 
     public Tiers Fournisseur { get; set; } = null!;
     public Variete Variete { get; set; } = null!;
-    public FactureFournisseur? FactureFournisseur { get; set; }
+    public Charge Charge { get; set; } = null!;
 }

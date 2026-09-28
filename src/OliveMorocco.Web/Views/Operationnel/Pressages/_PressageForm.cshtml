@@ -5,8 +5,7 @@
       method="post"
       class="form-grid pressage-form"
       id="pressageForm"
-      data-pressage-form
-      data-factures-url="@Url.Action("Factures")">
+      data-pressage-form>
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All" class="form-validation-summary"></div>
 
@@ -41,18 +40,6 @@
             <label for="Date">Date</label>
             <input asp-for="Date" type="date" />
             <span asp-validation-for="Date" class="field-validation-error"></span>
-        </div>
-
-        <div class="form-field">
-            <label for="FactureFournisseurId">Facture fournisseur</label>
-            <select asp-for="FactureFournisseurId" id="FactureFournisseurId" data-pressage-facture>
-                <option value="">— Aucune —</option>
-                @foreach (var facture in Model.Factures)
-                {
-                    <option value="@facture.Id">@facture.Numero (@facture.Date.ToString("dd/MM/yyyy"))</option>
-                }
-            </select>
-            <span asp-validation-for="FactureFournisseurId" class="field-validation-error"></span>
         </div>
     </div>
 

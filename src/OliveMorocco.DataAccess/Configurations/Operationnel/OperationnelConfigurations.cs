@@ -178,7 +178,6 @@ public class PressageConfiguration : IEntityTypeConfiguration<Pressage>
         builder.HasIndex(p => p.FournisseurId);
         builder.HasIndex(p => p.VarieteId);
         builder.HasIndex(p => p.Date);
-        builder.HasIndex(p => p.FactureFournisseurId);
 
         builder.Property(p => p.Numero).HasMaxLength(32).IsRequired();
         builder.Property(p => p.QuantiteOlives).HasPrecision(12, 4);
@@ -194,11 +193,6 @@ public class PressageConfiguration : IEntityTypeConfiguration<Pressage>
             .WithMany(v => v.Pressages)
             .HasForeignKey(p => p.VarieteId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(p => p.FactureFournisseur)
-            .WithMany(f => f.Pressages)
-            .HasForeignKey(p => p.FactureFournisseurId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 

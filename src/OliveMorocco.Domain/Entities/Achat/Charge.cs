@@ -7,6 +7,7 @@ public class Charge : BaseEntity
 {
     public int TypeChargeId { get; set; }
     public int? InterventionId { get; set; }
+    public int? PressageId { get; set; }
     public string Libelle { get; set; } = string.Empty;
     public DateTime Date { get; set; }
     public decimal MontantTtc { get; set; }
@@ -14,4 +15,5 @@ public class Charge : BaseEntity
 
     public TypeCharge TypeCharge { get; set; } = null!;
     public Intervention? Intervention { get; set; }
+    public Pressage? Pressage { get; set; }
 }

@@ -30,8 +30,4 @@ public interface IPressageService
 
     Task<IReadOnlyList<VarieteSelectItemDto>> GetVarietesForSelectAsync(
         CancellationToken cancellationToken = default);
-
-    Task<IReadOnlyList<FactureFournisseurSelectItemDto>> GetFacturesForSelectAsync(
-        int fournisseurId,
-        CancellationToken cancellationToken = default);
 }

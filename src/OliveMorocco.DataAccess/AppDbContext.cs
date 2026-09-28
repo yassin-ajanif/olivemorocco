@@ -64,6 +64,11 @@ public class AppDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         ApplyDateTimeUtcConverters(modelBuilder);
+
+        modelBuilder.Entity<Pressage>()
+            .HasOne(p => p.Charge)
+            .WithOne(c => c.Pressage)
+            .HasForeignKey<Pressage>(p => p.ChargeId);
     }
 
     private static void ApplyDateTimeUtcConverters(ModelBuilder modelBuilder)

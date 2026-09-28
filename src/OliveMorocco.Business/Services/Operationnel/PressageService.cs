@@ -21,6 +21,7 @@ public sealed class PressageService : IPressageService
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<FactureFournisseur> _factures;
     private readonly IRepository<MouvementStockVariete> _mouvementsHuile;
+    private readonly IRepository<Charge> _charges;
     private readonly IMapper _mapper;
     private readonly IValidator<CreatePressageDto>? _createValidator;
     private readonly IValidator<UpdatePressageDto>? _updateValidator;
@@ -31,6 +32,7 @@ public sealed class PressageService : IPressageService
         IRepository<Variete> varietes,
         IRepository<FactureFournisseur> factures,
         IRepository<MouvementStockVariete> mouvementsHuile,
+        IRepository<Charge> charges,
         IMapper mapper,
         IEnumerable<IValidator<CreatePressageDto>> createValidators,
         IEnumerable<IValidator<UpdatePressageDto>> updateValidators)
@@ -40,6 +42,7 @@ public sealed class PressageService : IPressageService
         _varietes = varietes;
         _factures = factures;
         _mouvementsHuile = mouvementsHuile;
+        _charges = charges;
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -60,8 +63,7 @@ public sealed class PressageService : IPressageService
         var (items, totalCount) = await _pressages.QueryPagedAsync(
             p => pattern == null
                  || EF.Functions.ILike(p.Fournisseur.Nom, pattern)
-                 || EF.Functions.ILike(p.Variete.Nom, pattern)
-                 || (p.FactureFournisseur != null && EF.Functions.ILike(p.FactureFournisseur.Numero, pattern)),
+                 || EF.Functions.ILike(p.Variete.Nom, pattern),
             query => query.OrderByDescending(p => p.Date).ThenByDescending(p => p.Id),
             p => new PressageListItemDto(
                 p.Id,
@@ -71,8 +73,7 @@ public sealed class PressageService : IPressageService
                 p.Variete.Nom,
                 p.QuantiteOlives,
                 p.Rendement,
-                p.QuantiteHuile,
-                p.FactureFournisseur != null ? p.FactureFournisseur.Numero : null),
+                p.QuantiteHuile),
             page,
             pageSize,
             cancellationToken);
@@ -84,7 +85,7 @@ public sealed class PressageService : IPressageService
     {
         var entity = await _pressages.GetByIdWithNavigationsAsync(
             id,
-            [p => p.Fournisseur, p => p.Variete, p => p.FactureFournisseur!],
+            [p => p.Fournisseur, p => p.Variete],
             cancellationToken);
 
         return entity is null ? null : ToDto(entity);
@@ -95,14 +96,25 @@ public sealed class PressageService : IPressageService
         CancellationToken cancellationToken = default)
     {
         await ValidateAsync(_createValidator, dto, cancellationToken);
-        await EnsureReferencesValidAsync(dto.FournisseurId, dto.VarieteId, dto.FactureFournisseurId, cancellationToken);
+        await EnsureReferencesValidAsync(dto.FournisseurId, dto.VarieteId, cancellationToken);
 
         var entity = _mapper.Map<Pressage>(dto);
         entity.Numero = await GenerateNumeroAsync(cancellationToken);
         entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
 
+        var charge = new Charge
+        {
+            TypeChargeId = dto.TypeChargeId,
+            Libelle = dto.Libelle,
+            Date = dto.ChargeDate,
+            MontantTtc = dto.MontantTtc,
+            Note = dto.Note ?? string.Empty,
+        };
+
         await _pressages.ExecuteInTransactionAsync(async ct =>
         {
+            await _charges.AddAsync(charge, ct);
+            entity.ChargeId = charge.Id;
             await _pressages.AddAsync(entity, ct);
             await ApplyHuileAsync(
                 entity.VarieteId,
@@ -121,7 +133,7 @@ public sealed class PressageService : IPressageService
         CancellationToken cancellationToken = default)
     {
         await ValidateAsync(_updateValidator, dto, cancellationToken);
-        await EnsureReferencesValidAsync(dto.FournisseurId, dto.VarieteId, dto.FactureFournisseurId, cancellationToken);
+        await EnsureReferencesValidAsync(dto.FournisseurId, dto.VarieteId, cancellationToken);
 
         var entity = await _pressages.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Pressage {id} introuvable.");
@@ -191,24 +203,6 @@ public sealed class PressageService : IPressageService
             .ToList();
     }
 
-    public async Task<IReadOnlyList<FactureFournisseurSelectItemDto>> GetFacturesForSelectAsync(
-        int fournisseurId,
-        CancellationToken cancellationToken = default)
-    {
-        if (fournisseurId <= 0)
-            return [];
-
-        var factures = await _factures.FindAsync(
-            f => f.FournisseurId == fournisseurId,
-            cancellationToken);
-
-        return factures
-            .OrderByDescending(f => f.Date)
-            .ThenByDescending(f => f.Id)
-            .Select(f => new FactureFournisseurSelectItemDto(f.Id, f.Numero, f.Date))
-            .ToList();
-    }
-
     private static PressageDto ToDto(Pressage entity) =>
         new(
             entity.Id,
@@ -220,9 +214,7 @@ public sealed class PressageService : IPressageService
             entity.Date,
             entity.QuantiteOlives,
             entity.Rendement,
-            entity.QuantiteHuile,
-            entity.FactureFournisseurId,
-            entity.FactureFournisseur?.Numero);
+            entity.QuantiteHuile);
 
     private async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken)
     {
@@ -275,7 +267,6 @@ public sealed class PressageService : IPressageService
     private async Task EnsureReferencesValidAsync(
         int fournisseurId,
         int varieteId,
-        int? factureFournisseurId,
         CancellationToken cancellationToken)
     {
         if (!await _tiers.AnyAsync(
@@ -296,19 +287,6 @@ public sealed class PressageService : IPressageService
                 new ValidationFailure(
                     nameof(CreatePressageDto.VarieteId),
                     "Variété introuvable."),
-            ]);
-        }
-
-        if (factureFournisseurId is null)
-            return;
-
-        var facture = await _factures.GetByIdAsync(factureFournisseurId.Value, cancellationToken);
-        if (facture is null || facture.FournisseurId != fournisseurId)
-        {
-            throw new ValidationException([
-                new ValidationFailure(
-                    nameof(CreatePressageDto.FactureFournisseurId),
-                    "La facture sélectionnée n'appartient pas à cette huilerie."),
             ]);
         }
     }

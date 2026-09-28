@@ -14,9 +14,7 @@ public record PressageDto(
     DateTime Date,
     decimal QuantiteOlives,
     decimal Rendement,
-    decimal? QuantiteHuile,
-    int? FactureFournisseurId,
-    string? FactureNumero);
+    decimal? QuantiteHuile);
 
 public record CreatePressageDto(
     int FournisseurId,
@@ -25,7 +23,11 @@ public record CreatePressageDto(
     decimal QuantiteOlives,
     decimal Rendement,
     decimal? QuantiteHuile,
-    int? FactureFournisseurId);
+    int TypeChargeId,
+    string Libelle,
+    DateTime ChargeDate,
+    decimal MontantTtc,
+    string? Note);
 
 public record UpdatePressageDto(
     int FournisseurId,
@@ -33,8 +35,7 @@ public record UpdatePressageDto(
     DateTime Date,
     decimal QuantiteOlives,
     decimal Rendement,
-    decimal? QuantiteHuile,
-    int? FactureFournisseurId);
+    decimal? QuantiteHuile);
 
 public record PressageListItemDto(
     int Id,
@@ -44,5 +45,4 @@ public record PressageListItemDto(
     string VarieteNom,
     decimal QuantiteOlives,
     decimal Rendement,
-    decimal? QuantiteHuile,
-    string? FactureNumero);
+    decimal? QuantiteHuile);

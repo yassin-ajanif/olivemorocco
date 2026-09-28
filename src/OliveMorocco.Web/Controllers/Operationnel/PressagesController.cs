@@ -122,15 +122,6 @@ public sealed class PressagesController(IPressageService pressages) : Controller
         }
     }
 
-    [HttpGet("Factures")]
-    public async Task<IActionResult> Factures(
-        int fournisseurId,
-        CancellationToken cancellationToken = default)
-    {
-        var items = await pressages.GetFacturesForSelectAsync(fournisseurId, cancellationToken);
-        return Json(items);
-    }
-
     private async Task<PressageFormViewModel> BuildFormAsync(
         PressageFormViewModel? model = null,
         CancellationToken cancellationToken = default)
@@ -150,9 +141,6 @@ public sealed class PressagesController(IPressageService pressages) : Controller
 
         model.Fournisseurs = fournisseurs;
         model.Varietes = varietes;
-        model.Factures = model.FournisseurId > 0
-            ? await pressages.GetFacturesForSelectAsync(model.FournisseurId, cancellationToken)
-            : [];
 
         return model;
     }
@@ -174,7 +162,6 @@ public sealed class PressagesController(IPressageService pressages) : Controller
             QuantiteOlives = pressage.QuantiteOlives,
             Rendement = pressage.Rendement,
             QuantiteHuile = pressage.QuantiteHuile,
-            FactureFournisseurId = pressage.FactureFournisseurId,
         };
 
     private static CreatePressageDto ToCreateDto(PressageFormViewModel model) =>
@@ -185,7 +172,11 @@ public sealed class PressagesController(IPressageService pressages) : Controller
             model.QuantiteOlives,
             model.Rendement,
             model.QuantiteHuile,
-            model.FactureFournisseurId);
+            model.TypeChargeId,
+            model.Libelle,
+            model.ChargeDate,
+            model.MontantTtc,
+            model.Note);
 
     private static UpdatePressageDto ToUpdateDto(PressageFormViewModel model) =>
         new(
@@ -194,8 +185,7 @@ public sealed class PressagesController(IPressageService pressages) : Controller
             model.Date,
             model.QuantiteOlives,
             model.Rendement,
-            model.QuantiteHuile,
-            model.FactureFournisseurId);
+            model.QuantiteHuile);
 
     private static string? Normalize(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
