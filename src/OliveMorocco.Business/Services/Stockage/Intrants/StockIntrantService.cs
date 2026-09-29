@@ -19,6 +19,9 @@ public sealed class StockIntrantService : IStockIntrantService
     /// <summary>Intrant used in an intervention (out), or its correction / reversal on edit / delete.</summary>
     public const string OrigineIntervention = "Intervention";
 
+    /// <summary>Goods reception from a supplier (in), or its correction / reversal on edit / delete.</summary>
+    public const string OrigineBonReception = "BR";
+
     /// <summary>Manual adjustment of intrant stock.</summary>
     public const string OrigineImport = "Import";
 
@@ -200,6 +203,69 @@ public sealed class StockIntrantService : IStockIntrantService
         }
     }
 
+    public async Task ApplyBonReceptionEntreeAsync(
+        int bonReceptionId,
+        IEnumerable<(int IntrantId, decimal QuantiteRecue)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (intrantId, quantiteRecue) in lignes)
+        {
+            if (quantiteRecue <= 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                quantiteRecue,
+                OrigineBonReception,
+                bonReceptionId,
+                string.Empty,
+                nameof(DTOs.Achat.CreateBonReceptionDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ApplyBonReceptionAjustementAsync(
+        int bonReceptionId,
+        IEnumerable<(int IntrantId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (intrantId, delta) in deltas)
+        {
+            if (delta == 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                delta,
+                OrigineBonReception,
+                bonReceptionId,
+                "Modification du bon de réception",
+                nameof(DTOs.Achat.UpdateBonReceptionDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ReverseBonReceptionAsync(
+        int bonReceptionId,
+        IEnumerable<(int IntrantId, decimal QuantiteRecue)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (intrantId, quantiteRecue) in lignes)
+        {
+            if (quantiteRecue <= 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                -quantiteRecue,
+                OrigineBonReception,
+                bonReceptionId,
+                "Suppression du bon de réception",
+                string.Empty,
+                cancellationToken);
+        }
+    }
+
     public async Task ApplyMouvementAsync(
         int intrantId,
         decimal variation,
@@ -292,6 +358,7 @@ public sealed class StockIntrantService : IStockIntrantService
         origineType switch
         {
             OrigineIntervention => origineId.HasValue ? $"Intervention #{origineId}" : "Intervention",
+            OrigineBonReception => origineId.HasValue ? $"BR #{origineId}" : "Bon de réception",
             OrigineImport => "Ajustement manuel",
             _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
         };

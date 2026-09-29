@@ -8,6 +8,7 @@ using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Enums;
+using OliveMorocco.Business.Services.Stockage.Intrants;
 
 namespace OliveMorocco.Business.Services.Achat;
 
@@ -19,6 +20,7 @@ public sealed class BonReceptionService
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<FactureFournisseurLigne> _factureLignes;
     private readonly IRepository<FactureFournisseur> _factures;
+    private readonly IStockIntrantService _stockIntrantService;
 
     public BonReceptionService(
         IRepository<BonReception> bons,
@@ -26,6 +28,7 @@ public sealed class BonReceptionService
         IRepository<Tiers> tiers,
         IRepository<FactureFournisseurLigne> factureLignes,
         IRepository<FactureFournisseur> factures,
+        IStockIntrantService stockIntrantService,
         IMapper mapper,
         IEnumerable<IValidator<CreateBonReceptionDto>> createValidators,
         IEnumerable<IValidator<UpdateBonReceptionDto>> updateValidators)
@@ -35,6 +38,7 @@ public sealed class BonReceptionService
         _tiers = tiers;
         _factureLignes = factureLignes;
         _factures = factures;
+        _stockIntrantService = stockIntrantService;
     }
 
     public async Task<PagedResult<BonReceptionListItemDto>> GetBonsReceptionAsync(
@@ -180,7 +184,15 @@ public sealed class BonReceptionService
         var entity = Mapper.Map<BonReception>(dto with { Numero = numero });
         entity.Note = dto.Note ?? string.Empty;
 
-        await Repo.AddAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await Repo.AddAsync(entity, ct);
+            await _stockIntrantService.ApplyBonReceptionEntreeAsync(
+                entity.Id,
+                entity.Lignes.Select(l => (l.IntrantId, l.QuantiteRecue)),
+                ct);
+        }, cancellationToken);
+
         return (await GetBonReceptionByIdAsync(entity.Id, cancellationToken))!;
     }
 
@@ -195,6 +207,14 @@ public sealed class BonReceptionService
         var entity = await Repo.GetByIdWithNavigationsAsync(id, [b => b.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Bon de livraison {id} introuvable.");
 
+        // Signed difference per intrant: + when more was received, - when less, so the
+        // ledger can be corrected with a single movement per intrant.
+        var intrantDeltas = new Dictionary<int, decimal>();
+        foreach (var ligne in entity.Lignes)
+            intrantDeltas[ligne.IntrantId] = intrantDeltas.GetValueOrDefault(ligne.IntrantId) - ligne.QuantiteRecue;
+        foreach (var ligne in dto.Lignes)
+            intrantDeltas[ligne.IntrantId] = intrantDeltas.GetValueOrDefault(ligne.IntrantId) + ligne.QuantiteRecue;
+
         entity.Lignes.Clear();
         Mapper.Map(dto, entity);
         entity.Note = dto.Note ?? string.Empty;
@@ -205,16 +225,33 @@ public sealed class BonReceptionService
             line.BRId = entity.Id;
         }
 
-        await Repo.UpdateAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockIntrantService.ApplyBonReceptionAjustementAsync(
+                id,
+                intrantDeltas.Select(d => (d.Key, d.Value)),
+                ct);
+
+            await Repo.UpdateAsync(entity, ct);
+        }, cancellationToken);
     }
 
     public async Task DeleteBonReceptionAsync(int id, CancellationToken cancellationToken = default)
     {
-        _ = await GetBonReceptionByIdAsync(id, cancellationToken)
+        var entity = await Repo.GetByIdWithNavigationsAsync(id, [b => b.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Bon de livraison {id} introuvable.");
 
         await EnsureCanDeleteAsync(id, cancellationToken);
-        await DeleteAsync(id, cancellationToken);
+
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockIntrantService.ReverseBonReceptionAsync(
+                id,
+                entity.Lignes.Select(l => (l.IntrantId, l.QuantiteRecue)),
+                ct);
+
+            await DeleteAsync(id, ct);
+        }, cancellationToken);
     }
 
     public async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken = default)
