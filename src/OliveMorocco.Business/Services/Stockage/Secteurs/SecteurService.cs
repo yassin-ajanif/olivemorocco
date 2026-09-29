@@ -8,7 +8,7 @@ using OliveMorocco.DataAccess;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Secteurs;
 
 public sealed class SecteurService : ISecteurService
 {

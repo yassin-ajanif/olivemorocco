@@ -9,7 +9,7 @@ using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
 using OliveMorocco.Domain.Enums;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Produits;
 
 public sealed class ProduitService : IProduitService
 {

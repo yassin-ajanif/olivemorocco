@@ -5,6 +5,10 @@ using OliveMorocco.Business.Services;
 using OliveMorocco.Business.Services.Achat;
 using OliveMorocco.Business.Services.Operationnel;
 using OliveMorocco.Business.Services.Stockage;
+using OliveMorocco.Business.Services.Stockage.Produits;
+using OliveMorocco.Business.Services.Stockage.Varietes;
+using OliveMorocco.Business.Services.Stockage.Intrants;
+using OliveMorocco.Business.Services.Stockage.Secteurs;
 using OliveMorocco.Business.Services.Vente;
 using OliveMorocco.DataAccess;
 
@@ -49,7 +53,7 @@ public static class DependencyInjection
         services.AddScoped<IVarieteService, VarieteService>();
         services.AddScoped<IIntrantService, IntrantService>();
         services.AddScoped<ISecteurService, SecteurService>();
-        services.AddScoped<IStockService, StockService>();
+        services.AddScoped<IStockProduitService, StockProduitService>();
         services.AddScoped<IStockHuileService, StockHuileService>();
         services.AddScoped<IInterventionService, InterventionService>();
         services.AddScoped<IPressageService, PressageService>();

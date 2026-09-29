@@ -1,7 +1,7 @@
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Produits;
 
 public interface IProduitService
 {

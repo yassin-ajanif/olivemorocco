@@ -8,6 +8,7 @@ using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.Business.Services.Achat;
 using OliveMorocco.Business.Services.Stockage;
+using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Common;

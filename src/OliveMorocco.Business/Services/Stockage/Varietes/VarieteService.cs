@@ -8,7 +8,7 @@ using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Varietes;
 
 public sealed class VarieteService : IVarieteService
 {

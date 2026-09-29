@@ -8,14 +8,14 @@ using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Vente;
 using OliveMorocco.Domain.Enums;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Produits;
 
 /// <summary>
 /// Owns the product stock ledger: <see cref="Produit"/> stock is the sum of its
 /// <see cref="MouvementStock"/> rows (no persisted stock column), and every source —
 /// bon de livraison, remplissage, manual adjustment — writes through this service.
 /// </summary>
-public sealed class StockService : IStockService
+public sealed class StockProduitService : IStockProduitService
 {
     /// <summary>Shipment to a client (out), or its correction / reversal on edit / delete.</summary>
     public const string OrigineBonLivraison = "BonLivraison";
@@ -39,7 +39,7 @@ public sealed class StockService : IStockService
     private readonly IRepository<MouvementStock> _mouvements;
     private readonly IValidator<CreateAjustementStockDto>? _ajustementValidator;
 
-    public StockService(
+    public StockProduitService(
         IRepository<Produit> produits,
         IRepository<MouvementStock> mouvements,
         IEnumerable<IValidator<CreateAjustementStockDto>> ajustementValidators)

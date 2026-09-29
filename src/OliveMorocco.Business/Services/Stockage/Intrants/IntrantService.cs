@@ -8,7 +8,7 @@ using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
 using OliveMorocco.Domain.Entities.Operationnel;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Intrants;
 
 public sealed class IntrantService : IIntrantService
 {

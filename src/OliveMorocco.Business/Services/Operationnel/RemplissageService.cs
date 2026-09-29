@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.Services.Stockage;
+using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
@@ -19,7 +20,7 @@ public sealed class RemplissageService : IRemplissageService
     private readonly IRepository<Remplissage> _remplissages;
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<Produit> _produits;
-    private readonly IStockService _stockService;
+    private readonly IStockProduitService _stockService;
     private readonly IStockHuileService _stockHuile;
     private readonly IValidator<CreateRemplissageDto>? _createValidator;
     private readonly IValidator<UpdateRemplissageDto>? _updateValidator;
@@ -28,7 +29,7 @@ public sealed class RemplissageService : IRemplissageService
         IRepository<Remplissage> remplissages,
         IRepository<Variete> varietes,
         IRepository<Produit> produits,
-        IStockService stockService,
+        IStockProduitService stockService,
         IStockHuileService stockHuile,
         IEnumerable<IValidator<CreateRemplissageDto>> createValidators,
         IEnumerable<IValidator<UpdateRemplissageDto>> updateValidators)
@@ -252,7 +253,7 @@ public sealed class RemplissageService : IRemplissageService
                 p.Designation,
                 p.Unite,
                 p.ContenanceLitres!.Value,
-                StockService.ComputeStock(p)))
+                StockProduitService.ComputeStock(p)))
             .ToList();
     }
 
@@ -336,7 +337,7 @@ public sealed class RemplissageService : IRemplissageService
         await _stockService.ApplyProduitMouvementAsync(
             produitId,
             variation,
-            StockService.OrigineRemplissage,
+            StockProduitService.OrigineRemplissage,
             remplissageId,
             note,
             nameof(CreateRemplissageDto.Lignes),

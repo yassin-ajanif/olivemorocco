@@ -1,9 +1,9 @@
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Stockage;
 
-namespace OliveMorocco.Business.Services.Stockage;
+namespace OliveMorocco.Business.Services.Stockage.Produits;
 
-public interface IStockService
+public interface IStockProduitService
 {
     Task<PagedResult<StockEtatListItemDto>> GetStockEtatAsync(
         string? search = null,

@@ -4,7 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Vente;
-using OliveMorocco.Business.Services.Stockage;
+using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Vente;
@@ -20,7 +20,7 @@ public sealed class BonLivraisonClientService
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<FactureClientLigne> _factureLignes;
     private readonly IRepository<FactureClient> _factures;
-    private readonly IStockService _stockService;
+    private readonly IStockProduitService _stockService;
 
     public BonLivraisonClientService(
         IRepository<BonLivraisonClient> bons,
@@ -28,7 +28,7 @@ public sealed class BonLivraisonClientService
         IRepository<Tiers> tiers,
         IRepository<FactureClientLigne> factureLignes,
         IRepository<FactureClient> factures,
-        IStockService stockService,
+        IStockProduitService stockService,
         IMapper mapper,
         IEnumerable<IValidator<CreateBonLivraisonClientDto>> createValidators,
         IEnumerable<IValidator<UpdateBonLivraisonClientDto>> updateValidators)
