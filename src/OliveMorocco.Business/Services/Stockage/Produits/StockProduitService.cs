@@ -219,6 +219,77 @@ public sealed class StockProduitService : IStockProduitService
         }
     }
 
+    public async Task ApplyAvoirClientEntreeAsync(
+        int avoirClientId,
+        bool retourMarchandise,
+        IEnumerable<(int ProduitId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        if (!retourMarchandise)
+            return;
+
+        foreach (var (produitId, quantite) in lignes)
+        {
+            if (quantite <= 0)
+                continue;
+
+            await ApplyProduitMouvementAsync(
+                produitId,
+                quantite,
+                OrigineAvoirClient,
+                avoirClientId,
+                string.Empty,
+                nameof(DTOs.Vente.CreateAvoirClientDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ApplyAvoirClientAjustementAsync(
+        int avoirClientId,
+        IEnumerable<(int ProduitId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (produitId, delta) in deltas)
+        {
+            if (delta == 0)
+                continue;
+
+            await ApplyProduitMouvementAsync(
+                produitId,
+                delta,
+                OrigineAvoirClient,
+                avoirClientId,
+                "Modification de l'avoir client",
+                nameof(DTOs.Vente.UpdateAvoirClientDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ReverseAvoirClientAsync(
+        int avoirClientId,
+        bool retourMarchandise,
+        IEnumerable<(int ProduitId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        if (!retourMarchandise)
+            return;
+
+        foreach (var (produitId, quantite) in lignes)
+        {
+            if (quantite <= 0)
+                continue;
+
+            await ApplyProduitMouvementAsync(
+                produitId,
+                -quantite,
+                OrigineAvoirClient,
+                avoirClientId,
+                "Suppression de l'avoir client",
+                string.Empty,
+                cancellationToken);
+        }
+    }
+
     public async Task ApplyProduitMouvementAsync(
         int produitId,
         decimal variation,

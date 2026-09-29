@@ -43,6 +43,34 @@ public interface IStockProduitService
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Client credit note whose <c>RetourMarchandise</c> flag is set: the goods come back
+    /// from the client, so each line puts stock back in. A financial-only credit note
+    /// (flag off) moves nothing.
+    /// </summary>
+    Task ApplyAvoirClientEntreeAsync(
+        int avoirClientId,
+        bool retourMarchandise,
+        IEnumerable<(int ProduitId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Correction applied on edit: the signed difference between the stock effect the old
+    /// lines had and the one the new lines have. Callers pass deltas already signed, so
+    /// flipping <c>RetourMarchandise</c> on or off is handled by the same call.
+    /// </summary>
+    Task ApplyAvoirClientAjustementAsync(
+        int avoirClientId,
+        IEnumerable<(int ProduitId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Reversal applied on delete: takes the returned goods back out of stock.</summary>
+    Task ReverseAvoirClientAsync(
+        int avoirClientId,
+        bool retourMarchandise,
+        IEnumerable<(int ProduitId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Applies a product stock movement to the ledger: rejects a negative resulting stock
     /// and persists the <c>MouvementStock</c>. Product stock is the sum of those movements.
     /// Used by the operational flows (remplissage) so the ledger has a single writer.

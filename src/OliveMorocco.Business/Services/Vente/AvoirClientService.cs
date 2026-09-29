@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Vente;
+using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Vente;
@@ -18,12 +19,14 @@ public sealed class AvoirClientService
     private readonly IRepository<AvoirClientLigne> _lignes;
     private readonly IRepository<Tiers> _tiers;
     private readonly IRepository<FactureClient> _factures;
+    private readonly IStockProduitService _stockService;
 
     public AvoirClientService(
         IRepository<AvoirClient> avoirs,
         IRepository<AvoirClientLigne> lignes,
         IRepository<Tiers> tiers,
         IRepository<FactureClient> factures,
+        IStockProduitService stockService,
         IMapper mapper,
         IEnumerable<IValidator<CreateAvoirClientDto>> createValidators,
         IEnumerable<IValidator<UpdateAvoirClientDto>> updateValidators)
@@ -32,6 +35,7 @@ public sealed class AvoirClientService
         _lignes = lignes;
         _tiers = tiers;
         _factures = factures;
+        _stockService = stockService;
     }
 
     public async Task<PagedResult<AvoirClientListItemDto>> GetAvoirsAsync(
@@ -163,7 +167,16 @@ public sealed class AvoirClientService
         entity.Motif = dto.Motif ?? string.Empty;
         NormalizeLines(entity.Lignes);
 
-        await Repo.AddAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await Repo.AddAsync(entity, ct);
+            await _stockService.ApplyAvoirClientEntreeAsync(
+                entity.Id,
+                entity.RetourMarchandise,
+                entity.Lignes.Select(l => (l.ProduitId, l.Quantite)),
+                ct);
+        }, cancellationToken);
+
         return (await GetAvoirByIdAsync(entity.Id, cancellationToken))!;
     }
 
@@ -179,6 +192,16 @@ public sealed class AvoirClientService
         var entity = await Repo.GetByIdWithNavigationsAsync(id, [a => a.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Avoir {id} introuvable.");
 
+        // Signed difference between the stock effect the old lines had and the one the new
+        // lines have, so editing quantities — or ticking / unticking the goods-return
+        // checkbox — is corrected with a single movement per product.
+        var deltas = AvoirStockEffect.Delta(
+            entity.RetourMarchandise,
+            entity.Lignes.Select(l => (l.ProduitId, l.Quantite)),
+            dto.RetourMarchandise,
+            dto.Lignes.Select(l => (l.ProduitId, l.Quantite)),
+            signe: 1);
+
         entity.Lignes.Clear();
         Mapper.Map(dto, entity);
         entity.Motif = dto.Motif ?? string.Empty;
@@ -190,15 +213,32 @@ public sealed class AvoirClientService
             line.AvoirClientId = entity.Id;
         }
 
-        await Repo.UpdateAsync(entity, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockService.ApplyAvoirClientAjustementAsync(
+                id,
+                deltas.Select(d => (d.Key, d.Value)),
+                ct);
+
+            await Repo.UpdateAsync(entity, ct);
+        }, cancellationToken);
     }
 
     public async Task DeleteAvoirAsync(int id, CancellationToken cancellationToken = default)
     {
-        _ = await GetAvoirByIdAsync(id, cancellationToken)
+        var entity = await Repo.GetByIdWithNavigationsAsync(id, [a => a.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Avoir {id} introuvable.");
 
-        await DeleteAsync(id, cancellationToken);
+        await Repo.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockService.ReverseAvoirClientAsync(
+                id,
+                entity.RetourMarchandise,
+                entity.Lignes.Select(l => (l.ProduitId, l.Quantite)),
+                ct);
+
+            await DeleteAsync(id, ct);
+        }, cancellationToken);
     }
 
     public async Task<string> GenerateNumeroAsync(CancellationToken cancellationToken = default)

@@ -114,13 +114,12 @@
                         <span data-label="Quantité" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N0")</span>
                         <span data-label="Stock après" class="cell-bold cell-center">@m.StockApres.ToString("N0")</span>
                         <span data-label="Origine">
-                            @if (m.OrigineType == StockIntrantService.OrigineIntervention && m.OrigineId.HasValue)
-                            {
-                                <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Interventions/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
+                            @{
+                                var origineHref = StockOriginLinks.ForIntrant(m.OrigineType, m.OrigineId);
                             }
-                            else if (m.OrigineType == StockIntrantService.OrigineBonReception && m.OrigineId.HasValue)
+                            @if (origineHref is not null)
                             {
-                                <a href="/@OliveMorocco.Web.Routing.AppSections.Achat/BonsReception/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
+                                <a href="@origineHref" class="list-link">@m.OrigineLabel</a>
                             }
                             else
                             {

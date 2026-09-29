@@ -114,9 +114,12 @@
                         <span data-label="Quantité" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N0")</span>
                         <span data-label="Stock après" class="cell-bold cell-center">@m.StockApres.ToString("N0")</span>
                         <span data-label="Origine">
-                            @if (m.OrigineType == "Remplissage" && m.OrigineId.HasValue)
+                            @{
+                                var origineHref = StockOriginLinks.ForProduit(m.OrigineType, m.OrigineId);
+                            }
+                            @if (origineHref is not null)
                             {
-                                <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Remplissages/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
+                                <a href="@origineHref" class="list-link">@m.OrigineLabel</a>
                             }
                             else
                             {

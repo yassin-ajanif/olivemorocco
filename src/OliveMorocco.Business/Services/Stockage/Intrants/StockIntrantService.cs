@@ -22,6 +22,9 @@ public sealed class StockIntrantService : IStockIntrantService
     /// <summary>Goods reception from a supplier (in), or its correction / reversal on edit / delete.</summary>
     public const string OrigineBonReception = "BR";
 
+    /// <summary>Supplier credit note / goods returned to the supplier (out).</summary>
+    public const string OrigineAvoirFournisseur = "AvoirFournisseur";
+
     /// <summary>Manual adjustment of intrant stock.</summary>
     public const string OrigineImport = "Import";
 
@@ -266,6 +269,77 @@ public sealed class StockIntrantService : IStockIntrantService
         }
     }
 
+    public async Task ApplyAvoirFournisseurSortieAsync(
+        int avoirFournisseurId,
+        bool retourMarchandise,
+        IEnumerable<(int IntrantId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        if (!retourMarchandise)
+            return;
+
+        foreach (var (intrantId, quantite) in lignes)
+        {
+            if (quantite <= 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                -quantite,
+                OrigineAvoirFournisseur,
+                avoirFournisseurId,
+                string.Empty,
+                nameof(DTOs.Achat.CreateAvoirFournisseurDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ApplyAvoirFournisseurAjustementAsync(
+        int avoirFournisseurId,
+        IEnumerable<(int IntrantId, decimal Delta)> deltas,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var (intrantId, delta) in deltas)
+        {
+            if (delta == 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                delta,
+                OrigineAvoirFournisseur,
+                avoirFournisseurId,
+                "Modification de l'avoir fournisseur",
+                nameof(DTOs.Achat.UpdateAvoirFournisseurDto.Lignes),
+                cancellationToken);
+        }
+    }
+
+    public async Task ReverseAvoirFournisseurAsync(
+        int avoirFournisseurId,
+        bool retourMarchandise,
+        IEnumerable<(int IntrantId, decimal Quantite)> lignes,
+        CancellationToken cancellationToken = default)
+    {
+        if (!retourMarchandise)
+            return;
+
+        foreach (var (intrantId, quantite) in lignes)
+        {
+            if (quantite <= 0)
+                continue;
+
+            await ApplyMouvementAsync(
+                intrantId,
+                quantite,
+                OrigineAvoirFournisseur,
+                avoirFournisseurId,
+                "Suppression de l'avoir fournisseur",
+                string.Empty,
+                cancellationToken);
+        }
+    }
+
     public async Task ApplyMouvementAsync(
         int intrantId,
         decimal variation,
@@ -359,6 +433,7 @@ public sealed class StockIntrantService : IStockIntrantService
         {
             OrigineIntervention => origineId.HasValue ? $"Intervention #{origineId}" : "Intervention",
             OrigineBonReception => origineId.HasValue ? $"BR #{origineId}" : "Bon de réception",
+            OrigineAvoirFournisseur => origineId.HasValue ? $"Avoir fourn. #{origineId}" : "Avoir fournisseur",
             OrigineImport => "Ajustement manuel",
             _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
         };
