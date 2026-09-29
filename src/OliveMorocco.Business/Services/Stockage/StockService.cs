@@ -10,8 +10,31 @@ using OliveMorocco.Domain.Enums;
 
 namespace OliveMorocco.Business.Services.Stockage;
 
+/// <summary>
+/// Owns the product stock ledger: <see cref="Produit"/> stock is the sum of its
+/// <see cref="MouvementStock"/> rows (no persisted stock column), and every source —
+/// bon de livraison, remplissage, manual adjustment — writes through this service.
+/// </summary>
 public sealed class StockService : IStockService
 {
+    /// <summary>Shipment to a client (out), or its correction / reversal on edit / delete.</summary>
+    public const string OrigineBonLivraison = "BonLivraison";
+
+    /// <summary>Goods reception from a supplier (in).</summary>
+    public const string OrigineBonReception = "BR";
+
+    /// <summary>Client credit note / return (in).</summary>
+    public const string OrigineAvoirClient = "Avoir";
+
+    /// <summary>Supplier credit note / return (out).</summary>
+    public const string OrigineAvoirFournisseur = "AvoirFournisseur";
+
+    /// <summary>Product import / manual adjustment.</summary>
+    public const string OrigineImport = "Import";
+
+    /// <summary>Bottles produced by a remplissage (in), or its correction / reversal on edit / delete.</summary>
+    public const string OrigineRemplissage = "Remplissage";
+
     private readonly IRepository<Produit> _produits;
     private readonly IRepository<MouvementStock> _mouvements;
     private readonly IValidator<CreateAjustementStockDto>? _ajustementValidator;
@@ -118,39 +141,17 @@ public sealed class StockService : IStockService
     {
         await ValidateAsync(_ajustementValidator, dto, cancellationToken);
 
-        var produit = await _produits.GetByIdWithNavigationsAsync(
-            produitId, [p => p.MouvementsStock], cancellationToken)
-            ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
+        var produit = await LoadProduitAsync(produitId, cancellationToken);
 
-        var stockAvant = ComputeStock(produit);
-        var nouveauStock = stockAvant + dto.Variation;
+        var mouvement = BuildMouvement(
+            produit,
+            dto.Variation,
+            OrigineImport,
+            origineId: null,
+            dto.Note,
+            nameof(CreateAjustementStockDto.Variation));
 
-        if (nouveauStock < 0)
-        {
-            throw new ValidationException([
-                new ValidationFailure(
-                    nameof(CreateAjustementStockDto.Variation),
-                    "Le stock ne peut pas devenir négatif."),
-            ]);
-        }
-
-        var type = dto.Variation > 0 ? TypeMouvement.Entree : TypeMouvement.Sortie;
-        var now = DateTime.UtcNow;
-
-        var mouvement = new MouvementStock
-        {
-            ProduitId = produitId,
-            Type = type,
-            Quantite = Math.Abs(dto.Variation),
-            StockAvant = stockAvant,
-            OrigineType = "Import",
-            OrigineId = null,
-            Note = dto.Note?.Trim() ?? string.Empty,
-            CreatedAt = now,
-            UpdatedAt = now,
-        };
-
-        produit.UpdatedAt = now;
+        produit.UpdatedAt = DateTime.UtcNow;
 
         await _mouvements.AddAsync(mouvement, cancellationToken);
     }
@@ -165,20 +166,14 @@ public sealed class StockService : IStockService
             if (quantiteLivree <= 0)
                 continue;
 
-            var produit = await _produits.GetByIdWithNavigationsAsync(
-                produitId, [p => p.MouvementsStock], cancellationToken)
-                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
-
-            var mouvement = StockProduitMouvements.Apply(
-                produit,
+            await ApplyProduitMouvementAsync(
+                produitId,
                 -quantiteLivree,
-                StockProduitMouvements.OrigineBonLivraison,
+                OrigineBonLivraison,
                 bonLivraisonId,
                 string.Empty,
                 nameof(DTOs.Vente.CreateBonLivraisonClientDto.Lignes),
-                $"Stock insuffisant pour « {produit.Reference} » : {ComputeStock(produit):N0} en stock, {quantiteLivree:N0} demandés.");
-
-            await _mouvements.AddAsync(mouvement, cancellationToken);
+                cancellationToken);
         }
     }
 
@@ -192,20 +187,14 @@ public sealed class StockService : IStockService
             if (delta == 0)
                 continue;
 
-            var produit = await _produits.GetByIdWithNavigationsAsync(
-                produitId, [p => p.MouvementsStock], cancellationToken)
-                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
-
-            var mouvement = StockProduitMouvements.Apply(
-                produit,
+            await ApplyProduitMouvementAsync(
+                produitId,
                 delta,
-                StockProduitMouvements.OrigineBonLivraison,
+                OrigineBonLivraison,
                 bonLivraisonId,
                 "Modification du bon de livraison",
                 nameof(DTOs.Vente.UpdateBonLivraisonClientDto.Lignes),
-                $"Stock insuffisant pour « {produit.Reference} » : {ComputeStock(produit):N0} en stock, {-delta:N0} demandés.");
-
-            await _mouvements.AddAsync(mouvement, cancellationToken);
+                cancellationToken);
         }
     }
 
@@ -219,22 +208,46 @@ public sealed class StockService : IStockService
             if (quantiteLivree <= 0)
                 continue;
 
-            var produit = await _produits.GetByIdWithNavigationsAsync(
-                produitId, [p => p.MouvementsStock], cancellationToken)
-                ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
-
-            var mouvement = StockProduitMouvements.Apply(
-                produit,
+            await ApplyProduitMouvementAsync(
+                produitId,
                 quantiteLivree,
-                StockProduitMouvements.OrigineBonLivraison,
+                OrigineBonLivraison,
                 bonLivraisonId,
                 "Suppression du bon de livraison",
                 string.Empty,
-                string.Empty);
-
-            await _mouvements.AddAsync(mouvement, cancellationToken);
+                cancellationToken);
         }
     }
+
+    public async Task ApplyProduitMouvementAsync(
+        int produitId,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName,
+        CancellationToken cancellationToken = default)
+    {
+        if (variation == 0)
+            return;
+
+        var produit = await LoadProduitAsync(produitId, cancellationToken);
+
+        var mouvement = BuildMouvement(
+            produit,
+            variation,
+            origineType,
+            origineId,
+            note,
+            errorPropertyName);
+
+        await _mouvements.AddAsync(mouvement, cancellationToken);
+    }
+
+    private async Task<Produit> LoadProduitAsync(int produitId, CancellationToken cancellationToken) =>
+        await _produits.GetByIdWithNavigationsAsync(
+            produitId, [p => p.MouvementsStock], cancellationToken)
+        ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
 
     private static StockProduitDetailDto ToDetailDto(Produit entity) =>
         new(
@@ -248,8 +261,63 @@ public sealed class StockService : IStockService
             ComputeStock(entity) <= entity.StockMinimum,
             ComputeStock(entity) <= 0);
 
-    private static decimal ComputeStock(Produit produit) =>
+    /// <summary>
+    /// Product stock is derived from the movement ledger only — nothing is stored on the produit,
+    /// so <see cref="Produit.MouvementsStock"/> must be loaded for the result to be meaningful.
+    /// </summary>
+    public static decimal ComputeStock(Produit produit) =>
         produit.MouvementsStock.Sum(m => m.Type == TypeMouvement.Entree ? m.Quantite : -m.Quantite);
+
+    /// <summary>
+    /// Builds a movement and rejects a negative resulting stock.
+    /// The caller persists the returned movement.
+    /// </summary>
+    private static MouvementStock BuildMouvement(
+        Produit produit,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName)
+    {
+        var stockAvant = ComputeStock(produit);
+        var nouveauStock = stockAvant + variation;
+
+        if (nouveauStock < 0)
+        {
+            throw new ValidationException([
+                new ValidationFailure(
+                    errorPropertyName,
+                    BuildStockInsuffisantMessage(produit, stockAvant, variation, origineType)),
+            ]);
+        }
+
+        return new MouvementStock
+        {
+            ProduitId = produit.Id,
+            Type = variation > 0 ? TypeMouvement.Entree : TypeMouvement.Sortie,
+            Quantite = Math.Abs(variation),
+            StockAvant = stockAvant,
+            OrigineType = origineType,
+            OrigineId = origineId,
+            Note = note?.Trim() ?? string.Empty,
+        };
+    }
+
+    /// <summary>The wording follows the source of the movement: manual adjustment, bottling, or a sales document.</summary>
+    private static string BuildStockInsuffisantMessage(
+        Produit produit,
+        decimal stockAvant,
+        decimal variation,
+        string origineType) =>
+        origineType switch
+        {
+            OrigineImport => "Le stock ne peut pas devenir négatif.",
+            OrigineRemplissage =>
+                $"Stock insuffisant pour « {produit.Reference} » : {stockAvant:N0} en stock, ces unités ont déjà été vendues ou ajustées.",
+            _ =>
+                $"Stock insuffisant pour « {produit.Reference} » : {stockAvant:N0} en stock, {Math.Abs(variation):N0} demandés.",
+        };
 
     private static decimal ComputeStockApres(TypeMouvement type, decimal stockAvant, decimal quantite) =>
         type switch
@@ -262,12 +330,12 @@ public sealed class StockService : IStockService
     private static string FormatOrigineLabel(string origineType, int? origineId) =>
         origineType switch
         {
-            "BL" => origineId.HasValue ? $"BL #{origineId}" : "Bon de livraison",
-            "BR" => origineId.HasValue ? $"BR #{origineId}" : "Bon de réception",
-            "Avoir" => origineId.HasValue ? $"Avoir #{origineId}" : "Avoir client",
-            "AvoirFournisseur" => origineId.HasValue ? $"Avoir fourn. #{origineId}" : "Avoir fournisseur",
-            "Remplissage" => origineId.HasValue ? $"Remplissage #{origineId}" : "Remplissage",
-            "Import" => "Ajustement manuel",
+            OrigineBonLivraison => origineId.HasValue ? $"BL #{origineId}" : "Bon de livraison",
+            OrigineBonReception => origineId.HasValue ? $"BR #{origineId}" : "Bon de réception",
+            OrigineAvoirClient => origineId.HasValue ? $"Avoir #{origineId}" : "Avoir client",
+            OrigineAvoirFournisseur => origineId.HasValue ? $"Avoir fourn. #{origineId}" : "Avoir fournisseur",
+            OrigineRemplissage => origineId.HasValue ? $"Remplissage #{origineId}" : "Remplissage",
+            OrigineImport => "Ajustement manuel",
             _ => origineId.HasValue ? $"{origineType} #{origineId}" : origineType,
         };
 

@@ -19,7 +19,7 @@ public sealed class RemplissageService : IRemplissageService
     private readonly IRepository<Remplissage> _remplissages;
     private readonly IRepository<Variete> _varietes;
     private readonly IRepository<Produit> _produits;
-    private readonly IRepository<MouvementStock> _mouvementsProduit;
+    private readonly IStockService _stockService;
     private readonly IStockHuileService _stockHuile;
     private readonly IValidator<CreateRemplissageDto>? _createValidator;
     private readonly IValidator<UpdateRemplissageDto>? _updateValidator;
@@ -28,7 +28,7 @@ public sealed class RemplissageService : IRemplissageService
         IRepository<Remplissage> remplissages,
         IRepository<Variete> varietes,
         IRepository<Produit> produits,
-        IRepository<MouvementStock> mouvementsProduit,
+        IStockService stockService,
         IStockHuileService stockHuile,
         IEnumerable<IValidator<CreateRemplissageDto>> createValidators,
         IEnumerable<IValidator<UpdateRemplissageDto>> updateValidators)
@@ -36,7 +36,7 @@ public sealed class RemplissageService : IRemplissageService
         _remplissages = remplissages;
         _varietes = varietes;
         _produits = produits;
-        _mouvementsProduit = mouvementsProduit;
+        _stockService = stockService;
         _stockHuile = stockHuile;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -252,7 +252,7 @@ public sealed class RemplissageService : IRemplissageService
                 p.Designation,
                 p.Unite,
                 p.ContenanceLitres!.Value,
-                StockProduitMouvements.ComputeStock(p)))
+                StockService.ComputeStock(p)))
             .ToList();
     }
 
@@ -333,22 +333,14 @@ public sealed class RemplissageService : IRemplissageService
         string note,
         CancellationToken cancellationToken)
     {
-        if (variation == 0)
-            return;
-
-        var produit = await _produits.GetByIdAsync(produitId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Produit {produitId} introuvable.");
-
-        var mouvement = StockProduitMouvements.Apply(
-            produit,
+        await _stockService.ApplyProduitMouvementAsync(
+            produitId,
             variation,
-            StockProduitMouvements.OrigineRemplissage,
+            StockService.OrigineRemplissage,
             remplissageId,
             note,
             nameof(CreateRemplissageDto.Lignes),
-            $"Stock insuffisant pour « {produit.Reference} » : {StockProduitMouvements.ComputeStock(produit):N0} en stock, ces unités ont déjà été vendues ou ajustées.");
-
-        await _mouvementsProduit.AddAsync(mouvement, cancellationToken);
+            cancellationToken);
     }
 
     private static ValidationException LigneError(string message) =>

@@ -41,4 +41,19 @@ public interface IStockService
         int bonLivraisonId,
         IEnumerable<(int ProduitId, decimal QuantiteLivree)> lignes,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Applies a product stock movement to the ledger: rejects a negative resulting stock
+    /// and persists the <c>MouvementStock</c>. Product stock is the sum of those movements.
+    /// Used by the operational flows (remplissage) so the ledger has a single writer.
+    /// </summary>
+    /// <param name="errorPropertyName">Validation property the "insufficient stock" failure is attached to.</param>
+    Task ApplyProduitMouvementAsync(
+        int produitId,
+        decimal variation,
+        string origineType,
+        int? origineId,
+        string? note,
+        string errorPropertyName,
+        CancellationToken cancellationToken = default);
 }
