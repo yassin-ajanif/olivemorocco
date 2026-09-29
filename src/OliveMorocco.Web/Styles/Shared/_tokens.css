@@ -65,7 +65,7 @@ html {
   --space-4_5: 1.125rem;      /* 18px */
   --space-5: 1.25rem;         /* 20px */
   --space-3xl: 3rem;          /* 48px */
-  --space-section: 7.5rem;    /* 120px — vitrine section padding */
+  --space-section: 1rem;    /* 120px — vitrine section padding */
 
   /* Control heights (rem, scales with text) */
   --control-h: 2.25rem;       /* 36px — buttons, inputs */

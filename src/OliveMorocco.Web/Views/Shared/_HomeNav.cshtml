@@ -1,0 +1,31 @@
+@{
+    // The landing page is a single scrolling document, so its section links are in-page
+    // anchors. On the Boutique pages the same links have to point back at the landing page,
+    // otherwise "#origine" would resolve against a page that has no such anchor.
+    var route = ViewContext.RouteData.Values;
+    var onHome = string.Equals(route["controller"] as string, "Home", StringComparison.Ordinal)
+                 && string.Equals(route["action"] as string, "Index", StringComparison.Ordinal);
+    var onBoutique = string.Equals(route["action"] as string, "Boutique", StringComparison.Ordinal)
+                     || string.Equals(route["action"] as string, "BoutiqueDetail", StringComparison.Ordinal);
+    var sections = onHome ? string.Empty : "/Home/";
+
+    // Nav text is --cream, so it needs a dark backdrop. The landing page gets that from the
+    // pine hero behind it; the shop pages have no hero, so without this the cream nav would
+    // sit on the cream body and be unreadable until home.js added .scrolled on scroll.
+    // nav-solid applies the same treatment permanently, without touching the scroll behaviour.
+}
+
+<nav id="mainNav" class="@(onHome ? null : "nav-solid")">
+    <a class="nav-word" href="@(onHome ? "#origine" : "/Home")">OliveMorocco</a>
+    <ul class="nav-links">
+        <li><a href="@(sections + "#origine")">Origine</a></li>
+        <li><a href="@(sections + "#processus")">Processus</a></li>
+        <li><a href="@(sections + "#produit")">Produit</a></li>
+        <li><a asp-controller="Home" asp-action="Boutique" aria-current="@(onBoutique ? "page" : null)">Boutique</a></li>
+        <li><a href="@(sections + "#contact")">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+        <a class="nav-dashboard" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        <a class="nav-cta" href="@(sections + "#contact")">Demander un échantillon</a>
+    </div>
+</nav>

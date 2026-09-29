@@ -3,19 +3,7 @@
     ViewData["Title"] = "OliveMorocco — Huile d'Olive Extra Vierge, Essaouira";
 }
 
-<nav id="mainNav">
-    <div class="nav-word">OliveMorocco</div>
-    <ul class="nav-links">
-        <li><a href="#origine">Origine</a></li>
-        <li><a href="#processus">Processus</a></li>
-        <li><a href="#produit">Produit</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div class="nav-actions">
-        <a class="nav-dashboard" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-        <a class="nav-cta" href="#contact">Demander un échantillon</a>
-    </div>
-</nav>
+<partial name="_HomeNav" />
 
 <header class="hero">
     <svg class="hero-branch" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -156,29 +144,4 @@
     </form>
 </section>
 
-<footer class="home-footer">
-    <div class="foot-top">
-        <div class="foot-word">OliveMorocco</div>
-        <div class="foot-cols">
-            <div class="foot-col">
-                <h4>Exploitation</h4>
-                <p>Had Touabet, Chiadma</p>
-                <p>Essaouira, Maroc</p>
-            </div>
-            <div class="foot-col">
-                <h4>Contact</h4>
-                <a href="mailto:contact@zaho-oil.com">contact@zaho-oil.com</a>
-                <a href="tel:+212661990570">+212 661 990 570</a>
-            </div>
-            <div class="foot-col">
-                <h4>Suivre OliveMorocco</h4>
-                <a href="#">Instagram</a>
-                <a href="#">LinkedIn</a>
-            </div>
-        </div>
-    </div>
-    <div class="foot-bottom">
-        <span>&copy; @DateTime.UtcNow.Year OliveMorocco — Blad Atouaa Elmahdi</span>
-        <span>Récolte AOP Tyout Chiadma</span>
-    </div>
-</footer>
+<partial name="_HomeFooter" />

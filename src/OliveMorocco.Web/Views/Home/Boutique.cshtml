@@ -1,0 +1,116 @@
+@model IReadOnlyList<BoutiqueVarieteViewModel>
+@{
+    Layout = "_HomeLayout";
+    ViewData["Title"] = "Boutique — Huiles d'olive extra vierge, OliveMorocco";
+    var total = Model.Sum(v => v.Produits.Count);
+}
+
+<partial name="_HomeNav" />
+
+<main class="shop-main">
+    <div class="shop-toolbar">
+        <p class="shop-count">
+            @total @(total > 1 ? "produits" : "produit") — @Model.Count variétés
+        </p>
+        <ul class="shop-filters">
+            <li>
+                <a class="pill pill-active" href="@Url.Action("Boutique", "Home")">Toutes</a>
+            </li>
+            @foreach (var variete in Model)
+            {
+                <li>
+                    <a class="pill" href="@Url.Action("Boutique", "Home", new { variete = variete.Id })">@variete.Nom</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    @foreach (var variete in Model)
+    {
+        <section class="shop-line" id="variete-@variete.Id">
+            <div class="shop-line-head">
+                <h2>
+                    <span class="variete-badge"
+                          tabindex="0"
+                          role="button"
+                          aria-describedby="variete-info-@variete.Id">
+                        @variete.Nom
+                        <svg class="variete-badge-info" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                            <circle cx="8" cy="8" r="7" />
+                            <path d="M8 7v5" />
+                            <circle cx="8" cy="4.6" r="0.9" class="dot" />
+                        </svg>
+                    </span>
+                </h2>
+                <p class="shop-line-region">@variete.RegionOrigine</p>
+            </div>
+
+            <div class="shop-line-body">
+                <div class="variete-card" id="variete-info-@variete.Id" role="tooltip">
+                    <p class="variete-card-name">@variete.Nom</p>
+                    <p class="variete-card-meta">
+                        @(variete.Code is { Length: > 0 } code ? $"Code {code} · " : string.Empty)@variete.RegionOrigine
+                    </p>
+                    @if (variete.Description is { Length: > 0 } description)
+                    {
+                        <p class="variete-card-desc">@description</p>
+                    }
+                </div>
+
+                <div class="shop-line-grid">
+                    @foreach (var produit in variete.Produits)
+                    {
+                        <article class="shop-card">
+                            <a class="shop-card-media" asp-controller="Home" asp-action="BoutiqueDetail"
+                               asp-route-id="@produit.Id" tabindex="-1" aria-hidden="true">
+                                @if (produit.ImageUrl is { } src)
+                                {
+                                    <img src="@Url.Content(src)" alt="" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <span>Photo à venir</span>
+                                }
+                            </a>
+                            <div class="shop-card-body">
+                                <p class="shop-ref">@produit.Reference</p>
+                                <h3>
+                                    <a asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@produit.Id">@produit.Designation</a>
+                                </h3>
+                                <p class="shop-price">
+                                    <b>@produit.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
+                                    <span>TVA @produit.TauxTVA.ToString("0") % incluse</span>
+                                </p>
+                                <a class="shop-link" asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@produit.Id">
+                                    Voir le produit <span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+</main>
+
+<section class="shop-reassure">
+    <div class="diff-grid">
+        <div class="diff-card">
+            <div class="mark">1</div>
+            <h3>Expédition sous 48 h</h3>
+            <p>Commande confirmée par téléphone, expédition le jour ouvré suivant.</p>
+        </div>
+        <div class="diff-card">
+            <div class="mark">2</div>
+            <h3>Livraison Maroc &amp; Europe</h3>
+            <p>Frais calculés selon le volume. Franco de port à partir de 2 000 MAD.</p>
+        </div>
+        <div class="diff-card">
+            <div class="mark">3</div>
+            <h3>Numéro de lot</h3>
+            <p>Chaque bouteille indique son lot et son année de récolte.</p>
+        </div>
+    </div>
+</section>
+
+<partial name="_HomeFooter" />

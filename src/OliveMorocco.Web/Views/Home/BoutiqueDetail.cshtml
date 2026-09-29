@@ -1,0 +1,173 @@
+@model BoutiqueProduitDetailViewModel
+@{
+    Layout = "_HomeLayout";
+    var produit = Model.Produit;
+    ViewData["Title"] = $"{produit.Designation} — {produit.VarieteNom} — Boutique OliveMorocco";
+}
+
+<partial name="_HomeNav" />
+
+<header class="shop-hero shop-hero-detail">
+    <div class="shop-hero-inner">
+        <nav class="shop-crumbs" aria-label="Fil d'Ariane">
+            <a asp-controller="Home" asp-action="Boutique">Boutique</a>
+            <span aria-hidden="true">/</span>
+            <a asp-controller="Home" asp-action="Boutique" asp-fragment="variete-@produit.VarieteId">@produit.VarieteNom</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">@produit.Reference</span>
+        </nav>
+    </div>
+</header>
+
+<main class="shop-main">
+    <div class="shop-detail">
+        <div class="shop-detail-media reveal">
+            @if (produit.ImageUrl is { } src)
+            {
+                <img src="@Url.Content(src)" alt="@produit.Designation" />
+            }
+            else
+            {
+                <span>Photo à venir</span>
+            }
+        </div>
+
+        <div class="shop-detail-info reveal">
+            <p class="shop-ref">@produit.Reference</p>
+
+            @* Same hover badge as the grid: hovering or focusing shows the variety notes. *@
+            <p class="shop-detail-variete">
+                <span class="variete-badge"
+                      tabindex="0"
+                      role="button"
+                      aria-describedby="variete-info-@produit.VarieteId">
+                    @produit.VarieteNom
+                    <svg class="variete-badge-info" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                        <circle cx="8" cy="8" r="7" />
+                        <path d="M8 7v5" />
+                        <circle cx="8" cy="4.6" r="0.9" class="dot" />
+                    </svg>
+                </span>
+                @if (Model.Variete is { Description.Length: > 0 } variete)
+                {
+                    <span class="variete-card" id="variete-info-@produit.VarieteId" role="tooltip">
+                        <span class="variete-card-name">@variete.Nom</span>
+                        <span class="variete-card-meta">
+                            @(variete.Code is { Length: > 0 } code ? $"Code {code} · " : string.Empty)@variete.RegionOrigine
+                        </span>
+                        <span class="variete-card-desc">@variete.Description</span>
+                    </span>
+                }
+            </p>
+
+            <h1>@produit.Designation</h1>
+
+            <p class="shop-price shop-price-lg">
+                <b>@produit.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
+                <span>@produit.PrixVenteHT.ToString("N2") MAD HT — TVA @produit.TauxTVA.ToString("0") % incluse</span>
+            </p>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Resume))
+            {
+                <p class="shop-resume">@Model.Resume</p>
+            }
+
+            <div class="tag-row">
+                <span class="pill">Extra vierge</span>
+                <span class="pill">Première pression à froid</span>
+                @if (produit.ContenanceLabel is { Length: > 0 } contenance)
+                {
+                    <span class="pill">@contenance</span>
+                }
+            </div>
+
+            <ul class="spec-list">
+                @foreach (var (label, valeur) in Model.Specs)
+                {
+                    <li><span>@label</span><b>@valeur</b></li>
+                }
+            </ul>
+
+            <div class="shop-detail-cta">
+                <a class="btn-gold" href="@Url.Action("Index", "Home")#contact">Commander</a>
+                <a class="btn-ghost" href="@Url.Action("Index", "Home")#contact">Demander un échantillon</a>
+            </div>
+
+            <p class="shop-note">
+                Commande et livraison par téléphone au
+                <a href="tel:+212661990570">+212 661 990 570</a> — du lundi au samedi, 9 h – 18 h.
+            </p>
+        </div>
+    </div>
+
+    @if (Model.Autres.Count > 0)
+    {
+        <section class="shop-others">
+            <h2>Autres contenances — @produit.VarieteNom</h2>
+            <div class="shop-line-grid">
+                @foreach (var autre in Model.Autres)
+                {
+                    <article class="shop-card">
+                        <a class="shop-card-media" asp-controller="Home" asp-action="BoutiqueDetail"
+                           asp-route-id="@autre.Id" tabindex="-1" aria-hidden="true">
+                            @if (autre.ImageUrl is { } autreSrc)
+                            {
+                                <img src="@Url.Content(autreSrc)" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span>Photo à venir</span>
+                            }
+                        </a>
+                        <div class="shop-card-body">
+                            <p class="shop-ref">@autre.Reference</p>
+                            <h3>
+                                <a asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@autre.Id">@autre.Designation</a>
+                            </h3>
+                            <p class="shop-price">
+                                <b>@autre.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
+                            </p>
+                        </div>
+                    </article>
+                }
+            </div>
+        </section>
+    }
+
+    @if (Model.AutresVarietes.Count > 0)
+    {
+        <section class="shop-others">
+            <h2>Autres variétés</h2>
+            <div class="shop-line-grid">
+                @foreach (var autre in Model.AutresVarietes)
+                {
+                    <article class="shop-card">
+                        <a class="shop-card-media" asp-controller="Home" asp-action="BoutiqueDetail"
+                           asp-route-id="@autre.Id" tabindex="-1" aria-hidden="true">
+                            @if (autre.ImageUrl is { } autreSrc)
+                            {
+                                <img src="@Url.Content(autreSrc)" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span>Photo à venir</span>
+                            }
+                        </a>
+                        <div class="shop-card-body">
+                            <p class="shop-ref">@autre.Reference</p>
+                            <h3>
+                                <a asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@autre.Id">@autre.Designation</a>
+                            </h3>
+                            <p class="shop-variete">@autre.VarieteNom</p>
+                            <p class="shop-price">
+                                <b>@autre.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
+                            </p>
+                        </div>
+                    </article>
+                }
+            </div>
+        </section>
+    }
+</main>
+
+<partial name="_HomeFooter" />

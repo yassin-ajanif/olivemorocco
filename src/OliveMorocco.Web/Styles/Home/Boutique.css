@@ -1,0 +1,591 @@
+/* ---------- SHOP — BOUTIQUE ---------- */
+/* Public shop pages. Reuses the landing page tokens and the .photo-slot / .spec-list /
+   .diff-card / .pill components so the two pages read as one site. */
+
+.shop-hero {
+  background: radial-gradient(ellipse at 30% 20%, var(--pine-gradient) 0%, var(--pine) 60%);
+  color: var(--cream);
+  padding: 10.5rem 6vw 4.5rem;
+}
+
+.shop-hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.shop-hero .eyebrow {
+  color: var(--gold-soft);
+}
+
+.shop-hero h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+  line-height: 1.05;
+  margin-top: var(--space-lg);
+}
+
+.shop-hero .hero-desc {
+  max-width: 520px;
+  margin-top: var(--space-5);
+  font-size: var(--text-md);
+  line-height: 1.7;
+  color: var(--hero-body);
+}
+
+.shop-crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2_5);
+  font-size: var(--text-sm);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+}
+
+.shop-crumbs a {
+  color: var(--gold-soft);
+  text-decoration: none;
+}
+
+.shop-crumbs a:hover {
+  text-decoration: underline;
+}
+
+/* The grid is the page: no hero, so the top padding only has to clear the fixed nav. */
+/* Wide enough that three cards per variety line are genuinely wide — the shop is the
+   page here, so it is not bound to the narrower reading measure the landing page uses. */
+.shop-main {
+  padding: calc(var(--topbar-h) + 3.5rem) 6vw var(--space-section);
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+/* ---------- TOOLBAR ---------- */
+.shop-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 3rem;
+}
+
+.shop-count {
+  font-size: var(--text-sm);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.shop-filters {
+  display: flex;
+  gap: var(--space-2_5);
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+/* .pill is defined in Index.css; the active variant is shop-only. */
+.pill-active {
+  border-color: var(--gold);
+  color: var(--pine);
+  background: var(--gold);
+  font-weight: 600;
+}
+
+/* ---------- ONE LINE PER VARIETY ---------- */
+.shop-line + .shop-line {
+  margin-top: 4.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.shop-line-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-xl);
+}
+
+.shop-line-head h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: var(--text-xl);
+}
+
+.shop-line-region {
+  font-size: var(--text-sm);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The products take the full width; the variety card floats over them (see below),
+   so this is a positioning context rather than a two-column layout. */
+.shop-line-body {
+  position: relative;
+}
+
+/* The three formats of one variety, side by side. */
+.shop-line-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+/* ---------- VARIETY BADGE + HOVER CARD ---------- */
+/* Gold pill carrying the variety name. The label is --pine on --gold, the same
+   pairing .btn-gold uses, so the contrast is already established in the system. */
+.variete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: inherit;
+  color: var(--btn-color);
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 0.3125rem var(--space-lg);
+  cursor: help;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.variete-badge:hover,
+.variete-badge:focus-visible {
+  background: var(--gold-soft);
+  border-color: var(--gold-soft);
+}
+
+/* The info glyph sits on gold, so it needs a little more weight to stay legible. */
+.variete-badge .variete-badge-info {
+  opacity: 0.9;
+}
+
+.variete-badge-info {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  opacity: 0.75;
+}
+
+.variete-badge-info .dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.variete-card {
+  display: block;
+  background: var(--pine);
+  color: var(--cream);
+  border-left: 2px solid var(--gold);
+  padding: 1.125rem 1.25rem;
+  font-size: var(--text-base-sm);
+  line-height: 1.65;
+  /* Hidden until the badge is hovered or focused. */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+}
+
+/* On the grid the card overlays the top-left of the product row, so it takes no space.
+   visibility (not just opacity) keeps it out of the a11y tree while collapsed. */
+.shop-line-body > .variete-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: min(320px, 100%);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 44px -22px rgb(0 0 0 / 0.55);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+/* :has() so the card reacts to the badge and to itself (to keep it readable while
+   the pointer is over the text) without the badge needing to be an ancestor. */
+.shop-line-body:has(.variete-badge:hover) > .variete-card,
+.shop-line-body:has(.variete-badge:focus-visible) > .variete-card,
+.shop-line-body:has(> .variete-card:hover),
+.shop-line:focus-within > .shop-line-body > .variete-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.variete-card-name {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: var(--text-md);
+  color: var(--gold-soft);
+}
+
+.variete-card-meta {
+  display: block;
+  font-size: var(--text-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+  margin-top: 2px;
+}
+
+.variete-card-desc {
+  display: block;
+  margin-top: var(--space-md);
+  color: var(--cream);
+}
+
+/* On the detail page the card follows the badge inline and expands under it. */
+.shop-detail-variete {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.shop-detail-variete > .variete-badge {
+  flex: none;
+  margin-top: 2px;
+}
+
+.shop-detail-variete > .variete-card {
+  flex: 1;
+  position: absolute;
+  top: calc(100% + var(--space-sm));
+  left: 0;
+  right: 0;
+  z-index: 5;
+  box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.5);
+}
+
+.shop-detail-variete:hover > .variete-card,
+.shop-detail-variete:focus-within > .variete-card {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Respect the OS reduced-motion setting — keep the card visible, just without the fade. */
+@media (prefers-reduced-motion: reduce) {
+  .shop-line-body > .variete-card,
+  .variete-card {
+    transition: none;
+  }
+}
+
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.shop-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / var(--shadow-color));
+}
+
+/* 4/5 to suit the Chiadma photos, which are portrait (933x1280, 863x1280, 802x1280 —
+   ratios 0.73 / 0.67 / 0.63). A square frame cropped roughly a third off each bottle;
+   this keeps the whole product visible while staying short enough to scan. */
+.shop-card-media {
+  display: block;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--slot-bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.shop-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.shop-card:hover .shop-card-media img {
+  transform: scale(1.04);
+}
+
+.shop-card-media span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--text-sm);
+  letter-spacing: 0.5px;
+  color: var(--placeholder);
+}
+
+.shop-card-body {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.shop-ref {
+  font-size: var(--text-xs);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.shop-card-body h2,
+.shop-card-body h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: var(--text-heading-sm);
+  line-height: 1.25;
+  margin-top: var(--space-sm);
+}
+
+.shop-card-body h2 a,
+.shop-card-body h3 a {
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.shop-card-body h2 a:hover,
+.shop-card-body h3 a:hover {
+  color: var(--pine-mid);
+}
+
+.shop-variete {
+  font-size: var(--text-base-sm);
+  color: var(--card-body);
+  margin-top: var(--space-xs);
+}
+
+.shop-price {
+  margin-top: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shop-price b {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: var(--text-xl);
+  color: var(--pine);
+}
+
+.shop-price b small {
+  font-family: 'Work Sans', sans-serif;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.shop-price span {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.shop-price-lg b {
+  font-size: var(--text-3xl);
+  color: var(--gold);
+}
+
+.shop-price-lg span {
+  font-size: var(--text-sm);
+}
+
+.shop-link {
+  margin-top: auto;
+  padding-top: var(--space-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold);
+  transition: color 0.25s, gap 0.25s;
+}
+
+.shop-link:hover {
+  color: var(--pine);
+}
+
+/* ---------- REASSURANCE STRIP ---------- */
+.shop-reassure {
+  padding: 0 6vw var(--space-section);
+}
+
+.shop-reassure .diff-grid {
+  margin-top: 0;
+}
+
+/* ---------- PRODUCT DETAIL ---------- */
+.shop-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4.375rem;
+  align-items: start;
+  padding-top: 4rem;
+}
+
+/* 4/5 to match the portrait product photos, with a max-width so the frame stays a
+   sensible size in the detail column instead of tracking the whole column width. */
+.shop-detail-media {
+  aspect-ratio: 4/5;
+  max-width: 520px;
+  overflow: hidden;
+  background: var(--slot-bg);
+  border: 1px solid var(--line);
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--space-lg));
+}
+
+.shop-detail-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.shop-detail-media span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--text-sm);
+  color: var(--placeholder);
+}
+
+.shop-detail-info h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  line-height: 1.15;
+  margin-top: var(--space-sm);
+}
+
+.shop-resume {
+  font-size: var(--text-md);
+  line-height: 1.8;
+  color: var(--card-body);
+  margin-top: var(--space-xl);
+  max-width: 480px;
+}
+
+.shop-detail-info .tag-row {
+  display: flex;
+  gap: var(--space-2_5);
+  flex-wrap: wrap;
+  margin: 1.75rem 0;
+}
+
+.shop-detail-info .spec-list {
+  margin-top: 0;
+}
+
+.shop-detail-cta {
+  display: flex;
+  gap: var(--space-4_5);
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+
+/* .btn-ghost assumes the dark pine background; on the cream shop page it needs a dark border. */
+.shop-detail-cta .btn-ghost {
+  border-color: var(--pine);
+  color: var(--pine);
+}
+
+.shop-detail-cta .btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--pine);
+  background: var(--gold);
+}
+
+.shop-note {
+  font-size: var(--text-base-sm);
+  color: var(--muted);
+  margin-top: var(--space-lg);
+}
+
+.shop-note a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.shop-note a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- RELATED ---------- */
+.shop-others {
+  margin-top: 6rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.shop-others h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: var(--text-xl);
+  margin-bottom: 2.5rem;
+}
+
+.shop-others .shop-line-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.shop-others .shop-card-body h3 {
+  font-size: var(--text-lg);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 980px) {
+  .shop-detail {
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .shop-hero {
+    padding: 8.5rem 6vw 3.5rem;
+  }
+
+  .shop-detail,
+  .shop-line-grid,
+  .shop-others .shop-line-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-detail {
+    padding-top: 2.5rem;
+  }
+
+  /* Sticky media is unhelpful once the image sits above the buy buttons. */
+  .shop-detail-media {
+    position: static;
+    max-width: 420px;
+  }
+
+  /* An overlay would sit on top of the first product at this width, so the card
+     returns to normal flow and pushes the products down instead. */
+  .shop-line-body > .variete-card {
+    position: static;
+    width: 100%;
+    margin-bottom: var(--space-lg);
+    transform: none;
+  }
+}
