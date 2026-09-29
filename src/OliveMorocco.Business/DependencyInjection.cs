@@ -9,7 +9,6 @@ using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.Business.Services.Stockage.Varietes;
 using OliveMorocco.Business.Services.Stockage.Intrants;
 using OliveMorocco.Business.Services.Stockage.Secteurs;
-using OliveMorocco.Business.Services.Stockage.Intrants;
 using OliveMorocco.Business.Services.Vente;
 using OliveMorocco.DataAccess;
 

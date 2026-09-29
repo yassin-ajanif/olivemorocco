@@ -59,10 +59,16 @@ public sealed class IntrantService : IIntrantService
         var (items, totalCount) = await _intrants.QueryPagedAsync(
             i => pattern == null || EF.Functions.ILike(i.Nom, pattern),
             query => query.OrderBy(i => i.Nom),
-            i => new IntrantListItemDto(i.Id, i.Nom, i.Unite, i.PrixAchatHT),
+            i => new IntrantListItemDto(
+                i.Id,
+                i.Nom,
+                i.Unite,
+                i.PrixAchatHT,
+                StockIntrantService.ComputeStock(i)),
             page,
             pageSize,
-            cancellationToken);
+            cancellationToken,
+            [i => i.MouvementsIntrant]);
 
         return new PagedResult<IntrantListItemDto>(items, totalCount);
     }

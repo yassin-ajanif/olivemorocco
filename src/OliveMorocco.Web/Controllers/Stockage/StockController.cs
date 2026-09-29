@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.Business.Services.Stockage;
+using OliveMorocco.Business.Services.Stockage.Intrants;
 using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.Web.Models.Stockage.Stock;
 using OliveMorocco.Web.Routing;
@@ -9,7 +10,7 @@ using OliveMorocco.Web.Routing;
 namespace OliveMorocco.Web.Controllers.Stockage;
 
 [Route(AppSections.Stockage + "/[controller]")]
-public sealed class StockController(IStockProduitService stock, IStockHuileService stockHuile) : Controller
+public sealed class StockController(IStockProduitService stock, IStockHuileService stockHuile, IStockIntrantService stockIntrant) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(
@@ -36,6 +37,24 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
                 Search = Normalize(search),
                 Page = page,
                 TotalCount = huile.TotalCount,
+            });
+        }
+
+        if (string.Equals(vue, StockListViewModel.VueIntrant, StringComparison.OrdinalIgnoreCase))
+        {
+            var intrant = await stockIntrant.GetStockIntrantAsync(
+                search,
+                page,
+                StockListViewModel.DefaultPageSize,
+                cancellationToken);
+
+            return View(new StockListViewModel
+            {
+                Vue = StockListViewModel.VueIntrant,
+                IntrantItems = intrant.Items,
+                Search = Normalize(search),
+                Page = page,
+                TotalCount = intrant.TotalCount,
             });
         }
 

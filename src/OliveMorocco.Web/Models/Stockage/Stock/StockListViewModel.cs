@@ -7,15 +7,20 @@ public sealed class StockListViewModel
     public const int DefaultPageSize = 15;
     public const string VueProduits = "produits";
     public const string VueHuile = "huile";
+    public const string VueIntrant = "intrant";
 
-    /// <summary>Active tab: <see cref="VueProduits"/> (bottled products) or <see cref="VueHuile"/> (bulk oil per variety).</summary>
+    /// <summary>Active tab: <see cref="VueProduits"/> (bottled products), <see cref="VueHuile"/> (bulk oil per variety), or <see cref="VueIntrant"/> (intrants).</summary>
     public string Vue { get; init; } = VueProduits;
 
     public bool IsHuile => Vue == VueHuile;
 
+    public bool IsIntrant => Vue == VueIntrant;
+
     public IReadOnlyList<StockEtatListItemDto> Items { get; init; } = [];
 
     public IReadOnlyList<StockHuileListItemDto> HuileItems { get; init; } = [];
+
+    public IReadOnlyList<IntrantStockListItemDto> IntrantItems { get; init; } = [];
 
     public string? Search { get; init; }
 

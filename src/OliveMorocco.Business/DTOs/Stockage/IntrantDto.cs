@@ -20,4 +20,5 @@ public record IntrantListItemDto(
     int Id,
     string Nom,
     string Unite,
-    decimal PrixAchatHT);
+    decimal PrixAchatHT,
+    decimal StockActuel);
