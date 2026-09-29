@@ -9,7 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="home-page">
+@* BodyClass lets a view opt into a page-scoped background without the layout having
+   to know about it — the shop views set it to "shop-page". *@
+<body class="home-page @(ViewData["BodyClass"] as string)">
 @RenderBody()
 <script src="~/js/home.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)

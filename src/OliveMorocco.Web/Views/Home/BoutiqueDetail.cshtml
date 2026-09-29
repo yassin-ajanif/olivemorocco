@@ -3,9 +3,12 @@
     Layout = "_HomeLayout";
     var produit = Model.Produit;
     ViewData["Title"] = $"{produit.Designation} — {produit.VarieteNom} — Boutique OliveMorocco";
+    ViewData["BodyClass"] = "shop-page";
 }
 
 <partial name="_HomeNav" />
+
+<partial name="_OliveBackground" />
 
 <header class="shop-hero shop-hero-detail">
     <div class="shop-hero-inner">

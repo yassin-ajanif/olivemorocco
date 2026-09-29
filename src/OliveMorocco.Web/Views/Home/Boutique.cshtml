@@ -2,10 +2,13 @@
 @{
     Layout = "_HomeLayout";
     ViewData["Title"] = "Boutique — Huiles d'olive extra vierge, OliveMorocco";
+    ViewData["BodyClass"] = "shop-page";
     var total = Model.Sum(v => v.Produits.Count);
 }
 
 <partial name="_HomeNav" />
+
+<partial name="_OliveBackground" />
 
 <main class="shop-main">
     <div class="shop-toolbar">
