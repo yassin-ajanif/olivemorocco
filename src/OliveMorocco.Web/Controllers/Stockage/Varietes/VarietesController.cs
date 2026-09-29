@@ -5,7 +5,7 @@ using OliveMorocco.Business.Services.Stockage.Varietes;
 using OliveMorocco.Web.Models.Stockage.Varietes;
 using OliveMorocco.Web.Routing;
 
-namespace OliveMorocco.Web.Controllers.Stockage;
+namespace OliveMorocco.Web.Controllers.Stockage.Varietes;
 
 [Route(AppSections.Stockage + "/[controller]")]
 public sealed class VarietesController(IVarieteService varietes) : Controller

@@ -146,7 +146,7 @@ else if (Model.IsIntrant)
                 {
                     <div class="list-row" style="grid-template-columns:@intrantCols">
                         <span data-label="Nom">
-                            <a asp-action="Detail" asp-route-id="@item.Id" class="list-link">@item.Nom</a>
+                            <a asp-action="Intrant" asp-route-id="@item.Id" class="list-link">@item.Nom</a>
                         </span>
                         <span data-label="Unité">@item.Unite</span>
                         <span data-label="Stock actuel" class="cell-bold cell-center">
@@ -156,7 +156,7 @@ else if (Model.IsIntrant)
                             @(item.PrixAchatHT?.ToString("N2") ?? "—")
                         </span>
                         <span class="list-row-actions" data-label="Actions">
-                            <a asp-action="Detail"
+                            <a asp-action="Intrant"
                                asp-route-id="@item.Id"
                                class="btn btn-sm"
                                title="Historique des mouvements">
@@ -193,7 +193,7 @@ else
                 {
                     <div class="list-row" style="grid-template-columns:@produitCols">
                         <span data-label="Réf.">
-                            <a asp-action="Detail" asp-route-id="@item.Id" class="list-link">@item.Reference</a>
+                            <a asp-action="Produit" asp-route-id="@item.Id" class="list-link">@item.Reference</a>
                         </span>
                         <span data-label="Désignation">@item.Designation</span>
                         <span data-label="Variété">@item.VarieteNom</span>
@@ -217,7 +217,7 @@ else
                             }
                         </span>
                         <span class="list-row-actions" data-label="Actions">
-                            <a asp-action="Detail"
+                            <a asp-action="Produit"
                                asp-route-id="@item.Id"
                                class="btn btn-sm"
                                title="Historique des mouvements">

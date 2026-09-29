@@ -4,6 +4,7 @@ using OliveMorocco.Business.DTOs.Stockage;
 using OliveMorocco.Business.Services.Stockage;
 using OliveMorocco.Business.Services.Stockage.Intrants;
 using OliveMorocco.Business.Services.Stockage.Produits;
+using OliveMorocco.Web.Models.Stockage.IntrantStock;
 using OliveMorocco.Web.Models.Stockage.Stock;
 using OliveMorocco.Web.Routing;
 
@@ -75,8 +76,15 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
         });
     }
 
-    [HttpGet("Detail/{id:int}")]
-    public async Task<IActionResult> Detail(
+    /// <summary>
+    /// Legacy entry point: the standalone intrant stock list is now the « Intrants » tab of this page.
+    /// </summary>
+    [HttpGet("/" + AppSections.Stockage + "/IntrantStock")]
+    public IActionResult LegacyIntrantStock()
+        => RedirectToAction(nameof(Index), new { vue = StockListViewModel.VueIntrant });
+
+    [HttpGet("Produit/{id:int}")]
+    public async Task<IActionResult> Produit(
         int id,
         int page = 1,
         CancellationToken cancellationToken = default)
@@ -102,9 +110,9 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
         });
     }
 
-    [HttpPost("Detail/{id:int}/Ajustement")]
+    [HttpPost("Produit/{id:int}/Ajustement")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Ajustement(
+    public async Task<IActionResult> ProduitAjustement(
         int id,
         [Bind(Prefix = "Ajustement")] StockAjustementViewModel model,
         int page = 1,
@@ -121,7 +129,7 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
         }
 
         if (!ModelState.IsValid)
-            return await DetailViewAsync(id, page, model, cancellationToken);
+            return await ProduitViewAsync(id, page, model, cancellationToken);
 
         try
         {
@@ -133,14 +141,14 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
         catch (ValidationException exception)
         {
             AddValidationErrors(exception, prefix);
-            return await DetailViewAsync(id, page, model, cancellationToken);
+            return await ProduitViewAsync(id, page, model, cancellationToken);
         }
 
         TempData["Success"] = "Stock ajusté avec succès.";
-        return RedirectToAction(nameof(Detail), new { id, page = 1 });
+        return RedirectToAction(nameof(Produit), new { id, page = 1 });
     }
 
-    private async Task<IActionResult> DetailViewAsync(
+    private async Task<IActionResult> ProduitViewAsync(
         int id,
         int page,
         StockAjustementViewModel formState,
@@ -156,7 +164,7 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
             StockDetailViewModel.DefaultMouvementPageSize,
             cancellationToken);
 
-        return View(nameof(Detail), new StockDetailViewModel
+        return View(nameof(Produit), new StockDetailViewModel
         {
             Produit = produit,
             Mouvements = mouvements.Items,
@@ -234,6 +242,81 @@ public sealed class StockController(IStockProduitService stock, IStockHuileServi
         return View(nameof(Huile), new StockHuileDetailViewModel
         {
             Variete = variete,
+            Mouvements = mouvements.Items,
+            MouvementPage = page,
+            MouvementTotalCount = mouvements.TotalCount,
+            Ajustement = formState,
+        });
+    }
+
+    [HttpGet("Intrant/{id:int}")]
+    public async Task<IActionResult> Intrant(
+        int id,
+        int page = 1,
+        CancellationToken cancellationToken = default)
+        => await IntrantViewAsync(id, Math.Max(1, page), new IntrantStockAjustementViewModel(), cancellationToken);
+
+    [HttpPost("Intrant/{id:int}/Ajustement")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> IntrantAjustement(
+        int id,
+        [Bind(Prefix = "Ajustement")] IntrantStockAjustementViewModel model,
+        int page = 1,
+        CancellationToken cancellationToken = default)
+    {
+        page = Math.Max(1, page);
+        const string prefix = "Ajustement";
+
+        if (!model.Variation.HasValue)
+        {
+            ModelState.AddModelError(
+                $"{prefix}.{nameof(IntrantStockAjustementViewModel.Variation)}",
+                "La variation est requise.");
+        }
+
+        if (!ModelState.IsValid)
+            return await IntrantViewAsync(id, page, model, cancellationToken);
+
+        try
+        {
+            await stockIntrant.CreateAjustementAsync(
+                id,
+                new CreateAjustementIntrantDto(model.Variation!.Value, model.Note),
+                cancellationToken);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (ValidationException exception)
+        {
+            AddValidationErrors(exception, prefix);
+            return await IntrantViewAsync(id, page, model, cancellationToken);
+        }
+
+        TempData["Success"] = "Stock d'intrant ajusté avec succès.";
+        return RedirectToAction(nameof(Intrant), new { id, page = 1 });
+    }
+
+    private async Task<IActionResult> IntrantViewAsync(
+        int id,
+        int page,
+        IntrantStockAjustementViewModel formState,
+        CancellationToken cancellationToken)
+    {
+        var intrant = await stockIntrant.GetDetailAsync(id, cancellationToken);
+        if (intrant is null)
+            return NotFound();
+
+        var mouvements = await stockIntrant.GetMouvementsAsync(
+            id,
+            page,
+            IntrantStockDetailViewModel.DefaultMouvementPageSize,
+            cancellationToken);
+
+        return View(nameof(Intrant), new IntrantStockDetailViewModel
+        {
+            Intrant = intrant,
             Mouvements = mouvements.Items,
             MouvementPage = page,
             MouvementTotalCount = mouvements.TotalCount,

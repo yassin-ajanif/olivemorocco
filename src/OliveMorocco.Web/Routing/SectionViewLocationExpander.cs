@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc.Razor;
 namespace OliveMorocco.Web.Routing;
 
 /// <summary>
-/// Resolves views under <c>Views/{Vente|Achat|Operationnel}/{Controller}/</c>
+/// Resolves views under <c>Views/{Vente|Achat|Operationnel|Stockage}/{Controller}/</c>
 /// for controllers in matching <c>Controllers.*</c> subfolders (see docs/ARCHITECTURE.md).
+/// Sections may nest feature folders (e.g. <c>Controllers.Stockage.Intrants</c>) —
+/// only the first segment identifies the section.
 /// </summary>
 public sealed class SectionViewLocationExpander : IViewLocationExpander
 {
@@ -45,10 +47,14 @@ public sealed class SectionViewLocationExpander : IViewLocationExpander
         if (!controllerNamespace.StartsWith(prefix, StringComparison.Ordinal))
             return null;
 
-        var section = controllerNamespace[prefix.Length..];
-        if (section.Length == 0 || section.Contains('.', StringComparison.Ordinal))
+        var relative = controllerNamespace[prefix.Length..];
+        if (relative.Length == 0)
             return null;
 
-        return section;
+        // Sections may nest feature folders, e.g. "Stockage.Intrants" — take the section only.
+        var sectionEnd = relative.IndexOf('.', StringComparison.Ordinal);
+        var section = sectionEnd < 0 ? relative : relative[..sectionEnd];
+
+        return section.Length == 0 ? null : section;
     }
 }

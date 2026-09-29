@@ -5,7 +5,7 @@ using OliveMorocco.Business.Services.Stockage.Produits;
 using OliveMorocco.Web.Models.Stockage.Produits;
 using OliveMorocco.Web.Routing;
 
-namespace OliveMorocco.Web.Controllers.Stockage;
+namespace OliveMorocco.Web.Controllers.Stockage.Produits;
 
 [Route(AppSections.Stockage + "/[controller]")]
 public sealed class ProduitsController(IProduitService produits) : Controller

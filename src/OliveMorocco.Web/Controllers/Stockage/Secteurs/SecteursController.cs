@@ -5,7 +5,7 @@ using OliveMorocco.Business.Services.Stockage.Secteurs;
 using OliveMorocco.Web.Models.Stockage.Secteurs;
 using OliveMorocco.Web.Routing;
 
-namespace OliveMorocco.Web.Controllers.Stockage;
+namespace OliveMorocco.Web.Controllers.Stockage.Secteurs;
 
 [Route(AppSections.Stockage + "/[controller]")]
 public sealed class SecteursController(ISecteurService secteurs) : Controller

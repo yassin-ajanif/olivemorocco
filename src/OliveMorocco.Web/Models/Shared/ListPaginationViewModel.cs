@@ -12,7 +12,7 @@ public sealed class ListPaginationViewModel
 
     public string? Search { get; init; }
 
-    /// <summary>Route id for detail pages (e.g. stock mouvements on /Stock/Detail/{id}).</summary>
+    /// <summary>Route id for detail pages (e.g. stock mouvements on /Stockage/Stock/Produit/{id}).</summary>
     public int? Id { get; init; }
 
     /// <summary>Stock list filter — preserve « stock bas uniquement » across pages.</summary>

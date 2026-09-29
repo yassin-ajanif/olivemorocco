@@ -1,9 +1,9 @@
-@model StockDetailViewModel
+@model IntrantStockDetailViewModel
 @using OliveMorocco.Domain.Enums
 @{
-    var p = Model.Produit;
+    var i = Model.Intrant;
     const string cols = "1.1fr 0.75fr 0.7fr 0.8fr 0.8fr 1fr minmax(0,1.2fr)";
-    const string emptyMessage = "Aucun mouvement enregistré pour ce produit.";
+    const string emptyMessage = "Aucun mouvement enregistré pour cet intrant.";
     var ajustementOpen = !ViewData.ModelState.IsValid;
     var pagination = new ListPaginationViewModel
     {
@@ -11,17 +11,17 @@
         TotalPages = Model.MouvementTotalPages,
         HasPrevious = Model.MouvementHasPrevious,
         HasNext = Model.MouvementHasNext,
-        Id = p.Id,
+        Id = i.Id,
     };
 }
 
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · État du stock</p>
-    <h1>@p.Designation</h1>
-    <p class="module-section">@p.Reference · @p.VarieteNom</p>
-    <a asp-action="Index" class="btn btn-sm">← Retour à la liste</a>
+    <p class="eyebrow">Stockage · Stock des intrants</p>
+    <h1>@i.Nom</h1>
+    <p class="module-section">@i.Unite</p>
+    <a asp-action="Index" asp-route-vue="intrant" class="btn btn-sm">← Retour à la liste</a>
 </div>
 
 <div class="dash-panel stock-ajustement-panel@(ajustementOpen ? " is-open" : "")"
@@ -37,8 +37,8 @@
          id="stockAjustementBody"
          @(!ajustementOpen ? "hidden" : null)>
         <p class="stock-panel-hint">Entrez une variation positive (entrée) ou négative (sortie).</p>
-        <form asp-action="Ajustement"
-              asp-route-id="@p.Id"
+        <form asp-action="IntrantAjustement"
+              asp-route-id="@i.Id"
               asp-route-page="@Model.MouvementPage"
               method="post"
               class="stock-ajustement-form">
@@ -114,9 +114,9 @@
                         <span data-label="Quantité" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N0")</span>
                         <span data-label="Stock après" class="cell-bold cell-center">@m.StockApres.ToString("N0")</span>
                         <span data-label="Origine">
-                            @if (m.OrigineType == "Remplissage" && m.OrigineId.HasValue)
+                            @if (m.OrigineType == "Intervention" && m.OrigineId.HasValue)
                             {
-                                <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Remplissages/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
+                                <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Interventions/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
                             }
                             else
                             {

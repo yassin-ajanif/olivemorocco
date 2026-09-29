@@ -55,7 +55,10 @@
                     <span data-label="Unité">@intrant.Unite</span>
                     <span data-label="PU HT">@intrant.PrixAchatHT.ToString("N2", CultureInfo.GetCultureInfo("fr-FR")) DH</span>
                     <span data-label="Stock" class="cell-bold cell-center">
-                        <a href="/@OliveMorocco.Web.Routing.AppSections.Stockage/IntrantStock/Detail/@intrant.Id" class="list-link">@intrant.StockActuel.ToString("N2")</a>
+                        <a asp-controller="Stock"
+                           asp-action="Intrant"
+                           asp-route-id="@intrant.Id"
+                           class="list-link">@intrant.StockActuel.ToString("N2")</a>
                     </span>
                     <span class="list-row-actions" data-label="Actions">
                         <a asp-action="Edit"

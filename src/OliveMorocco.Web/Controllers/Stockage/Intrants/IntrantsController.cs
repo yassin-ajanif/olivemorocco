@@ -5,7 +5,7 @@ using OliveMorocco.Business.Services.Stockage.Intrants;
 using OliveMorocco.Web.Models.Stockage.Intrants;
 using OliveMorocco.Web.Routing;
 
-namespace OliveMorocco.Web.Controllers.Stockage;
+namespace OliveMorocco.Web.Controllers.Stockage.Intrants;
 
 [Route(AppSections.Stockage + "/[controller]")]
 public sealed class IntrantsController(IIntrantService intrants) : Controller

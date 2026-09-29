@@ -215,11 +215,19 @@ Organized under the **three domains** (mirrors Business services):
 
 ```
 Controllers/
-├── Stockage/          (ProduitsController, VarietesController, IntrantsController, SecteursController, StockController)
+├── Stockage/          (StockController — all stock views: produits, huile, intrants)
+│   ├── Intrants/      (IntrantsController — intrant catalogue)
+│   ├── Produits/      (ProduitsController)
+│   ├── Secteurs/      (SecteursController)
+│   └── Varietes/      (VarietesController)
 ├── Operationnel/      (InterventionsController, PressagesController, RemplissagesController, RecoltesController, …)
 ├── Vente/             (ClientsController, DevisController, …)
 └── Achat/             (FournisseursController, ChargesController, …)
 ```
+
+Sections may nest feature sub-folders (namespace `…Controllers.Stockage.Intrants`).
+`SectionViewLocationExpander` reads only the **first** namespace segment, so views stay
+flat under `Views/{Section}/{Controller}/`.
 
 - **`sealed` primary-constructor** controllers
 - Inject **`I*Service`** from Business only — never `DbContext`
@@ -357,7 +365,7 @@ Prefer **C# records** for immutability.
 | Entities | PascalCase French terms | `BonLivraisonClient`, `SecteurVariete` |
 | Services | `I{Feature}Service` / `{Feature}Service` | `IRecolteService` |
 | Validators | `{DtoName}Validator` | `CreateRecolteDtoValidator` |
-| Controllers | `{Feature}Controller` in domain folder | `Controllers/Operationnel/SecteursController.cs` |
+| Controllers | `{Feature}Controller` in domain folder | `Controllers/Stockage/Secteurs/SecteursController.cs` |
 | ViewModels | `{Feature}{Purpose}ViewModel` | `SecteurListViewModel` |
 | Views | Match controller | `Views/Secteurs/Index.cshtml` |
 | Partials | `_` prefix | `_SecteursListResults.cshtml` |
