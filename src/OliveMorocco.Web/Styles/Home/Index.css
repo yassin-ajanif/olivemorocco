@@ -34,7 +34,7 @@
 .nav-word {
   font-family: 'Fraunces', serif;
   font-size: var(--text-xl);
-  letter-spacing: 4px;
+  letter-spacing: 1.5px;
   color: var(--cream);
 }
 
@@ -140,10 +140,12 @@
   animation: riseIn 0.9s ease 0.2s forwards;
 }
 
+/* 12-character wordmark: sized so it never exceeds the 760px .hero-inner column
+   (12 chars x ~0.55em + 1px tracking) and still fits a 375px phone at the clamp floor. */
 .hero h1 {
   font-family: 'Fraunces', serif;
   font-weight: 600;
-  font-size: clamp(4rem, 11vw, 9.25rem);
+  font-size: clamp(2.6rem, 8.2vw, 6.75rem);
   line-height: 0.92;
   letter-spacing: 1px;
   opacity: 0;
@@ -585,7 +587,7 @@ form.contact-form option {
   font-family: 'Fraunces', serif;
   color: var(--cream);
   font-size: var(--text-heading-sm);
-  letter-spacing: 3px;
+  letter-spacing: 1.5px;
 }
 
 .foot-cols {
@@ -626,6 +628,17 @@ form.contact-form option {
 }
 
 /* ---------- RESPONSIVE ---------- */
+
+/* The 12-character wordmark is ~95px wider than the 4-letter one it replaced, and #mainNav
+   is a non-wrapping `space-between` row. Below this width the items would push the nav CTA
+   past the right padding, so drop that button first — the hero and contact sections still
+   carry the same call to action, and the section links survive until 860px. */
+@media (max-width: 980px) {
+  .nav-cta {
+    display: none;
+  }
+}
+
 @media (max-width: 860px) {
   .nav-links {
     display: none;
