@@ -9,4 +9,5 @@ public class Intrant : BaseEntity
     public decimal PrixAchatHT { get; set; }
 
     public ICollection<InterventionLigne> InterventionLignes { get; set; } = new List<InterventionLigne>();
+    public ICollection<MouvementIntrant> MouvementsIntrant { get; set; } = new List<MouvementIntrant>();
 }

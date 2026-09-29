@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OliveMorocco.Business.DTOs;
 using OliveMorocco.Business.DTOs.Operationnel;
 using OliveMorocco.Business.Services.Achat;
+using OliveMorocco.Business.Services.Stockage.Intrants;
 
 using OliveMorocco.DataAccess.Repositories;
 using OliveMorocco.Domain.Entities.Achat;
@@ -19,6 +20,7 @@ public sealed class InterventionService : IInterventionService
     private readonly IRepository<Intrant> _intrants;
     private readonly IRepository<Charge> _charges;
     private readonly IChargeService _chargeService;
+    private readonly IStockIntrantService _stockIntrantService;
     private readonly IMapper _mapper;
     private readonly IValidator<CreateInterventionDto>? _createValidator;
     private readonly IValidator<UpdateInterventionDto>? _updateValidator;
@@ -29,6 +31,7 @@ public sealed class InterventionService : IInterventionService
         IRepository<Intrant> intrants,
         IRepository<Charge> charges,
         IChargeService chargeService,
+        IStockIntrantService stockIntrantService,
         IMapper mapper,
         IEnumerable<IValidator<CreateInterventionDto>> createValidators,
         IEnumerable<IValidator<UpdateInterventionDto>> updateValidators)
@@ -38,6 +41,7 @@ public sealed class InterventionService : IInterventionService
         _intrants = intrants;
         _charges = charges;
         _chargeService = chargeService;
+        _stockIntrantService = stockIntrantService;
         _mapper = mapper;
         _createValidator = createValidators.FirstOrDefault();
         _updateValidator = updateValidators.FirstOrDefault();
@@ -125,6 +129,10 @@ public sealed class InterventionService : IInterventionService
                 interventionId,
                 dto.Charges,
                 ct);
+            await _stockIntrantService.ApplyInterventionSortieAsync(
+                interventionId,
+                dto.Lignes.Select(l => (l.IntrantId, l.Quantite)),
+                ct);
         }, cancellationToken);
 
         return (await GetInterventionByIdAsync(interventionId, cancellationToken))!;
@@ -139,8 +147,22 @@ public sealed class InterventionService : IInterventionService
         await EnsureSecteurExistsAsync(dto.SecteurId, cancellationToken);
         await EnsureIntrantsExistAsync(dto.Lignes, cancellationToken);
 
-        _ = await _interventions.GetByIdAsync(id, cancellationToken)
+        var existing = await _interventions.GetByIdWithNavigationsAsync(id, [i => i.Lignes], cancellationToken)
             ?? throw new KeyNotFoundException($"Intervention {id} introuvable.");
+
+        // Compute stock deltas: reverse old lines, apply new lines
+        var oldLines = existing.Lignes.GroupBy(l => l.IntrantId)
+            .ToDictionary(g => g.Key, g => g.Sum(l => l.Quantite));
+        var newLines = dto.Lignes.GroupBy(l => l.IntrantId)
+            .ToDictionary(g => g.Key, g => g.Sum(l => l.Quantite));
+
+        var allIntrantIds = oldLines.Keys.Union(newLines.Keys).ToList();
+        var deltas = allIntrantIds.Select(produitId =>
+        {
+            var oldQty = oldLines.GetValueOrDefault(produitId);
+            var newQty = newLines.GetValueOrDefault(produitId);
+            return (produitId, Delta: newQty - oldQty);
+        }).ToList();
 
         await _interventions.ExecuteInTransactionAsync(async ct =>
         {
@@ -149,11 +171,27 @@ public sealed class InterventionService : IInterventionService
                 id,
                 dto.Charges,
                 ct);
+            await _stockIntrantService.ApplyInterventionAjustementAsync(
+                id,
+                deltas,
+                ct);
         }, cancellationToken);
     }
 
-    public Task DeleteInterventionAsync(int id, CancellationToken cancellationToken = default)
-        => _interventions.DeleteAsync(id, cancellationToken);
+    public async Task DeleteInterventionAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _interventions.GetByIdWithNavigationsAsync(id, [i => i.Lignes], cancellationToken)
+            ?? throw new KeyNotFoundException($"Intervention {id} introuvable.");
+
+        await _interventions.ExecuteInTransactionAsync(async ct =>
+        {
+            await _stockIntrantService.ReverseInterventionAsync(
+                id,
+                entity.Lignes.Select(l => (l.IntrantId, l.Quantite)),
+                ct);
+            await _interventions.DeleteAsync(id, ct);
+        }, cancellationToken);
+    }
 
     public async Task<IReadOnlyList<SecteurSelectItemDto>> GetSecteursForSelectAsync(
         CancellationToken cancellationToken = default)

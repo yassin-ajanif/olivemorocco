@@ -95,6 +95,34 @@ public class IntrantConfiguration : IEntityTypeConfiguration<Intrant>
     }
 }
 
+public class MouvementIntrantConfiguration : IEntityTypeConfiguration<MouvementIntrant>
+{
+    public void Configure(EntityTypeBuilder<MouvementIntrant> builder)
+    {
+        builder.ToTable("MouvementsIntrant", t => t.HasCheckConstraint(
+            "CK_MouvementsIntrant_Type",
+            "\"Type\" IN ('Entree','Sortie','Ajustement')"));
+
+        builder.HasIndex(m => m.IntrantId);
+        builder.HasIndex(m => new { m.OrigineType, m.OrigineId });
+
+        builder.Property(m => m.Type)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
+
+        builder.Property(m => m.Quantite).HasPrecision(12, 4);
+        builder.Property(m => m.StockAvant).HasPrecision(12, 4);
+        builder.Property(m => m.OrigineType).IsRequired();
+        builder.Property(m => m.Note).IsRequired();
+
+        builder.HasOne(m => m.Intrant)
+            .WithMany(i => i.MouvementsIntrant)
+            .HasForeignKey(m => m.IntrantId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
 public class InterventionConfiguration : IEntityTypeConfiguration<Intervention>
 {
     public void Configure(EntityTypeBuilder<Intervention> builder)
