@@ -16,7 +16,8 @@ public record ProduitDto(
     decimal StockActuel,
     decimal StockMinimum,
     bool Actif,
-    decimal? ContenanceLitres = null);
+    decimal? ContenanceLitres = null,
+    string? ImageUrl = null);
 
 public record CreateProduitDto(
     string Reference,
@@ -30,7 +31,8 @@ public record CreateProduitDto(
     decimal StockInitial,
     decimal StockMinimum,
     bool Actif,
-    decimal? ContenanceLitres = null);
+    decimal? ContenanceLitres = null,
+    string? ImageUrl = null);
 
 public record UpdateProduitDto(
     string Reference,
@@ -43,7 +45,8 @@ public record UpdateProduitDto(
     decimal TauxTVA,
     decimal StockMinimum,
     bool Actif,
-    decimal? ContenanceLitres = null);
+    decimal? ContenanceLitres = null,
+    string? ImageUrl = null);
 
 public record ProduitListItemDto(
     int Id,

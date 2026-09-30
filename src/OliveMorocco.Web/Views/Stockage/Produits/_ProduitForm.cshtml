@@ -1,11 +1,145 @@
 @model ProduitFormViewModel
 
+@* multipart/form-data is required or the file input arrives as an empty string. *@
 <form asp-action="@(Model.IsEdit ? "Edit" : "Create")"
       asp-route-id="@Model.Id"
       method="post"
+      enctype="multipart/form-data"
       class="produit-form form-grid">
     @Html.AntiForgeryToken()
-    <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
+    @* All, not ModelOnly: the keyless error ("Enregistrement impossible") is filtered out
+       by ModelOnly and would render nothing, leaving the form looking like a plain
+       refresh. Field-level validation errors are all keyed, so All adds only the
+       keyless ones. *@
+    <div asp-validation-summary="All" class="form-validation-summary"></div>
+
+    @* Photo slot first: it is the one field on this form that is about presentation
+       rather than stock, and burying it under the pricing fields made it easy to
+       miss. Both the empty slot and the "Remplacer" button are labels for the same
+       hidden file input, so either is a valid click target. The input itself stays in
+       the DOM and stays focusable so keyboard and screen-reader users can still reach
+       it — it is only visually hidden. *@
+    @{
+        var hasPhoto = !string.IsNullOrEmpty(Model.CurrentImageUrl);
+    }
+    <div class="form-field produit-form-photo">
+        <span class="produit-form-photo-label">Photo du produit</span>
+
+        <div class="produit-photo-slot-wrap">
+            @* data-has-photo tells the script whether the photo it is hiding is the
+               stored one or a local preview, so it knows what to go back to. *@
+            <label class="produit-photo-slot@(hasPhoto ? "" : " is-empty")"
+                   for="ImageFile"
+                   data-has-photo="@(hasPhoto.ToString().ToLowerInvariant())">
+                @if (hasPhoto)
+                {
+                    <img src="@Url.Content(Model.CurrentImageUrl!)" alt="" />
+                }
+                else
+                {
+                    @* Rendered empty and hidden so picking a file has something to fill
+                       without the page having to round-trip. An <img> with no src must
+                       not be left visible: browsers request the page URL for src="". *@
+                    <img class="is-hidden" alt="" />
+                    <span class="produit-photo-empty">
+                        <span class="produit-photo-plus" aria-hidden="true">+</span>
+                        <span class="produit-photo-slot-text">Aucune photo</span>
+                    </span>
+                }
+            </label>
+
+            <div class="produit-photo-controls">
+                @if (hasPhoto)
+                {
+                    <label class="produit-photo-btn" for="ImageFile">+ Remplacer</label>
+
+                    @* Deferred to save, so a misclick plus "Annuler" destroys nothing. *@
+                    <label class="produit-photo-btn produit-photo-btn--danger">
+                        <input asp-for="RemoveImage" type="checkbox" />
+                        <span>× Supprimer</span>
+                    </label>
+                }
+                else
+                {
+                    <span class="produit-photo-btn produit-photo-btn--static">+ Choisir un fichier</span>
+                }
+            </div>
+        </div>
+
+        @* Visually hidden but present and focusable. *@
+        <input asp-for="ImageFile" type="file" class="produit-photo-input"
+               accept="image/jpeg,image/png,image/webp,image/gif" />
+
+        <p class="produit-form-hint">
+            JPEG, PNG, WebP ou GIF — 5 Mo maximum.
+            <span class="produit-photo-caption" data-photo-caption></span>
+        </p>
+        <span asp-validation-for="ImageFile" class="field-validation-error"></span>
+    </div>
+
+    @* Local preview, so picking a file shows it immediately instead of only after the
+       round-trip. createObjectURL is used rather than a FileReader/base64 because it
+       costs no copy of the bytes; every URL is revoked when it is replaced or dropped
+       so the blob does not stay pinned in memory. The server still re-checks the magic
+       bytes — this is only there so the operator sees what they picked. *@
+    <script>
+        (() => {
+            const file = document.getElementById('ImageFile');
+            const form = file?.closest('form');
+            if (!form) return;
+
+            const slot = form.querySelector('.produit-photo-slot');
+            const preview = slot?.querySelector('img');
+            const empty = slot?.querySelector('.produit-photo-empty');
+            const caption = form.querySelector('[data-photo-caption]');
+            const remove = form.querySelector('#RemoveImage');
+            if (!slot || !preview || !file) return;
+
+            const hadStoredPhoto = slot.dataset.hasPhoto === 'true';
+            let localUrl = null;
+
+            // Drops the local preview and restores whatever the server sent. Never
+            // touches the stored <img> src, so the DB photo survives a misclick.
+            const clearLocalPreview = () => {
+                if (localUrl) {
+                    URL.revokeObjectURL(localUrl);
+                    localUrl = null;
+                }
+
+                preview.removeAttribute('src');
+                preview.classList.add('is-hidden');
+                empty?.classList.remove('is-hidden');
+                slot.classList.toggle('is-empty', !hadStoredPhoto);
+                if (caption) caption.textContent = '';
+            };
+
+            file.addEventListener('change', () => {
+                const picked = file.files && file.files[0];
+                if (!picked) return;
+
+                if (localUrl) URL.revokeObjectURL(localUrl);
+                localUrl = URL.createObjectURL(picked);
+
+                preview.src = localUrl;
+                preview.classList.remove('is-hidden');
+                empty?.classList.add('is-hidden');
+                slot.classList.remove('is-empty');
+                if (caption) caption.textContent = `— ${picked.name}`;
+
+                // The two controls are mutually exclusive: a fresh pick cancels a
+                // pending removal. The server resolves the same collision in favour of
+                // the upload regardless — this only stops the UI claiming otherwise.
+                if (remove) remove.checked = false;
+            });
+
+            remove?.addEventListener('change', () => {
+                if (!remove.checked) return;
+
+                file.value = '';
+                clearLocalPreview();
+            });
+        })();
+    </script>
 
     <div class="form-field">
         <label for="Reference">Référence</label>

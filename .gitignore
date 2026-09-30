@@ -19,3 +19,6 @@ Thumbs.db
 ## Logs
 Logs/
 *.log
+
+## Uploaded product photos (PhotoStore default root)
+App_Data/

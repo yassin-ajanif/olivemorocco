@@ -100,7 +100,8 @@ public class StockageProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore())
-            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)));
+            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)))
+            .ForMember(d => d.ImageUrl, o => o.MapFrom(s => NormalizeOptional(s.ImageUrl)));
 
         CreateMap<UpdateProduitDto, Produit>()
             .ForMember(d => d.Id, o => o.Ignore())
@@ -116,7 +117,8 @@ public class StockageProfile : Profile
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.UpdatedAt, o => o.Ignore())
             .ForMember(d => d.CreatedByUserId, o => o.Ignore())
-            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)));
+            .ForMember(d => d.CodeBarre, o => o.MapFrom(s => NormalizeOptional(s.CodeBarre)))
+            .ForMember(d => d.ImageUrl, o => o.MapFrom(s => NormalizeOptional(s.ImageUrl)));
     }
 
     private static string? NormalizeOptional(string? value) =>

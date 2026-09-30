@@ -176,7 +176,8 @@ public sealed class ProduitService : IProduitService
             ComputeStock(entity),
             entity.StockMinimum,
             entity.Actif,
-            entity.ContenanceLitres);
+            entity.ContenanceLitres,
+            entity.ImageUrl);
 
     private static decimal ComputeStock(Produit produit) =>
         produit.MouvementsStock.Sum(m => m.Type == TypeMouvement.Entree ? m.Quantite : -m.Quantite);

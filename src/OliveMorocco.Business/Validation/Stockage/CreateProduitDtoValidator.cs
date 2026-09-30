@@ -1,13 +1,13 @@
 using FluentValidation;
 using OliveMorocco.Business.DTOs.Stockage;
+using OliveMorocco.Domain.Common;
 
 namespace OliveMorocco.Business.Validation.Stockage;
 
 public class CreateProduitDtoValidator : AbstractValidator<CreateProduitDto>
 {
     public CreateProduitDtoValidator()
-    {
-        RuleFor(x => x.Reference)
+    {        RuleFor(x => x.Reference)
             .NotEmpty().WithMessage("La référence est obligatoire.")
             .MaximumLength(64).WithMessage("La référence ne doit pas dépasser 64 caractères.");
 
@@ -30,6 +30,18 @@ public class CreateProduitDtoValidator : AbstractValidator<CreateProduitDto>
         RuleFor(x => x.CodeBarre)
             .MaximumLength(64)
             .When(x => !string.IsNullOrWhiteSpace(x.CodeBarre));
+
+        // Optional field, so both rules stand down when it is blank. Length and scheme
+        // are separate rules so the message names whichever one was actually broken.
+        RuleFor(x => x.ImageUrl)
+            .MaximumLength(ImageUrlPolicy.MaxLength)
+            .WithMessage(ImageUrlPolicy.MaxLengthMessage)
+            .When(x => !string.IsNullOrWhiteSpace(x.ImageUrl));
+
+        RuleFor(x => x.ImageUrl)
+            .Must(ImageUrlPolicy.IsWebUrl)
+            .WithMessage(ImageUrlPolicy.SchemeMessage)
+            .When(x => !string.IsNullOrWhiteSpace(x.ImageUrl));
 
         RuleFor(x => x.PrixAchatHT)
             .GreaterThanOrEqualTo(0).WithMessage("Le prix d'achat doit être positif ou nul.");

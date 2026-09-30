@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OliveMorocco.Domain.Common;
 using OliveMorocco.Domain.Entities.Common;
 using OliveMorocco.Domain.Entities.Operationnel;
 using OliveMorocco.Domain.Entities.Vente;
@@ -24,6 +25,10 @@ public class ProduitConfiguration : IEntityTypeConfiguration<Produit>
         builder.Property(p => p.TauxTVA).HasPrecision(18, 2);
         builder.Property(p => p.StockMinimum).HasPrecision(12, 4);
         builder.Property(p => p.ContenanceLitres).HasPrecision(8, 3);
+
+        // A varchar rather than the text the other free-text fields get: a URL has a
+        // sane upper bound, and bounding it keeps the column indexable.
+        builder.Property(p => p.ImageUrl).HasMaxLength(ImageUrlPolicy.MaxLength);
 
         builder.HasOne(p => p.Variete)
             .WithMany(v => v.Produits)

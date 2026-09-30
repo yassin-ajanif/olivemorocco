@@ -1,5 +1,6 @@
 using FluentValidation;
 using OliveMorocco.Business.DTOs.Stockage;
+using OliveMorocco.Domain.Common;
 
 namespace OliveMorocco.Business.Validation.Stockage;
 
@@ -30,6 +31,17 @@ public class UpdateProduitDtoValidator : AbstractValidator<UpdateProduitDto>
         RuleFor(x => x.CodeBarre)
             .MaximumLength(64)
             .When(x => !string.IsNullOrWhiteSpace(x.CodeBarre));
+
+        // Mirrors the create validator — see ImageUrlPolicy for why the scheme is pinned.
+        RuleFor(x => x.ImageUrl)
+            .MaximumLength(ImageUrlPolicy.MaxLength)
+            .WithMessage(ImageUrlPolicy.MaxLengthMessage)
+            .When(x => !string.IsNullOrWhiteSpace(x.ImageUrl));
+
+        RuleFor(x => x.ImageUrl)
+            .Must(ImageUrlPolicy.IsWebUrl)
+            .WithMessage(ImageUrlPolicy.SchemeMessage)
+            .When(x => !string.IsNullOrWhiteSpace(x.ImageUrl));
 
         RuleFor(x => x.PrixAchatHT)
             .GreaterThanOrEqualTo(0).WithMessage("Le prix d'achat doit être positif ou nul.");

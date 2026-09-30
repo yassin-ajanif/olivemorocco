@@ -68,6 +68,204 @@
   color:var(--muted);
 }
 
+/* Photo block, first on the page. Spans both form columns. */
+.produit-form .produit-form-photo{
+  grid-column:1 / -1;
+  padding:var(--space-md);
+  border:1px solid var(--line);
+  background:var(--slot-bg);
+}
+
+.produit-form .produit-form-photo-label{
+  display:block;
+  font-size:var(--text-sm);
+  font-weight:600;
+  letter-spacing:.3px;
+  margin-bottom:var(--space-sm);
+}
+
+/* Slot and its buttons sit side by side, matching the mockup. */
+.produit-form .produit-photo-slot-wrap{
+  display:flex;
+  align-items:flex-start;
+  gap:var(--space-md);
+}
+
+/* 4/5 to match the product card, so the preview crops the way the shop does.
+   A <label>, so clicking the empty slot opens the picker with no extra button. */
+.produit-form .produit-photo-slot{
+  flex:0 0 auto;
+  width:120px;
+  aspect-ratio:4/5;
+  overflow:hidden;
+  background:var(--surface);
+  border:1px solid var(--line);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-xs);
+  transition:border-color .15s ease;
+}
+
+.produit-form .produit-photo-slot:hover,
+.produit-form .produit-photo-slot:focus-within{
+  border-color:var(--pine);
+}
+
+/* Dashed only when there is no photo to show: a dashed border around a real photo
+   reads as a placeholder. Keyed off a class rather than :has(img), because the empty
+   state keeps an <img> in the DOM for the preview script to fill — so :has(img) is
+   true before anything is picked and the dashed border would never appear. */
+.produit-form .produit-photo-slot.is-empty{
+  border-style:dashed;
+}
+
+.produit-form .produit-photo-slot img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* The preview img starts empty and hidden, then gets a src from the picker. */
+.produit-form .produit-photo-slot img.is-hidden{
+  display:none;
+}
+
+/* Stacks the + and the caption inside the slot; the slot itself is already a centred
+   column, so this only needs to preserve the gap between the two. */
+.produit-form .produit-photo-empty{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:var(--space-xs);
+}
+
+.produit-form .produit-photo-empty.is-hidden{
+  display:none;
+}
+
+.produit-form .produit-photo-plus{
+  font-size:1.5rem;
+  line-height:1;
+  color:var(--muted);
+}
+
+.produit-form .produit-photo-slot-text{
+  font-size:var(--text-sm);
+  color:var(--muted);
+  text-align:center;
+  padding:0 var(--space-xs);
+}
+
+/* Picked filename, appended after the fixed hint text by the preview script. */
+.produit-form .produit-photo-caption{
+  color:var(--pine);
+}
+
+/* Nothing picked yet, so the hint must not carry a trailing separator. */
+.produit-form .produit-photo-caption:empty{
+  display:none;
+}
+
+.produit-form .produit-photo-controls{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  gap:var(--space-sm);
+  padding-top:var(--space-2_5);
+}
+
+.produit-form .produit-photo-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:var(--space-xs);
+  padding:var(--space-xs) var(--space-sm);
+  font-size:var(--text-sm);
+  font-weight:500;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--ink);
+  cursor:pointer;
+  transition:border-color .15s ease,color .15s ease;
+}
+
+.produit-form .produit-photo-btn:hover,
+.produit-form .produit-photo-btn:focus-within{
+  border-color:var(--pine);
+  color:var(--pine);
+}
+
+/* Destructive colour comes from the same tokens as .btn-danger, so the pending
+   removal and the real delete button read as the same family. */
+.produit-form .produit-photo-btn--danger:hover,
+.produit-form .produit-photo-btn--danger:focus-within{
+  border-color:var(--danger);
+  color:var(--danger);
+}
+
+/* The empty-state label is not clickable on its own, so it must not look like it is. */
+.produit-form .produit-photo-btn--static{
+  cursor:default;
+  color:var(--muted);
+}
+
+.produit-form .produit-photo-btn--static:hover{
+  border-color:var(--line);
+  color:var(--muted);
+}
+
+/* Real checkbox, hidden without losing keyboard focus. */
+.produit-form .produit-photo-btn input[type="checkbox"]{
+  position:absolute;
+  opacity:0;
+  width:1px;
+  height:1px;
+  margin:0;
+}
+
+/* Ticked: the button reports it, so the pending removal is visible before saving. */
+.produit-form .produit-photo-btn:has(input:checked){
+  border-color:var(--danger);
+  background:var(--danger);
+  color:var(--cream);
+}
+
+.produit-form .produit-photo-btn--danger:has(input:checked):hover{
+  color:var(--cream);
+}
+
+/* Visually hidden but still in the tab order and still the label target. */
+.produit-form .produit-photo-input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+@media (max-width:768px){
+  .produit-form .produit-photo-slot-wrap{
+    flex-direction:column;
+    gap:var(--space-sm);
+  }
+
+  .produit-form .produit-photo-controls{
+    padding-top:0;
+  }
+
+  .produit-form .produit-photo-btn{
+    flex:1 1 auto;
+    justify-content:center;
+  }
+}
+
 .produit-form-hint a{
   color:var(--pine);
   font-weight:500;

@@ -18,6 +18,13 @@ public class Produit : BaseEntity
     public bool Actif { get; set; } = true;
     public byte[]? ImageData { get; set; }
 
+    /// <summary>
+    /// Link to the product photo, used by the public shop. Distinct from
+    /// <see cref="ImageData"/>: that is an inline blob nothing currently writes, while
+    /// this points at a file that lives either on a CDN or under wwwroot.
+    /// </summary>
+    public string? ImageUrl { get; set; }
+
     public Variete Variete { get; set; } = null!;
     public ICollection<MouvementStock> MouvementsStock { get; set; } = new List<MouvementStock>();
     public ICollection<DevisClientLigne> DevisClientLignes { get; set; } = new List<DevisClientLigne>();
