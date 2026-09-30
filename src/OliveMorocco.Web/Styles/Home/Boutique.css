@@ -167,9 +167,13 @@
 }
 
 /* ---------- ONE LINE PER VARIETY ---------- */
+/* Was margin-top:4.5rem + padding-top:3.5rem, which stacked two gaps doing the same
+   job for 129px between one variety's products and the next variety's name. The
+   padding only exists to clear the border-top, and 56px of clearance for a 1px rule
+   is not what it was for. 48 + 32 = 80px, in line with the other vertical rhythm. */
 .shop-line + .shop-line {
-  margin-top: 4.5rem;
-  padding-top: 3.5rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--line);
 }
 
@@ -282,11 +286,14 @@
 }
 
 /* :has() so the card reacts to the badge and to itself (to keep it readable while
-   the pointer is over the text) without the badge needing to be an ancestor. */
+   the pointer is over the text) without the badge needing to be an ancestor.
+   display:block undoes the display:none that the narrow-screen rule applies, so one
+   set of selectors drives both layouts; wide screens are already block by default. */
 .shop-line-body:has(.variete-badge:hover) > .variete-card,
 .shop-line-body:has(.variete-badge:focus-visible) > .variete-card,
 .shop-line-body:has(> .variete-card:hover),
 .shop-line:focus-within > .shop-line-body > .variete-card {
+  display: block;
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
@@ -710,9 +717,18 @@
   }
 
   /* An overlay would sit on top of the first product at this width, so the card
-     returns to normal flow and pushes the products down instead. */
+     returns to normal flow and pushes the products down instead.
+
+     display:none, not position:static. The collapsed card was previously still in
+     flow, and visibility:hidden — like opacity:0 — reserves layout space, so every
+     line carried ~150px of *invisible* box (name + meta + the whole tasting note)
+     wedged between .shop-line-head and the products. visibility keeps it out of the
+     a11y tree; only display:none actually collapses the box. The trade is that the
+     reveal is instant on touch rather than fading, which is what a disclosure should
+     do anyway. margin-bottom is safe to leave here: with no box there is no margin,
+     and it applies again the moment the card is shown. */
   .shop-line-body > .variete-card {
-    position: static;
+    display: none;
     width: 100%;
     margin-bottom: var(--space-lg);
     transform: none;
