@@ -43,6 +43,13 @@
 .form-validation-summary ul{margin:0;padding-left:var(--space-lg);}
 .form-validation-summary li{margin:0;}
 .form-validation-summary li + li{margin-top:var(--space-xs);}
+/* Text kept for screen readers and for icon-only controls that carry no visible label.
+   Not display:none or visibility:hidden — both drop the text from the accessibility
+   tree, which is the one thing this class exists to prevent. */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
 .form-field .field-validation-error{
   display:block;margin-top:var(--space-xs);font-size:var(--text-sm);font-weight:500;
   letter-spacing:normal;text-transform:none;color:var(--danger);

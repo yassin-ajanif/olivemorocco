@@ -13,21 +13,27 @@
        keyless ones. *@
     <div asp-validation-summary="All" class="form-validation-summary"></div>
 
-    @* Photo slot first: it is the one field on this form that is about presentation
-       rather than stock, and burying it under the pricing fields made it easy to
-       miss. Both the empty slot and the "Remplacer" button are labels for the same
-       hidden file input, so either is a valid click target. The input itself stays in
-       the DOM and stays focusable so keyboard and screen-reader users can still reach
-       it — it is only visually hidden. *@
+    @* Left rail on desktop: photo, Référence and Code-barres in one card, so the
+       product's whole identity sits in a single narrow column beside the pricing fields
+       instead of costing three full-width rows. Below the breakpoint it collapses back to
+       the single column the form had before. Both the empty slot and the "Remplacer"
+       button are labels for the same hidden file input, so either is a valid click
+       target. The input itself stays in the DOM and stays focusable so keyboard and
+       screen-reader users can still reach it — it is only visually hidden. *@
     @{
         var hasPhoto = !string.IsNullOrEmpty(Model.CurrentImageUrl);
     }
-    <div class="form-field produit-form-photo">
+    <div class="form-field produit-form-photo produit-form-rail">
         <span class="produit-form-photo-label">Photo du produit</span>
 
-        <div class="produit-photo-slot-wrap">
-            @* data-has-photo tells the script whether the photo it is hiding is the
-               stored one or a local preview, so it knows what to go back to. *@
+        @* The frame is the positioning context for the hover overlay, and it holds the
+           file input so :focus-within raises the overlay for keyboard users as well as
+           for the mouse. The overlay is a sibling of the slot rather than nested inside
+           it: a <label> may not contain another <label>, and a click on the delete
+           control inside the slot would also fire the slot and open the picker.
+           data-has-photo tells the script whether the photo it is hiding is the stored
+           one or a local preview, so it knows what to go back to. *@
+        <div class="produit-photo-frame">
             <label class="produit-photo-slot@(hasPhoto ? "" : " is-empty")"
                    for="ImageFile"
                    data-has-photo="@(hasPhoto.ToString().ToLowerInvariant())">
@@ -42,46 +48,164 @@
                        not be left visible: browsers request the page URL for src="". *@
                     <img class="is-hidden" alt="" />
                     <span class="produit-photo-empty">
-                        <span class="produit-photo-plus" aria-hidden="true">+</span>
+                        <partial name="Icons/Plus" />
                         <span class="produit-photo-slot-text">Aucune photo</span>
                     </span>
                 }
             </label>
 
-            <div class="produit-photo-controls">
-                @if (hasPhoto)
-                {
-                    <label class="produit-photo-btn" for="ImageFile">+ Remplacer</label>
-
-                    @* Deferred to save, so a misclick plus "Annuler" destroys nothing. *@
-                    <label class="produit-photo-btn produit-photo-btn--danger">
-                        <input asp-for="RemoveImage" type="checkbox" />
-                        <span>× Supprimer</span>
+            @if (hasPhoto)
+            {
+                @* Replace and delete, centred on the photo and raised only on hover or
+                   focus. Two buttons underneath cost a whole row of the card; over the
+                   image they cost nothing, and the picture stays the thing you look at.
+                   Icons only, so each carries an .sr-only name plus a title for the
+                   mouse. Delete wraps a real checkbox rather than being a button:
+                   deferred to save, so a misclick plus "Annuler" destroys nothing. *@
+                <div class="produit-photo-overlay">
+                    <label class="produit-photo-btn" for="ImageFile" title="Remplacer la photo">
+                        <partial name="Icons/Plus" />
+                        <span class="sr-only">Remplacer la photo</span>
                     </label>
-                }
-                else
-                {
-                    <span class="produit-photo-btn produit-photo-btn--static">+ Choisir un fichier</span>
-                }
-            </div>
-        </div>
 
-        @* Visually hidden but present and focusable. *@
-        <input asp-for="ImageFile" type="file" class="produit-photo-input"
-               accept="image/jpeg,image/png,image/webp,image/gif" />
+                    <label class="produit-photo-btn produit-photo-btn--danger" title="Supprimer la photo">
+                        <input asp-for="RemoveImage" type="checkbox" />
+                        <partial name="Icons/Trash" />
+                        <span class="sr-only">Supprimer la photo</span>
+                    </label>
+                </div>
+            }
+
+            @* Visually hidden but present and focusable. Inside the frame so that
+               focusing it brings the overlay up. *@
+            <input asp-for="ImageFile" type="file" class="produit-photo-input"
+                   accept="image/jpeg,image/png,image/webp,image/gif" />
+        </div>
 
         <p class="produit-form-hint">
             JPEG, PNG, WebP ou GIF — 5 Mo maximum.
             <span class="produit-photo-caption" data-photo-caption></span>
         </p>
         <span asp-validation-for="ImageFile" class="field-validation-error"></span>
+
+        @* The two identity fields sit inside the photo card rather than beside it, so
+           the rail reads as one block instead of three loose ones. The rule above them
+           separates "what it looks like" from "what we call it". *@
+        <div class="produit-form-rail-fields">
+            <div class="form-field">
+                <label for="Reference">Référence</label>
+                <input asp-for="Reference" autocomplete="off" />
+                <span asp-validation-for="Reference" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-field">
+                <label for="CodeBarre">Code-barres</label>
+                <input asp-for="CodeBarre" autocomplete="off" />
+                <span asp-validation-for="CodeBarre" class="field-validation-error"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="produit-form-main">
+        <div class="produit-form-row-designation">
+            <div class="form-field">
+                <label for="Designation">Désignation</label>
+                <input asp-for="Designation" autocomplete="off" />
+                <span asp-validation-for="Designation" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-field form-check">
+                <input asp-for="Actif" type="checkbox" />
+                <label for="Actif">Actif</label>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label for="VarieteId">Variété</label>
+            <select asp-for="VarieteId" id="VarieteId">
+                <option value="">— Sélectionner —</option>
+                @foreach (var variete in Model.Varietes)
+                {
+                    <option value="@variete.Id">@variete.Nom</option>
+                }
+            </select>
+            <p class="produit-form-hint">
+                <a asp-controller="Varietes" asp-action="Index">Gérer les variétés</a>
+            </p>
+            <span asp-validation-for="VarieteId" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="Unite">Unité</label>
+            <input asp-for="Unite" autocomplete="off" placeholder="bouteille, L, unité…" />
+            <span asp-validation-for="Unite" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="ContenanceLitres">Contenance (L)</label>
+            <input asp-for="ContenanceLitres"
+                   type="number"
+                   step="0.001"
+                   min="0"
+                   placeholder="0.5, 1, 5…"
+                   value="@(Model.ContenanceLitres?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
+            <p class="produit-form-hint">Litres d'huile par unité — requis pour le remplissage.</p>
+            <span asp-validation-for="ContenanceLitres" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="TauxTVA">Taux TVA (%)</label>
+            <input asp-for="TauxTVA" type="number" step="1" min="0" />
+            <span asp-validation-for="TauxTVA" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="PrixAchatHT">Prix achat HT (DH)</label>
+            <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
+            <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="PrixVenteHT">Prix vente HT (DH)</label>
+            <input asp-for="PrixVenteHT" type="number" step="1" min="0" />
+            <span asp-validation-for="PrixVenteHT" class="field-validation-error"></span>
+        </div>
+
+        @if (Model.IsEdit)
+        {
+            <div class="form-field">
+                <label for="StockMinimum">Stock minimum</label>
+                <input asp-for="StockMinimum" type="number" step="1" min="0" />
+                <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
+            </div>
+        }
+        else
+        {
+            <div class="form-field">
+                <label for="StockInitial">Stock initial</label>
+                <input asp-for="StockInitial" type="number" step="1" min="0" />
+                <span asp-validation-for="StockInitial" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-field">
+                <label for="StockMinimum">Stock minimum</label>
+                <input asp-for="StockMinimum" type="number" step="1" min="0" />
+                <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
+            </div>
+        }
+    </div>
+
+    <div class="form-toolbar">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a asp-action="Index" class="btn">Annuler</a>
     </div>
 
     @* Local preview, so picking a file shows it immediately instead of only after the
        round-trip. createObjectURL is used rather than a FileReader/base64 because it
        costs no copy of the bytes; every URL is revoked when it is replaced or dropped
        so the blob does not stay pinned in memory. The server still re-checks the magic
-       bytes — this is only there so the operator sees what they picked. *@
+       bytes — this is only there so the operator sees what they picked. Last in the form
+       so it reads as behaviour for the whole thing, not for one column. *@
     <script>
         (() => {
             const file = document.getElementById('ImageFile');
@@ -140,109 +264,4 @@
             });
         })();
     </script>
-
-    <div class="form-field">
-        <label for="Reference">Référence</label>
-        <input asp-for="Reference" autocomplete="off" />
-        <span asp-validation-for="Reference" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="CodeBarre">Code-barres</label>
-        <input asp-for="CodeBarre" autocomplete="off" />
-        <span asp-validation-for="CodeBarre" class="field-validation-error"></span>
-    </div>
-
-    <div class="produit-form-row-designation">
-        <div class="form-field">
-            <label for="Designation">Désignation</label>
-            <input asp-for="Designation" autocomplete="off" />
-            <span asp-validation-for="Designation" class="field-validation-error"></span>
-        </div>
-
-        <div class="form-field form-check">
-            <input asp-for="Actif" type="checkbox" />
-            <label for="Actif">Actif</label>
-        </div>
-    </div>
-
-    <div class="form-field">
-        <label for="VarieteId">Variété</label>
-        <select asp-for="VarieteId" id="VarieteId">
-            <option value="">— Sélectionner —</option>
-            @foreach (var variete in Model.Varietes)
-            {
-                <option value="@variete.Id">@variete.Nom</option>
-            }
-        </select>
-        <p class="produit-form-hint">
-            <a asp-controller="Varietes" asp-action="Index">Gérer les variétés</a>
-        </p>
-        <span asp-validation-for="VarieteId" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="Unite">Unité</label>
-        <input asp-for="Unite" autocomplete="off" placeholder="bouteille, L, unité…" />
-        <span asp-validation-for="Unite" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="ContenanceLitres">Contenance (L)</label>
-        <input asp-for="ContenanceLitres"
-               type="number"
-               step="0.001"
-               min="0"
-               placeholder="0.5, 1, 5…"
-               value="@(Model.ContenanceLitres?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
-        <p class="produit-form-hint">Litres d'huile par unité — requis pour le remplissage.</p>
-        <span asp-validation-for="ContenanceLitres" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="TauxTVA">Taux TVA (%)</label>
-        <input asp-for="TauxTVA" type="number" step="1" min="0" />
-        <span asp-validation-for="TauxTVA" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="PrixAchatHT">Prix achat HT (DH)</label>
-        <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
-        <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
-    </div>
-
-    <div class="form-field">
-        <label for="PrixVenteHT">Prix vente HT (DH)</label>
-        <input asp-for="PrixVenteHT" type="number" step="1" min="0" />
-        <span asp-validation-for="PrixVenteHT" class="field-validation-error"></span>
-    </div>
-
-    @if (Model.IsEdit)
-    {
-        <div class="form-field">
-            <label for="StockMinimum">Stock minimum</label>
-            <input asp-for="StockMinimum" type="number" step="1" min="0" />
-            <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
-        </div>
-
-    }
-    else
-    {
-        <div class="form-field">
-            <label for="StockInitial">Stock initial</label>
-            <input asp-for="StockInitial" type="number" step="1" min="0" />
-            <span asp-validation-for="StockInitial" class="field-validation-error"></span>
-        </div>
-
-        <div class="form-field">
-            <label for="StockMinimum">Stock minimum</label>
-            <input asp-for="StockMinimum" type="number" step="1" min="0" />
-            <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
-        </div>
-    }
-
-    <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
-    </div>
 </form>

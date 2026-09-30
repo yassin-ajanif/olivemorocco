@@ -29,10 +29,56 @@
   gap:var(--space-md) var(--space-sm);
 }
 
+/* Full-width rows of the form grid. The summary is here because the form is now two
+   columns: as a plain grid item it would drop into the narrow left rail and the red box
+   would sit beside the photo instead of above it, reading as part of that card. */
+.produit-form .form-validation-summary,
 .produit-form .form-field-span-2,
 .produit-form .form-toolbar,
 .produit-form .produit-form-row-designation{
   grid-column:1 / -1;
+}
+
+/* Desktop: the photo card — which now also holds Référence and Code-barres — is the left
+   rail, and the product fields get their own two-up grid on the right. Both are direct
+   items of the form's grid, so the validation summary and the toolbar keep spanning it
+   for free without needing grid-column on themselves. Base is the mobile behaviour: one
+   column of wrappers, each still two-up, which is how the form was before the split. */
+.produit-form-main{
+  display:grid;
+  min-width:0;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--space-md) var(--space-sm);
+}
+
+/* The rule between the photo and the identity fields below it: separates "what it looks
+   like" from "what we call it" inside the one card. */
+.produit-form .produit-form-rail-fields{
+  display:grid;
+  gap:var(--space-md);
+  margin-top:var(--space-xs);
+  padding-top:var(--space-md);
+  border-top:1px solid var(--line);
+}
+
+@media (min-width:769px){
+  .produit-form.form-grid{
+    /* Narrow left: the photo slot is 120px and both identity inputs are short, so the
+       rail needs no more. The right takes the rest, which keeps the product fields
+       two-up instead of collapsing into one cramped column. */
+    grid-template-columns:minmax(200px,280px) minmax(0,1fr);
+    align-items:start;
+  }
+
+  .produit-form-main{
+    gap:var(--space-md) var(--space-lg);
+  }
+}
+
+@media (max-width:768px){
+  .produit-form.form-grid{
+    grid-template-columns:minmax(0,1fr);
+  }
 }
 
 .produit-form-row-designation{
@@ -68,9 +114,9 @@
   color:var(--muted);
 }
 
-/* Photo block, first on the page. Spans both form columns. */
+/* The identity card: photo, Référence, Code-barres. It is a grid item of the form, not a
+   full-width banner, so it gets no grid-column of its own. */
 .produit-form .produit-form-photo{
-  grid-column:1 / -1;
   padding:var(--space-md);
   border:1px solid var(--line);
   background:var(--slot-bg);
@@ -84,18 +130,19 @@
   margin-bottom:var(--space-sm);
 }
 
-/* Slot and its buttons sit side by side, matching the mockup. */
-.produit-form .produit-photo-slot-wrap{
-  display:flex;
-  align-items:flex-start;
-  gap:var(--space-md);
+/* Positioning context for the hover overlay. Capped so the photo does not become a poster
+   once the form drops to a single column on a phone. Holds the file input as well, so
+   :focus-within can raise the overlay for keyboard users and not only for the mouse. */
+.produit-form .produit-photo-frame{
+  position:relative;
+  width:100%;
+  max-width:280px;
 }
 
 /* 4/5 to match the product card, so the preview crops the way the shop does.
    A <label>, so clicking the empty slot opens the picker with no extra button. */
 .produit-form .produit-photo-slot{
-  flex:0 0 auto;
-  width:120px;
+  width:100%;
   aspect-ratio:4/5;
   overflow:hidden;
   background:var(--surface);
@@ -147,9 +194,10 @@
   display:none;
 }
 
-.produit-form .produit-photo-plus{
-  font-size:1.5rem;
-  line-height:1;
+/* The empty-slot plus is the shared icon, drawn larger than the 1rem .icon default. */
+.produit-form .produit-photo-empty .icon{
+  width:1.5rem;
+  height:1.5rem;
   color:var(--muted);
 }
 
@@ -170,21 +218,39 @@
   display:none;
 }
 
-.produit-form .produit-photo-controls{
+/* Replace and delete, centred on the photo. visibility rather than opacity alone, so the
+   hidden controls are neither clickable nor in the tab order while they are invisible —
+   :focus-within is what brings them back. The scrim is the same deep green the mobile
+   nav uses, light enough to still read as the photo underneath. */
+.produit-form .produit-photo-overlay{
+  position:absolute;
+  inset:0;
   display:flex;
-  flex-wrap:wrap;
-  align-items:flex-start;
+  align-items:center;
+  justify-content:center;
   gap:var(--space-sm);
-  padding-top:var(--space-2_5);
+  background:rgba(20, 38, 28, 0.55);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .15s ease, visibility .15s ease;
 }
 
+.produit-form .produit-photo-frame:hover .produit-photo-overlay,
+.produit-form .produit-photo-frame:focus-within .produit-photo-overlay{
+  opacity:1;
+  visibility:visible;
+}
+
+/* Icon-only, so square: no padding to size the text and no gap, because the box itself is
+   the target. The sr-only span inside keeps the accessible name. */
 .produit-form .produit-photo-btn{
   display:inline-flex;
   align-items:center;
-  gap:var(--space-xs);
-  padding:var(--space-xs) var(--space-sm);
-  font-size:var(--text-sm);
-  font-weight:500;
+  justify-content:center;
+  width:var(--control-h);
+  height:var(--control-h);
+  flex:0 0 auto;
+  padding:0;
   border:1px solid var(--line);
   background:var(--surface);
   color:var(--ink);
@@ -204,17 +270,6 @@
 .produit-form .produit-photo-btn--danger:focus-within{
   border-color:var(--danger);
   color:var(--danger);
-}
-
-/* The empty-state label is not clickable on its own, so it must not look like it is. */
-.produit-form .produit-photo-btn--static{
-  cursor:default;
-  color:var(--muted);
-}
-
-.produit-form .produit-photo-btn--static:hover{
-  border-color:var(--line);
-  color:var(--muted);
 }
 
 /* Real checkbox, hidden without losing keyboard focus. */
@@ -248,22 +303,6 @@
   clip:rect(0,0,0,0);
   white-space:nowrap;
   border:0;
-}
-
-@media (max-width:768px){
-  .produit-form .produit-photo-slot-wrap{
-    flex-direction:column;
-    gap:var(--space-sm);
-  }
-
-  .produit-form .produit-photo-controls{
-    padding-top:0;
-  }
-
-  .produit-form .produit-photo-btn{
-    flex:1 1 auto;
-    justify-content:center;
-  }
 }
 
 .produit-form-hint a{
