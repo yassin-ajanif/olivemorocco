@@ -1,0 +1,45 @@
+@model ProductCardViewModel
+
+@* The one product card, shared by the boutique grid, the detail page's related strips and
+   the landing page's variety strip. Optional blocks (tag, description, subtitle, price) are
+   simply omitted when null — that is what lets one layout serve all three. *@
+<article class="product-card@(Model.Tall ? " product-card--tall" : null)@(Model.Reveal ? " reveal" : null)">
+    <a class="product-card-media" href="@Model.Url" tabindex="-1" aria-hidden="true">
+        @if (Model.ImageUrl is { } src)
+        {
+            <img src="@Url.Content(src)" alt="" loading="lazy" />
+        }
+        else
+        {
+            <span>Photo à venir</span>
+        }
+        @if (Model.Tag is { Length: > 0 } tag)
+        {
+            <span class="product-tag">@tag</span>
+        }
+    </a>
+    <div class="product-card-body">
+        <p class="product-ref">@Model.Ref</p>
+        <h3>
+            <a href="@Model.Url">@Model.Titre</a>
+        </h3>
+        @if (Model.SousTitre is { Length: > 0 } sousTitre)
+        {
+            <p class="product-sub">@sousTitre</p>
+        }
+        @if (Model.Description is { Length: > 0 } description)
+        {
+            <p class="product-desc">@description</p>
+        }
+        @if (Model.PrixTTC is { } prix)
+        {
+            <p class="product-price">
+                <b>@prix.ToString("N2") <small>MAD</small></b>
+                <span>TVA @Model.TauxTVA.ToString("0") % incluse</span>
+            </p>
+        }
+        <a class="product-link" href="@Model.Url">
+            @Model.LinkLabel <span aria-hidden="true">→</span>
+        </a>
+    </div>
+</article>

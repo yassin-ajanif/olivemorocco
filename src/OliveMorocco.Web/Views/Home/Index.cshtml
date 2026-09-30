@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IReadOnlyList<BoutiqueVarieteViewModel>
+@{
     Layout = "_HomeLayout";
     ViewData["Title"] = "OliveMorocco — Huile d'Olive Extra Vierge, Essaouira";
 }
@@ -29,6 +30,40 @@
     </div>
     <div class="scroll-cue"><span>Découvrir</span><span class="line"></span></div>
 </header>
+
+@if (Model is { Count: > 0 })
+{
+    /* One card per variety, placed above the terroir story: a visitor should meet the
+       oils before they read about us. No price here — the landing page sells the range,
+       the shop is where figures get quoted. Names and photos come from the same
+       catalogue the shop reads, so the two cannot drift apart. */
+    <section id="gamme">
+        <div class="gamme-head reveal">
+            <h2>
+                <span class="gamme-line">Un caractère par variété,</span>
+                <span class="gamme-line">un même pressoir.</span>
+            </h2>
+            <p class="section-lead">Récoltées la même année, sur les mêmes parcelles, dans les
+                vingt-quatre heures qui suivent la cueillette. Ce qui change d'un flacon à
+                l'autre, c'est l'huile — et c'est ce que ces @(Model.Count > 1 ? Model.Count + " cartes" : "cartes") racontent.</p>
+        </div>
+        <div class="gamme-grid">
+            @foreach (var variete in Model)
+            {
+                // Url.Action is annotated nullable because routing can fail; both actions
+                // here are static with an int route value, so it cannot.
+                var carte = ProductCardViewModel.PourVariete(
+                    variete,
+                    Url.Action("Boutique", "Home", new { variete = variete.Id })!);
+                <partial name="_ProductCard" model="carte" />
+            }
+        </div>
+        <div class="gamme-actions reveal">
+            <a asp-controller="Home" asp-action="Boutique" class="btn-gold">Voir toute la boutique</a>
+            <a href="#origine" class="btn-ghost">Découvrir l'origine</a>
+        </div>
+    </section>
+}
 
 <section id="origine">
     <div class="section-head reveal">

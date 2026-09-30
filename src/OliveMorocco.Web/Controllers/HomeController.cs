@@ -15,9 +15,13 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    /// <summary>
+    /// Landing page. The variety strip below the hero reads the same catalogue the shop
+    /// reads, so the two pages cannot drift apart on name, description or price.
+    /// </summary>
     public IActionResult Index()
     {
-        return View();
+        return View(BoutiqueDemoCatalogue.Varietes);
     }
 
     [Route("Home/Vitrine")]
@@ -30,10 +34,25 @@ public class HomeController : Controller
     /// Public shop grid. Backed by <see cref="BoutiqueDemoCatalogue"/> for now — swap for a
     /// service reading <c>Produits</c> when the real photography and stock are wired up.
     /// </summary>
+    /// <param name="variete">
+    /// Optional variety id, used by the filter pills and by the landing page's variety
+    /// strip. Unknown or missing ids fall back to the full grid rather than 404 — a bad
+    /// query string should not produce an error page on a public shop.
+    /// </param>
     [Route("Home/Boutique")]
-    public IActionResult Boutique()
+    public IActionResult Boutique(int? variete = null)
     {
-        return View(BoutiqueDemoCatalogue.Varietes);
+        var toutes = BoutiqueDemoCatalogue.Varietes;
+        var filtrees = variete is null
+            ? toutes
+            : toutes.Where(v => v.Id == variete.Value).ToList();
+
+        // Nothing matched: show everything rather than an empty page.
+        if (filtrees.Count == 0)
+            filtrees = toutes;
+
+        ViewData["VarieteActive"] = variete;
+        return View(filtrees);
     }
 
     /// <summary>Public product detail page.</summary>

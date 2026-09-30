@@ -11,9 +11,10 @@ namespace OliveMorocco.Web.Models.Boutique;
 /// built; they are demo figures, not quotations.
 /// </para>
 /// <para>
-/// Photos come from the two images already in <c>wwwroot/images</c> and are assigned by
-/// variety — the three formats of one variety deliberately share a photo, since a bottle,
-/// a 5 L and a 10 L can of the same oil are not separately photographed here.
+/// Photos come from the Chiadma shots in <c>wwwroot/images</c>. Within a variety the three
+/// formats share a photo, since a bottle, a 5 L and a 10 L can of the same oil are not
+/// separately photographed here; <see cref="BoutiqueVarieteViewModel.PhotoVariete"/> gives
+/// each variety one image of its own for the landing page cards.
 /// </para>
 /// <para>
 /// Replace with a service reading <c>Produits</c> joined to <c>Varietes</c> when the real
@@ -35,17 +36,23 @@ public static class BoutiqueDemoCatalogue
         (10m, "bidon", 0.76m, "~/images/chiadma 5l.jpeg"),
     ];
 
+    // Each variety gets a different photoVariete so the landing page's three variety cards
+    // don't all show the same bottle. Arbitrary assignment — the three Chiadma photos are all
+    // the same region, not three varieties — but it is what makes the lineup legible.
     public static IReadOnlyList<BoutiqueVarieteViewModel> Varietes { get; } =
     [
         Build(1, "Picholine Marocaine", "PICH", "Fès-Meknès", 130m,
             "Pic et dru, equilibré. Amande douce en bouche, finals herbacés et une amertume "
-            + "fine et tardive. La plus polyvalente de nos trois variétés."),
+            + "fine et tardive. La plus polyvalente de nos trois variétés.",
+            Formats[0].Photo),
         Build(2, "Haouzia", "HAOU", "Marrakech-Safi", 150m,
             "Douceur ronde, presque sans piquant. Beurre froid et noisette, très peu "
-            + "d'amertume. La plus facile à glisser dans un palais de tous les jours."),
+            + "d'amertume. La plus facile à glisser dans un palais de tous les jours.",
+            Formats[1].Photo),
         Build(3, "Meslala", "MESL", "Marrakech-Safi", 175m,
             "Forte, structurée, franche. Poivre vert à l'ouverture, tomate confite et "
-            + "herbes sèches en finale. Celle qui tient un plat de résistance."),
+            + "herbes sèches en finale. Celle qui tient un plat de résistance.",
+            Formats[2].Photo),
     ];
 
     public static IReadOnlyList<BoutiqueProduitViewModel> Tous { get; } =
@@ -63,7 +70,8 @@ public static class BoutiqueDemoCatalogue
         string code,
         string region,
         decimal prixParLitre,
-        string description)
+        string description,
+        string photoVariete)
     {
         var produits = new List<BoutiqueProduitViewModel>();
         var numero = 1;
@@ -95,6 +103,7 @@ public static class BoutiqueDemoCatalogue
             Code = code,
             RegionOrigine = region,
             Description = description,
+            PhotoVariete = photoVariete,
             Produits = produits,
         };
     }

@@ -19,6 +19,14 @@ public sealed class BoutiqueVarieteViewModel
     /// <summary>Tasting notes, shown in the hover badge under the name and region.</summary>
     public string? Description { get; init; }
 
+    /// <summary>
+    /// One photo standing for the whole variety. Separate from the per-format photos the
+    /// shop cards use, because a variety card shows one image while the products in that
+    /// variety all share the same set — without this, a landing strip of three varieties
+    /// would render the identical bottle three times.
+    /// </summary>
+    public string? PhotoVariete { get; init; }
+
     /// <summary>The products of this variety, in display order (1 L, 5 L, 10 L).</summary>
     public IReadOnlyList<BoutiqueProduitViewModel> Produits { get; init; } = [];
 }

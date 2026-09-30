@@ -353,7 +353,8 @@
   }
 }
 
-.shop-card {
+/* ---------- THE PRODUCT CARD (shared: shop grid, detail strips, landing page) ---------- */
+.product-card {
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -361,7 +362,7 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.shop-card:hover {
+.product-card:hover {
   transform: translateY(-4px);
   border-color: var(--gold);
   box-shadow: 0 18px 40px -24px rgb(0 0 0 / var(--shadow-color));
@@ -370,7 +371,8 @@
 /* 4/5 to suit the Chiadma photos, which are portrait (933x1280, 863x1280, 802x1280 —
    ratios 0.73 / 0.67 / 0.63). A square frame cropped roughly a third off each bottle;
    this keeps the whole product visible while staying short enough to scan. */
-.shop-card-media {
+.product-card-media {
+  position: relative;
   display: block;
   aspect-ratio: 4/5;
   overflow: hidden;
@@ -378,7 +380,20 @@
   border-bottom: 1px solid var(--line);
 }
 
-.shop-card-media img {
+/* The landing page's cards carry no price block, so the photo takes the height it freed —
+   and 0.75 sits closest to the Chiadma photos (0.63-0.73), so barely any is cropped.
+   Same ratio at every width; see the note below. */
+.product-card--tall .product-card-media {
+  aspect-ratio: 3/4;
+}
+
+/* The mobile cap that used to live here is gone on purpose. The media is object-fit:cover,
+   so any frame appreciably wider than the photos' own ~0.63-0.73 ratio cuts the top and
+   bottom off the bottle and reads as a zoom — which is exactly what a 16/10 landscape
+   frame does to a portrait shot. A phone-width card is tall, but tall shows the product;
+   short hides it. */
+
+.product-card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -386,11 +401,13 @@
   transition: transform 0.5s ease;
 }
 
-.shop-card:hover .shop-card-media img {
+.product-card:hover .product-card-media img {
   transform: scale(1.04);
 }
 
-.shop-card-media span {
+/* The placeholder slot, and the gold pill, are both spans in .product-card-media, so the
+   placeholder has to be told apart from the pill by what is inside it. */
+.product-card-media > span:not(.product-tag) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -400,22 +417,22 @@
   color: var(--placeholder);
 }
 
-.shop-card-body {
+.product-card-body {
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.shop-ref {
+.product-ref {
   font-size: var(--text-xs);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.shop-card-body h2,
-.shop-card-body h3 {
+.product-card-body h2,
+.product-card-body h3 {
   font-family: 'Fraunces', serif;
   font-weight: 600;
   font-size: var(--text-heading-sm);
@@ -423,38 +440,48 @@
   margin-top: var(--space-sm);
 }
 
-.shop-card-body h2 a,
-.shop-card-body h3 a {
+.product-card-body h2 a,
+.product-card-body h3 a {
   text-decoration: none;
   color: var(--ink);
 }
 
-.shop-card-body h2 a:hover,
-.shop-card-body h3 a:hover {
+.product-card-body h2 a:hover,
+.product-card-body h3 a:hover {
   color: var(--pine-mid);
 }
 
-.shop-variete {
+.product-sub {
   font-size: var(--text-base-sm);
   color: var(--card-body);
   margin-top: var(--space-xs);
 }
 
-.shop-price {
+/* The landing page's tasting notes. flex:1 so the link below is pushed to the bottom of
+   every card regardless of how long the notes run. */
+.product-desc {
+  margin-top: var(--space-md);
+  font-size: var(--text-base-sm);
+  line-height: 1.65;
+  color: var(--card-body);
+  flex: 1;
+}
+
+.product-price {
   margin-top: var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.shop-price b {
+.product-price b {
   font-family: 'Fraunces', serif;
   font-weight: 600;
   font-size: var(--text-xl);
   color: var(--pine);
 }
 
-.shop-price b small {
+.product-price b small {
   font-family: 'Work Sans', sans-serif;
   font-size: var(--text-sm);
   font-weight: 500;
@@ -462,21 +489,21 @@
   color: var(--muted);
 }
 
-.shop-price span {
+.product-price span {
   font-size: var(--text-xs);
   color: var(--muted);
 }
 
-.shop-price-lg b {
+.product-price-lg b {
   font-size: var(--text-3xl);
   color: var(--gold);
 }
 
-.shop-price-lg span {
+.product-price-lg span {
   font-size: var(--text-sm);
 }
 
-.shop-link {
+.product-link {
   margin-top: auto;
   padding-top: var(--space-lg);
   font-size: var(--text-sm);
@@ -488,8 +515,23 @@
   transition: color 0.25s, gap 0.25s;
 }
 
-.shop-link:hover {
+.product-link:hover {
   color: var(--pine);
+}
+
+/* Gold pill over the photo — --pine label on --gold, the same pairing .btn-gold and
+   .variete-badge use, so the contrast is already established in the system. */
+.product-tag {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  font-size: var(--text-xs);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--btn-color);
+  background: var(--gold);
+  padding: 0.3125rem var(--space-lg);
+  border-radius: 20px;
 }
 
 /* ---------- REASSURANCE STRIP ---------- */
@@ -619,7 +661,7 @@
   gap: 1.5rem;
 }
 
-.shop-others .shop-card-body h3 {
+.shop-others .product-card-body h3 {
   font-size: var(--text-lg);
 }
 

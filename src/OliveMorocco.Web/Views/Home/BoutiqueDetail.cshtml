@@ -36,7 +36,7 @@
         </div>
 
         <div class="shop-detail-info reveal">
-            <p class="shop-ref">@produit.Reference</p>
+            <p class="product-ref">@produit.Reference</p>
 
             @* Same hover badge as the grid: hovering or focusing shows the variety notes. *@
             <p class="shop-detail-variete">
@@ -65,7 +65,7 @@
 
             <h1>@produit.Designation</h1>
 
-            <p class="shop-price shop-price-lg">
+            <p class="product-price product-price-lg">
                 <b>@produit.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
                 <span>@produit.PrixVenteHT.ToString("N2") MAD HT — TVA @produit.TauxTVA.ToString("0") % incluse</span>
             </p>
@@ -110,28 +110,10 @@
             <div class="shop-line-grid">
                 @foreach (var autre in Model.Autres)
                 {
-                    <article class="shop-card">
-                        <a class="shop-card-media" asp-controller="Home" asp-action="BoutiqueDetail"
-                           asp-route-id="@autre.Id" tabindex="-1" aria-hidden="true">
-                            @if (autre.ImageUrl is { } autreSrc)
-                            {
-                                <img src="@Url.Content(autreSrc)" alt="" loading="lazy" />
-                            }
-                            else
-                            {
-                                <span>Photo à venir</span>
-                            }
-                        </a>
-                        <div class="shop-card-body">
-                            <p class="shop-ref">@autre.Reference</p>
-                            <h3>
-                                <a asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@autre.Id">@autre.Designation</a>
-                            </h3>
-                            <p class="shop-price">
-                                <b>@autre.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
-                            </p>
-                        </div>
-                    </article>
+                    var carte = ProductCardViewModel.PourProduit(
+                        autre,
+                        Url.Action("BoutiqueDetail", "Home", new { id = autre.Id })!);
+                    <partial name="_ProductCard" model="carte" />
                 }
             </div>
         </section>
@@ -144,29 +126,11 @@
             <div class="shop-line-grid">
                 @foreach (var autre in Model.AutresVarietes)
                 {
-                    <article class="shop-card">
-                        <a class="shop-card-media" asp-controller="Home" asp-action="BoutiqueDetail"
-                           asp-route-id="@autre.Id" tabindex="-1" aria-hidden="true">
-                            @if (autre.ImageUrl is { } autreSrc)
-                            {
-                                <img src="@Url.Content(autreSrc)" alt="" loading="lazy" />
-                            }
-                            else
-                            {
-                                <span>Photo à venir</span>
-                            }
-                        </a>
-                        <div class="shop-card-body">
-                            <p class="shop-ref">@autre.Reference</p>
-                            <h3>
-                                <a asp-controller="Home" asp-action="BoutiqueDetail" asp-route-id="@autre.Id">@autre.Designation</a>
-                            </h3>
-                            <p class="shop-variete">@autre.VarieteNom</p>
-                            <p class="shop-price">
-                                <b>@autre.PrixVenteTTC.ToString("N2") <small>MAD</small></b>
-                            </p>
-                        </div>
-                    </article>
+                    var carte = ProductCardViewModel.PourProduit(
+                        autre,
+                        Url.Action("BoutiqueDetail", "Home", new { id = autre.Id })!,
+                        autre.VarieteNom);
+                    <partial name="_ProductCard" model="carte" />
                 }
             </div>
         </section>
