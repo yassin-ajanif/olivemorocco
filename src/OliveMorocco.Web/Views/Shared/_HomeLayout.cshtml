@@ -13,6 +13,8 @@
    to know about it — the shop views set it to "shop-page". *@
 <body class="home-page @(ViewData["BodyClass"] as string)">
 @RenderBody()
+@* After the body, so it paints over the page rather than sitting under it. *@
+<partial name="_WhatsAppFloat" />
 <script src="~/js/home.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

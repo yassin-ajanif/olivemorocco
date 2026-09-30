@@ -663,6 +663,68 @@ form.contact-form option {
   min-height: 18px;
 }
 
+/* ---------- FLOATING WHATSAPP ---------- */
+/* The site's one channel that answers at any hour, so it is offered on every public page
+   rather than buried in a contact section — _HomeLayout renders it, which covers the
+   landing page, the shop and a product page, and skips the dashboard.
+
+   The colour is WhatsApp's own dark teal (#128C7E), not the bright #25D366 the brand is
+   usually drawn in: white on #25D366 measures 1.98:1, under the 3:1 a graphic needs, and
+   a floating button is nothing but a graphic. The teal is still unmistakably WhatsApp and
+   gives the white mark 4.14:1.
+
+   z-index 90 sits above every page element (the shop's olive background is 0/1, its
+   sticky media 5) and below the nav at 100 — the nav is top-anchored so the two never
+   meet, but keeping the float under it costs nothing if that ever changes. */
+.wa-float {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #128c7e;
+  color: #fff;
+  /* The shadow is tinted with the button's own green, so the button reads as sitting just
+     above the page rather than as a sticker dropped on it. */
+  box-shadow: 0 10px 26px -10px rgba(18, 140, 126, 0.7), 0 2px 6px rgba(20, 38, 28, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.wa-float:hover {
+  background: #0f7a6e;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -10px rgba(18, 140, 126, 0.8), 0 2px 6px rgba(20, 38, 28, 0.22);
+}
+
+.wa-float .icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* The gold focus ring from app.css works as-is on the teal, but it is 3px out and the
+   button is a circle, so nudge it back so the ring hugs the edge instead of floating. */
+.wa-float:focus-visible {
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .wa-float {
+    /* Slightly smaller and tucked in, so it does not crowd a product card on a phone. */
+    width: 3.125rem;
+    height: 3.125rem;
+  }
+
+  .wa-float .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
 /* ---------- FOOTER ---------- */
 .home-footer {
   background: var(--footer-bg);

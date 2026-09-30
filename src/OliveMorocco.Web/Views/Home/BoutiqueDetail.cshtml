@@ -4,6 +4,10 @@
     var produit = Model.Produit;
     ViewData["Title"] = $"{produit.Designation} — {produit.VarieteNom} — Boutique OliveMorocco";
     ViewData["BodyClass"] = "shop-page";
+    // The floating WhatsApp button opens with this bottle already named, so whoever is
+    // reading the page does not have to describe what they are looking at.
+    ViewData["WhatsAppMessage"] =
+        $"Bonjour OliveMorocco, je souhaite des informations sur {produit.Designation} ({produit.VarieteNom}, {produit.ContenanceLabel}).";
 }
 
 <partial name="_HomeNav" />
@@ -93,12 +97,14 @@
 
             <div class="shop-detail-cta">
                 <a class="btn-gold" href="@Url.Action("Index", "Home")#contact">Commander</a>
+                <a class="btn-ghost" href="@ContactInfo.WhatsApp(ViewData["WhatsAppMessage"] as string)"
+                   target="_blank" rel="noopener noreferrer">Commander par WhatsApp</a>
                 <a class="btn-ghost" href="@Url.Action("Index", "Home")#contact">Demander un échantillon</a>
             </div>
 
             <p class="shop-note">
-                Commande et livraison par téléphone au
-                <a href="tel:+212661990570">+212 661 990 570</a> — du lundi au samedi, 9 h – 18 h.
+                Commande et livraison par téléphone ou WhatsApp au
+                <a href="@ContactInfo.TelUri">@ContactInfo.Display</a> — du lundi au samedi, 9 h – 18 h.
             </p>
         </div>
     </div>

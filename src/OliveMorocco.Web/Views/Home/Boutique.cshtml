@@ -5,6 +5,11 @@
     ViewData["BodyClass"] = "shop-page";
     var total = Model.Sum(v => v.Produits.Count);
 
+    // On the shop grid a visitor is usually about to order rather than browse, so the
+    // floating button asks for a quote instead of offering a brochure.
+    ViewData["WhatsAppMessage"] =
+        "Bonjour OliveMorocco, je souhaite commander et connaître vos tarifs.";
+
     // The pills list every variety, not just the ones on screen: if it iterated Model,
     // filtering to one variety would delete the other pills and trap the visitor there.
     var toutes = BoutiqueDemoCatalogue.Varietes;

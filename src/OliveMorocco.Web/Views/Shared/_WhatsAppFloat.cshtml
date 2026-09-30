@@ -1,0 +1,18 @@
+@* Rendered once by _HomeLayout, so it sits on the landing page, the shop and a product
+   page alike, and not on the dashboard (which uses the other layout). Icon only: the
+   green bubble is the one thing on this site everybody already recognises, and a caption
+   beside it would only add noise. The name lives in aria-label for screen readers and in
+   title for the mouse.
+   A page can set ViewData["WhatsAppMessage"] before this renders to open a more specific
+   conversation — the product page asks about that bottle instead of in general. *@
+@{
+    var message = ViewData["WhatsAppMessage"] as string;
+}
+<a class="wa-float"
+   href="@ContactInfo.WhatsApp(message)"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Écrire à OliveMorocco sur WhatsApp"
+   title="Écrire à OliveMorocco sur WhatsApp">
+    <partial name="Icons/WhatsApp" />
+</a>
