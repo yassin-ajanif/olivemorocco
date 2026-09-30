@@ -16,12 +16,12 @@
 
 <div class="page-head">
     <p class="eyebrow">Vente</p>
-    <h1>Clients</h1>
-    <p class="module-section">Restaurateurs, importateurs, épiciers</p>
+    <h1><partial name="_TrLabel" model="@("Clients")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Restaurateurs, importateurs, épiciers")" /></p>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <input type="search"
            class="list-search"
            name="search"
@@ -32,11 +32,11 @@
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>Nom</span>
-        <span>ICE</span>
-        <span>Ville</span>
-        <span>Actif</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("Nom")" /></span>
+        <span><partial name="_TrLabel" model="@("ICE")" /></span>
+        <span><partial name="_TrLabel" model="@("Ville")" /></span>
+        <span><partial name="_TrLabel" model="@("Actif")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body">
         @if (Model.Items.Count == 0)
@@ -56,11 +56,11 @@
                     <span data-label="Actif">
                         @if (client.Actif)
                         {
-                            <span class="badge badge-ok">Actif</span>
+                            <span class="badge badge-ok"><partial name="_TrLabel" model="@("Actif")" /></span>
                         }
                         else
                         {
-                            <span class="badge badge-warn">Inactif</span>
+                            <span class="badge badge-warn"><partial name="_TrLabel" model="@("Inactif")" /></span>
                         }
                     </span>
                     <span class="list-row-actions" data-label="Actions">

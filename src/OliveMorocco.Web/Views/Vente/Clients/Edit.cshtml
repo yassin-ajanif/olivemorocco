@@ -5,7 +5,7 @@
 <div class="page-head">
     <p class="eyebrow">Vente · Clients</p>
     <h1>@Model.Nom</h1>
-    <p class="form-ref">Réf. client <strong>#@Model.Id</strong></p>
+    <p class="form-ref"><partial name="_TrLabel" model="@("Réf. client")" /> <strong>#@Model.Id</strong></p>
 </div>
 
 <div class="form-panel">
@@ -18,5 +18,5 @@
       class="form-delete"
       onsubmit="return confirm('Supprimer ce client ?');">
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <button type="submit" class="btn btn-danger"><partial name="_TrLabel" model="@("Supprimer")" /></button>
 </form>
