@@ -771,8 +771,13 @@ form.contact-form option {
     gap: 1.75rem;
   }
 
+  /* This used to be 5rem, which made mobile *looser* than desktop: 80px of padding a side
+     against the base 16px, so 160px of dead air between #gamme and #origine, stacked on
+     top of .gamme-actions' 3.5rem and .section-head's 4rem. Narrow screens do get a little
+     more air than wide ones, not five times more — 2.5rem here puts the inter-section gap
+     (80px) in the same range as the gaps already inside a section. */
   .home-page section {
-    padding: 5rem 6vw;
+    padding: 2.5rem 6vw;
   }
 
   .stat-row {
