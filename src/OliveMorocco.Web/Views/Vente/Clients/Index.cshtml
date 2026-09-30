@@ -15,7 +15,7 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Vente</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Vente")" /></p>
     <h1><partial name="_TrLabel" model="@("Clients")" /></h1>
     <p class="module-section"><partial name="_TrLabel" model="@("Restaurateurs, importateurs, épiciers")" /></p>
 </div>
@@ -26,7 +26,7 @@
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher…"
+           placeholder="Rechercher…" data-tr-ar="@(Translations.For("Rechercher…"))"
            autocomplete="off" />
 </form>
 
@@ -48,12 +48,12 @@
             foreach (var client in Model.Items)
             {
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="Nom">
+                    <span data-label="Nom" data-label-ar="@(Translations.For("Nom"))">
                         <a asp-action="Edit" asp-route-id="@client.Id" class="list-link">@client.Nom</a>
                     </span>
-                    <span data-label="ICE">@client.ICE</span>
-                    <span data-label="Ville">@client.Ville</span>
-                    <span data-label="Actif">
+                    <span data-label="ICE" data-label-ar="@(Translations.For("ICE"))">@client.ICE</span>
+                    <span data-label="Ville" data-label-ar="@(Translations.For("Ville"))">@client.Ville</span>
+                    <span data-label="Actif" data-label-ar="@(Translations.For("Actif"))">
                         @if (client.Actif)
                         {
                             <span class="badge badge-ok"><partial name="_TrLabel" model="@("Actif")" /></span>
@@ -63,12 +63,12 @@
                             <span class="badge badge-warn"><partial name="_TrLabel" model="@("Inactif")" /></span>
                         }
                     </span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         <a asp-action="Edit"
                            asp-route-id="@client.Id"
                            class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                         </a>
                         <form asp-action="ToggleActif" method="post" class="inline-form">

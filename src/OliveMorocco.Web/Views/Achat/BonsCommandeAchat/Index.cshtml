@@ -15,28 +15,28 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Achat</p>
-    <h1>Bons de commande</h1>
-    <p class="module-section">Commandes fournisseurs</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Achat")" /></p>
+    <h1><partial name="_TrLabel" model="@("Bons de commande")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Commandes fournisseurs")" /></p>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <input type="search"
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher par n° ou fournisseur…"
+           placeholder="Rechercher par n° ou fournisseur…" data-tr-ar="@(Translations.For("Rechercher par n° ou fournisseur…"))"
            autocomplete="off" />
 </form>
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>N°</span>
-        <span>Fournisseur</span>
-        <span>Date</span>
-        <span class="cell-bold">Total TTC</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("N°")" /></span>
+        <span><partial name="_TrLabel" model="@("Fournisseur")" /></span>
+        <span><partial name="_TrLabel" model="@("Date")" /></span>
+        <span class="cell-bold"><partial name="_TrLabel" model="@("Total TTC")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body">
         @if (Model.Items.Count == 0)
@@ -48,18 +48,18 @@
             foreach (var item in Model.Items)
             {
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="N°">
+                    <span data-label="N°" data-label-ar="@(Translations.For("N°"))">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
                     </span>
-                    <span data-label="Fournisseur">@item.FournisseurNom</span>
-                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
-                    <span data-label="Total TTC" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span data-label="Fournisseur" data-label-ar="@(Translations.For("Fournisseur"))">@item.FournisseurNom</span>
+                    <span data-label="Date" data-label-ar="@(Translations.For("Date"))">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Total TTC" data-label-ar="@(Translations.For("Total TTC"))" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         <a asp-action="Edit"
                            asp-route-id="@item.Id"
                            class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                         </a>
                     </span>

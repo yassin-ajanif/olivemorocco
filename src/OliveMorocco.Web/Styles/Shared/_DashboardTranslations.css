@@ -159,3 +159,26 @@
     display: none;
   }
 }
+
+/* ---------- field names a phone-sized list row prints ---------- */
+
+/* Below the row layout's breakpoint a list row prints each field's name from
+   content: attr(data-label), which _DashboardLists.css supplies. That is real content, so
+   it cannot be swapped by translations.js at the end of the body without every row of
+   every page flashing French first. The Arabic therefore arrives as data-label-ar and the
+   move happens here, where the head's decision is already in force.
+
+   The guard on [data-label-ar] is load-bearing. content: attr() has no fallback to fall
+   back to, so a selector that matched every row would blank the name of any field with no
+   translation; matching only the rows that carry an Arabic leaves the rest on the French
+   the base rule prints. */
+[data-tr="on"] .list-row > span[data-label][data-label-ar]::before {
+  content: attr(data-label-ar);
+
+  /* _DashboardLists.css uppercases and letter-spaces this label for Latin. Arabic has no
+     upper case to grow into, and it is cursive — its letters join along a baseline, so any
+     tracking opens visible gaps inside the words. */
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}

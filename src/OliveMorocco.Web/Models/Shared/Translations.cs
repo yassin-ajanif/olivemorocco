@@ -1,4 +1,23 @@
-using System.Reflection;
+using OliveMorocco.Web.Models.Achat.AvoirFournisseur;
+using OliveMorocco.Web.Models.Achat.BonsCommande;
+using OliveMorocco.Web.Models.Achat.BonsReception;
+using OliveMorocco.Web.Models.Achat.Charges;
+using OliveMorocco.Web.Models.Achat.FacturesFournisseurs;
+using OliveMorocco.Web.Models.Achat.Fournisseurs;
+using OliveMorocco.Web.Models.Operationnel.Interventions;
+using OliveMorocco.Web.Models.Operationnel.Pressages;
+using OliveMorocco.Web.Models.Operationnel.Remplissages;
+using OliveMorocco.Web.Models.Stockage.Intrants;
+using OliveMorocco.Web.Models.Stockage.Produits;
+using OliveMorocco.Web.Models.Stockage.Secteurs;
+using OliveMorocco.Web.Models.Stockage.Stock;
+using OliveMorocco.Web.Models.Stockage.Varietes;
+using OliveMorocco.Web.Models.Vente.Avoirs;
+using OliveMorocco.Web.Models.Vente.BonsCommande;
+using OliveMorocco.Web.Models.Vente.BonsLivraison;
+using OliveMorocco.Web.Models.Vente.Clients;
+using OliveMorocco.Web.Models.Vente.Devis;
+using OliveMorocco.Web.Models.Vente.Facturation;
 
 namespace OliveMorocco.Web.Models.Shared;
 
@@ -11,10 +30,12 @@ namespace OliveMorocco.Web.Models.Shared;
 /// same word back, so there is no arrangement of pages in which two of them disagree.
 ///
 /// <para>
-/// This class holds no words of its own. They live in per-document files, one per module
-/// that shows text, each marked with <see cref="TranslationsAttribute"/> — and the merge
-/// below is what puts them together. Merging is lazy, so a request that renders no labels
-/// pays nothing for it.
+/// This class holds no words of its own. They live in one file per document, in the
+/// document's own folder, and <see cref="Tables"/> is the only place a new document has to
+/// be mentioned. The list is a plain array of expressions rather than something discovered
+/// at runtime on purpose: renaming a table's <c>Arabic</c> property then fails the build
+/// instead of quietly compiling and leaving every gloss on that page missing. One line per
+/// document is a fair price for that.
 /// </para>
 /// </summary>
 public static class Translations
@@ -23,25 +44,76 @@ public static class Translations
     public static string? For(string? fr) =>
         fr is null ? null : Map.Value.GetValueOrDefault(fr);
 
+    /// <summary>
+    /// The Arabic for a label that lives inside an attribute — a placeholder, a tooltip, a
+    /// screen reader's label — falling back to the French when there is no Arabic, so the
+    /// attribute always has a value.
+    ///
+    /// <para>
+    /// <see cref="_TrLabel"/> renders element content, and a partial can only render
+    /// content: there is no way for it to put a word into an attribute. A tag helper would
+    /// normally be the answer, and it is the wrong one here. The dashboard's forms write
+    /// conditional attributes as bare <c>@(Model.X ? "disabled" : null)</c> — a disabled
+    /// fieldset, a read-only input — and Razor only tolerates that inside an element's
+    /// attribute list when no tag helper is bound to it. Binding one to every element to
+    /// reach a single attribute turns each of those into RZ1031, a build error on every
+    /// form in the application. A helper called by name writes the same attribute with none
+    /// of that cost.
+    /// </para>
+    ///
+    /// <para>
+    /// The fallback is what makes the attribute safe to write without checking first: a
+    /// label with no Arabic prints its own French rather than printing nothing. The
+    /// companion <c>data-tr-ar</c> the views carry therefore means "the value to show while
+    /// the switch is on" and nothing more — for an untranslated word that is simply the
+    /// French, and switching it changes nothing.
+    /// </para>
+    /// </summary>
+    public static string Ar(string fr) => Map.Value.GetValueOrDefault(fr) ?? fr;
+
+    /// <summary>
+    /// Every translation table, in the order they are merged.
+    ///
+    /// <see cref="UiTranslations"/> comes first so a document's own wording wins where the
+    /// two overlap: "Actif" means the same thing everywhere today, but "Conditions de
+    /// paiement" belongs to the client and the supplier, and if either of them ever wanted
+    /// different words the document must not have to fight the shell for them.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<string, string>[] Tables =
+    [
+        UiTranslations.Arabic,
+        SalesDocumentTranslations.Arabic,
+        ProductTranslations.Arabic,
+        VarieteTranslations.Arabic,
+        IntrantTranslations.Arabic,
+        SecteurTranslations.Arabic,
+        StockTranslations.Arabic,
+        ClientTranslations.Arabic,
+        DevisTranslations.Arabic,
+        BonCommandeVenteTranslations.Arabic,
+        BonLivraisonTranslations.Arabic,
+        FacturationTranslations.Arabic,
+        AvoirVenteTranslations.Arabic,
+        FournisseurTranslations.Arabic,
+        BonCommandeAchatTranslations.Arabic,
+        BonReceptionTranslations.Arabic,
+        FactureFournisseurTranslations.Arabic,
+        AvoirFournisseurTranslations.Arabic,
+        ChargeTranslations.Arabic,
+        InterventionTranslations.Arabic,
+        PressageTranslations.Arabic,
+        RemplissageTranslations.Arabic,
+    ];
+
     private static readonly Lazy<IReadOnlyDictionary<string, string>> Map = new(Merge);
 
     private static IReadOnlyDictionary<string, string> Merge()
     {
         var map = new Dictionary<string, string>(StringComparer.Ordinal);
 
-        // Seeded first so a document's own file always wins over this pile — see Pending.
-        foreach (var (fr, ar) in Pending)
+        foreach (var table in Tables)
         {
-            map[fr] = ar;
-        }
-
-        // Sorted by full type name because reflection order is not part of any contract.
-        // Left unsorted, "the last module file wins" would depend on the order the runtime
-        // happened to lay the metadata out in, and two people on two machines could get
-        // different Arabic for the same word from the same source tree.
-        foreach (var arabic in Tables().Select(Read))
-        {
-            foreach (var (fr, ar) in arabic)
+            foreach (var (fr, ar) in table)
             {
                 map[fr] = ar;
             }
@@ -49,88 +121,4 @@ public static class Translations
 
         return map;
     }
-
-    /// <summary>
-    /// The translation tables declared with <see cref="TranslationsAttribute"/>, in a stable
-    /// order.
-    ///
-    /// Only static classes count: a table is a bag of constants, and
-    /// <see cref="TranslationsAttribute"/> cannot be put on anything else in practice, but the
-    /// check is here so a future non-static table fails the same way everywhere instead of
-    /// being instantiated by <see cref="Read"/> and quietly ignored.
-    /// </summary>
-    private static IEnumerable<Type> Tables() =>
-        typeof(Translations).Assembly
-            .GetTypes()
-            .Where(t => t.IsDefined(typeof(TranslationsAttribute), inherit: false))
-            .OrderBy(t => t.FullName, StringComparer.Ordinal);
-
-    /// <summary>
-    /// A table's <c>Arabic</c> property, read statically.
-    ///
-    /// By name rather than against a shared type because C# will not let a static class
-    /// implement an interface (CS0714), so there is no type to cast to — see
-    /// <see cref="TranslationsAttribute"/> for why that is the right trade here rather than
-    /// making every table non-static to satisfy one.
-    /// </summary>
-    private static IReadOnlyDictionary<string, string> Read(Type table) =>
-        (IReadOnlyDictionary<string, string>)table
-            .GetProperty("Arabic", BindingFlags.Public | BindingFlags.Static)!
-            .GetValue(null)!;
-
-    /// <summary>
-    /// Words for the modules that have not been given their own file yet.
-    ///
-    /// Everything in the sidebar is here, so nothing was lost by moving Clients out to
-    /// <see cref="Vente.Clients.ClientTranslations"/> as the first document to be split off.
-    /// This dictionary is scaffolding, not the design: it is the thing each new document
-    /// file is carved out of, and it should shrink to nothing as the last module lands.
-    ///
-    /// It is seeded before the module files in <see cref="Merge"/>, so a stale entry here
-    /// can never quietly override the file that now owns the word.
-    ///
-    /// Note the singular entries at the end. <c>DashboardNav.PageTitle</c> builds
-    /// "Nouveau {SingularLabel}" and "Modifier {SingularLabel}" from them, so the document
-    /// titles are ready for the pass that wraps those headings.
-    /// </summary>
-    private static readonly Dictionary<string, string> Pending = new(StringComparer.Ordinal)
-    {
-        // --- Stockage ---
-        ["Produits"] = "المنتجات",
-        ["Variétés"] = "الأصناف",
-        ["Intrants"] = "المدخلات",
-        ["Secteurs"] = "القطاعات",
-        ["État du stock"] = "حالة المخزون",
-
-        // --- Vente ---
-        ["Devis"] = "عروض الأسعار",
-        ["Bons de commande"] = "أوامر الطلب",
-        ["Bons de livraison"] = "أوامر التسليم",
-        ["Facturation"] = "الفوترة",
-        ["Avoirs"] = "الإرجاعات",
-
-        // --- Achat ---
-        ["Fournisseurs"] = "الموردون",
-        ["Bons de réception"] = "أوامر الاستلام",
-        ["Factures fournisseur"] = "فواتير الموردين",
-        ["Avoir fournisseur"] = "إرجاع المورد",
-        ["Charges"] = "المصاريف",
-
-        // --- Opérationnel ---
-        ["Interventions"] = "التدخلات",
-        ["Pressages"] = "عمليات العصر",
-        ["Remplissages"] = "عمليات التعبئة",
-
-        // --- Singular document types, for the "Nouveau …" / "Modifier …" page titles ---
-        ["devis"] = "عرض سعر",
-        ["bon de commande"] = "أمر الطلب",
-        ["bon de livraison"] = "أمر التسليم",
-        ["facture"] = "فاتورة",
-        ["avoir"] = "إرجاع",
-        ["bon de réception"] = "أمر الاستلام",
-        ["facture fournisseur"] = "فاتورة المورد",
-        ["avoir fournisseur"] = "إرجاع المورد",
-        ["produit"] = "منتج",
-        ["intrant"] = "مدخل",
-    };
 }

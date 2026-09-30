@@ -15,31 +15,31 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage</p>
-    <h1>Produits</h1>
-    <p class="module-section">Catalogue des produits vendus</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Stockage")" /></p>
+    <h1><partial name="_TrLabel" model="@("Produits")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Catalogue des produits vendus")" /></p>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <input type="search"
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher par réf., désignation ou code-barres…"
+           placeholder="Rechercher par réf., désignation ou code-barres…" data-tr-ar="@(Translations.For("Rechercher par réf., désignation ou code-barres…"))"
            autocomplete="off" />
 </form>
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>Réf.</span>
-        <span>Désignation</span>
-        <span>Variété</span>
-        <span>Unité</span>
-        <span class="cell-bold cell-center">P. vente HT</span>
-        <span>Stock</span>
-        <span>Statut</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("Réf.")" /></span>
+        <span><partial name="_TrLabel" model="@("Désignation")" /></span>
+        <span><partial name="_TrLabel" model="@("Variété")" /></span>
+        <span><partial name="_TrLabel" model="@("Unité")" /></span>
+        <span class="cell-bold cell-center"><partial name="_TrLabel" model="@("P. vente HT")" /></span>
+        <span><partial name="_TrLabel" model="@("Stock")" /></span>
+        <span><partial name="_TrLabel" model="@("Statut")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body">
         @if (Model.Items.Count == 0)
@@ -51,36 +51,36 @@
             foreach (var produit in Model.Items)
             {
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="Réf.">
+                    <span data-label="Réf." data-label-ar="@(Translations.For("Réf."))">
                         <a asp-action="Edit" asp-route-id="@produit.Id" class="list-link">@produit.Reference</a>
                     </span>
-                    <span data-label="Désignation">@produit.Designation</span>
-                    <span data-label="Variété">@produit.VarieteNom</span>
-                    <span data-label="Unité">@produit.Unite</span>
-                    <span data-label="P. vente HT" class="cell-bold cell-center">@produit.PrixVenteHT.ToString("N2") DH</span>
-                    <span data-label="Stock">
+                    <span data-label="Désignation" data-label-ar="@(Translations.For("Désignation"))">@produit.Designation</span>
+                    <span data-label="Variété" data-label-ar="@(Translations.For("Variété"))">@produit.VarieteNom</span>
+                    <span data-label="Unité" data-label-ar="@(Translations.For("Unité"))">@produit.Unite</span>
+                    <span data-label="P. vente HT" data-label-ar="@(Translations.For("P. vente HT"))" class="cell-bold cell-center">@produit.PrixVenteHT.ToString("N2") DH</span>
+                    <span data-label="Stock" data-label-ar="@(Translations.For("Stock"))">
                         @produit.StockActuel.ToString("N0")
                         @if (produit.StockBas)
                         {
-                            <span class="badge badge-warn">Stock bas</span>
+                            <span class="badge badge-warn"><partial name="_TrLabel" model="@("Stock bas")" /></span>
                         }
                     </span>
-                    <span data-label="Statut">
+                    <span data-label="Statut" data-label-ar="@(Translations.For("Statut"))">
                         @if (produit.Actif)
                         {
-                            <span class="badge badge-ok">Actif</span>
+                            <span class="badge badge-ok"><partial name="_TrLabel" model="@("Actif")" /></span>
                         }
                         else
                         {
-                            <span class="badge badge-warn">Inactif</span>
+                            <span class="badge badge-warn"><partial name="_TrLabel" model="@("Inactif")" /></span>
                         }
                     </span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         <a asp-action="Edit"
                            asp-route-id="@produit.Id"
                            class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                         </a>
                         <form asp-action="ToggleActif" method="post" class="inline-form">

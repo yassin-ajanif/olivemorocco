@@ -15,29 +15,29 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Achat</p>
-    <h1>Charges</h1>
-    <p class="module-section">Frais liés aux achats et à l'exploitation</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Achat")" /></p>
+    <h1><partial name="_TrLabel" model="@("Charges")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Frais liés aux achats et à l'exploitation")" /></p>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <input type="search"
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher par libellé ou type…"
+           placeholder="Rechercher par libellé ou type…" data-tr-ar="@(Translations.For("Rechercher par libellé ou type…"))"
            autocomplete="off" />
 </form>
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>Type</span>
-        <span>Libellé</span>
-        <span>Date</span>
-        <span class="cell-bold">Montant TTC</span>
-        <span>Intervention</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("Type")" /></span>
+        <span><partial name="_TrLabel" model="@("Libellé")" /></span>
+        <span><partial name="_TrLabel" model="@("Date")" /></span>
+        <span class="cell-bold"><partial name="_TrLabel" model="@("Montant TTC")" /></span>
+        <span><partial name="_TrLabel" model="@("Intervention")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body">
         @if (Model.Items.Count == 0)
@@ -51,8 +51,8 @@
                 var linkedToIntervention = charge.InterventionId.HasValue;
 
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="Type">@charge.TypeChargeNom</span>
-                    <span data-label="Libellé">
+                    <span data-label="Type" data-label-ar="@(Translations.For("Type"))">@charge.TypeChargeNom</span>
+                    <span data-label="Libellé" data-label-ar="@(Translations.For("Libellé"))">
                         @if (linkedToIntervention)
                         {
                             @charge.Libelle
@@ -62,14 +62,14 @@
                             <a asp-action="Edit" asp-route-id="@charge.Id" class="list-link">@charge.Libelle</a>
                         }
                     </span>
-                    <span data-label="Date">@charge.Date.ToString("dd/MM/yyyy")</span>
-                    <span data-label="Montant TTC" class="cell-bold">@charge.MontantTtc.ToString("N2") DH</span>
-                    <span data-label="Intervention">
+                    <span data-label="Date" data-label-ar="@(Translations.For("Date"))">@charge.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Montant TTC" data-label-ar="@(Translations.For("Montant TTC"))" class="cell-bold">@charge.MontantTtc.ToString("N2") DH</span>
+                    <span data-label="Intervention" data-label-ar="@(Translations.For("Intervention"))">
                         @if (linkedToIntervention)
                         {
                             <a href="/Operationnel/Interventions/Edit/@charge.InterventionId"
                                class="list-intervention-link"
-                               title="Modifier depuis l'intervention">
+                               title="Modifier depuis l'intervention" data-tr-ar="@(Translations.For("Modifier depuis l'intervention"))">
                                 <span class="list-intervention-title">
                                     @charge.InterventionSecteurNom — @charge.InterventionDate!.Value.ToString("dd/MM/yyyy")
                                 </span>
@@ -83,14 +83,14 @@
                             <span class="cell-muted">—</span>
                         }
                     </span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         @if (linkedToIntervention)
                         {
                             <button type="button"
                                     class="btn btn-icon"
                                     disabled
-                                    title="Modifiable depuis l'intervention"
-                                    aria-label="Modifier (depuis l'intervention)">
+                                    title="Modifiable depuis l'intervention" data-tr-ar="@(Translations.For("Modifiable depuis l'intervention"))"
+                                    aria-label="Modifier (depuis l'intervention)" data-tr-ar="@(Translations.For("Modifier (depuis l'intervention)"))">
                                 <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                             </button>
                         }
@@ -99,8 +99,8 @@
                             <a asp-action="Edit"
                                asp-route-id="@charge.Id"
                                class="btn btn-icon"
-                               title="Modifier"
-                               aria-label="Modifier">
+                               title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                               aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                                 <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                             </a>
                         }

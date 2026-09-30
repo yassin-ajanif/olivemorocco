@@ -8,25 +8,25 @@
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
     <div class="form-field">
-        <label for="Nom">Nom</label>
+        <label for="Nom"><partial name="_TrLabel" model="@("Nom")" /></label>
         <input asp-for="Nom" autocomplete="off" maxlength="128" />
         <span asp-validation-for="Nom" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label for="Code">Code</label>
+        <label for="Code"><partial name="_TrLabel" model="@("Code")" /></label>
         <input asp-for="Code" autocomplete="off" maxlength="32" />
         <span asp-validation-for="Code" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label for="RegionOrigine">Région d'origine</label>
+        <label for="RegionOrigine"><partial name="_TrLabel" model="@("Région d'origine")" /></label>
         <input asp-for="RegionOrigine" autocomplete="off" maxlength="128" />
         <span asp-validation-for="RegionOrigine" class="field-validation-error"></span>
     </div>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
     </div>
 </form>

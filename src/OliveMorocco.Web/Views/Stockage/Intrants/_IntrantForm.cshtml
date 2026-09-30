@@ -8,25 +8,25 @@
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
     <div class="form-field">
-        <label for="Nom">Nom</label>
+        <label for="Nom"><partial name="_TrLabel" model="@("Nom")" /></label>
         <input asp-for="Nom" autocomplete="off" maxlength="128" />
         <span asp-validation-for="Nom" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label for="Unite">Unité</label>
-        <input asp-for="Unite" autocomplete="off" maxlength="16" placeholder="kg, L, tonne, sac 25 kg…" />
+        <label for="Unite"><partial name="_TrLabel" model="@("Unité")" /></label>
+        <input asp-for="Unite" autocomplete="off" maxlength="16" placeholder="kg, L, tonne, sac 25 kg…" data-tr-ar="@(Translations.For("kg, L, tonne, sac 25 kg…"))" />
         <span asp-validation-for="Unite" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label for="PrixAchatHT">PU HT (DH)</label>
+        <label for="PrixAchatHT"><partial name="_TrLabel" model="@("PU HT (DH)")" /></label>
         <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
         <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
     </div>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
     </div>
 </form>

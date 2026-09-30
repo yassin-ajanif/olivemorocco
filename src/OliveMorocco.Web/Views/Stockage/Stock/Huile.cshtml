@@ -17,12 +17,12 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · Huile en vrac</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Stockage · Huile en vrac")" /></p>
     <h1>@v.VarieteNom</h1>
     <p class="module-section">
         Stock actuel : <strong>@v.StockHuile.ToString("N2") L</strong>@(v.Code is null ? "" : $" · {v.Code}")
     </p>
-    <a asp-action="Index" asp-route-vue="huile" class="btn btn-sm">← Retour à la liste</a>
+    <a asp-action="Index" asp-route-vue="huile" class="btn btn-sm"><partial name="_TrLabel" model="@("← Retour à la liste")" /></a>
 </div>
 
 <div class="dash-panel stock-ajustement-panel@(ajustementOpen ? " is-open" : "")"
@@ -32,12 +32,12 @@
             aria-expanded="@(ajustementOpen ? "true" : "false")"
             aria-controls="stockAjustementBody">
         <span class="stock-ajustement-toggle-arrow" aria-hidden="true">@(ajustementOpen ? "▼" : "▶")</span>
-        <span class="stock-panel-title">Ajustement manuel</span>
+        <span class="stock-panel-title"><partial name="_TrLabel" model="@("Ajustement manuel")" /></span>
     </button>
     <div class="stock-ajustement-body"
          id="stockAjustementBody"
          @(!ajustementOpen ? "hidden" : null)>
-        <p class="stock-panel-hint">Entrez une variation en litres : positive (entrée) ou négative (sortie).</p>
+        <p class="stock-panel-hint"><partial name="_TrLabel" model="@("Entrez une variation en litres : positive (entrée) ou négative (sortie).")" /></p>
         <form asp-action="HuileAjustement"
               asp-route-id="@v.VarieteId"
               asp-route-page="@Model.MouvementPage"
@@ -47,24 +47,24 @@
             <div asp-validation-summary="All" class="form-validation-summary"></div>
             <div class="stock-ajustement-row">
                 <div class="form-field stock-ajustement-variation">
-                    <label asp-for="Ajustement.Variation">Variation (L)</label>
+                    <label asp-for="Ajustement.Variation"><partial name="_TrLabel" model="@("Variation (L)")" /></label>
                     <input asp-for="Ajustement.Variation"
                            type="number"
                            step="1"
-                           placeholder="Ex. 50 ou -12" />
+                           placeholder="Ex. 50 ou -12" data-tr-ar="@(Translations.For("Ex. 50 ou -12"))" />
                     <span asp-validation-for="Ajustement.Variation" class="field-validation-error"></span>
                 </div>
                 <div class="form-field stock-ajustement-note">
-                    <label asp-for="Ajustement.Note">Note</label>
+                    <label asp-for="Ajustement.Note"><partial name="_TrLabel" model="@("Note")" /></label>
                     <input asp-for="Ajustement.Note"
                            type="text"
                            maxlength="500"
-                           placeholder="Motif de l'ajustement (optionnel)" />
+                           placeholder="Motif de l'ajustement (optionnel)" data-tr-ar="@(Translations.For("Motif de l'ajustement (optionnel)"))" />
                     <span asp-validation-for="Ajustement.Note" class="field-validation-error"></span>
                 </div>
                 <div class="form-field stock-ajustement-submit">
                     <span class="stock-ajustement-submit-label" aria-hidden="true">&nbsp;</span>
-                    <button type="submit" class="btn btn-primary">Enregistrer l'ajustement</button>
+                    <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer l'ajustement")" /></button>
                 </div>
             </div>
         </form>
@@ -72,17 +72,17 @@
 </div>
 
 <div class="stock-mouvements-section">
-    <h2 class="stock-panel-title">Historique des mouvements</h2>
+    <h2 class="stock-panel-title"><partial name="_TrLabel" model="@("Historique des mouvements")" /></h2>
 
     <div class="list-wrap">
         <div class="list-header" style="grid-template-columns:@cols">
-            <span>Date</span>
-            <span>Type</span>
-            <span class="cell-center">Stock avant (L)</span>
-            <span class="cell-center">Quantité (L)</span>
-            <span class="cell-center">Stock après (L)</span>
-            <span>Origine</span>
-            <span>Note</span>
+            <span><partial name="_TrLabel" model="@("Date")" /></span>
+            <span><partial name="_TrLabel" model="@("Type")" /></span>
+            <span class="cell-center"><partial name="_TrLabel" model="@("Stock avant (L)")" /></span>
+            <span class="cell-center"><partial name="_TrLabel" model="@("Quantité (L)")" /></span>
+            <span class="cell-center"><partial name="_TrLabel" model="@("Stock après (L)")" /></span>
+            <span><partial name="_TrLabel" model="@("Origine")" /></span>
+            <span><partial name="_TrLabel" model="@("Note")" /></span>
         </div>
         <div class="list-body">
             @if (Model.Mouvements.Count == 0)
@@ -95,25 +95,25 @@
                 {
                     var qtyInbound = m.Type != TypeMouvement.Sortie;
                     <div class="list-row" style="grid-template-columns:@cols">
-                        <span data-label="Date">@m.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
-                        <span data-label="Type">
+                        <span data-label="Date" data-label-ar="@(Translations.For("Date"))">@m.Date.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        <span data-label="Type" data-label-ar="@(Translations.For("Type"))">
                             @switch (m.Type)
                             {
                                 case TypeMouvement.Entree:
-                                    <span class="badge badge-ok">Entrée</span>
+                                    <span class="badge badge-ok"><partial name="_TrLabel" model="@("Entrée")" /></span>
                                     break;
                                 case TypeMouvement.Sortie:
-                                    <span class="badge badge-warn">Sortie</span>
+                                    <span class="badge badge-warn"><partial name="_TrLabel" model="@("Sortie")" /></span>
                                     break;
                                 default:
-                                    <span class="badge badge-gold">Ajustement</span>
+                                    <span class="badge badge-gold"><partial name="_TrLabel" model="@("Ajustement")" /></span>
                                     break;
                             }
                         </span>
-                        <span data-label="Stock avant" class="cell-center">@m.StockAvant.ToString("N2")</span>
-                        <span data-label="Quantité" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N2")</span>
-                        <span data-label="Stock après" class="cell-bold cell-center">@m.StockApres.ToString("N2")</span>
-                        <span data-label="Origine">
+                        <span data-label="Stock avant" data-label-ar="@(Translations.For("Stock avant"))" class="cell-center">@m.StockAvant.ToString("N2")</span>
+                        <span data-label="Quantité" data-label-ar="@(Translations.For("Quantité"))" class="cell-center cell-bold @(qtyInbound ? "stock-qty-in" : "stock-qty-out")">@(qtyInbound ? "+" : "-")@m.Quantite.ToString("N2")</span>
+                        <span data-label="Stock après" data-label-ar="@(Translations.For("Stock après"))" class="cell-bold cell-center">@m.StockApres.ToString("N2")</span>
+                        <span data-label="Origine" data-label-ar="@(Translations.For("Origine"))">
                             @if (m.OrigineType == "Pressage" && m.OrigineId.HasValue)
                             {
                                 <a href="/@OliveMorocco.Web.Routing.AppSections.Operationnel/Pressages/Edit/@m.OrigineId" class="list-link">@m.OrigineLabel</a>
@@ -127,7 +127,7 @@
                                 @m.OrigineLabel
                             }
                         </span>
-                        <span data-label="Note">@(string.IsNullOrWhiteSpace(m.Note) ? "—" : m.Note)</span>
+                        <span data-label="Note" data-label-ar="@(Translations.For("Note"))">@(string.IsNullOrWhiteSpace(m.Note) ? "—" : m.Note)</span>
                     </div>
                 }
             }

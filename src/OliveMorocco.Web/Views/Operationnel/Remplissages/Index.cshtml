@@ -15,30 +15,30 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Opérationnel</p>
-    <h1>Remplissages</h1>
-    <p class="module-section">Mise en bouteille — l'huile en vrac d'une variété passe dans le stock des produits</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Opérationnel")" /></p>
+    <h1><partial name="_TrLabel" model="@("Remplissages")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Mise en bouteille — l'huile en vrac d'une variété passe dans le stock des produits")" /></p>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <input type="search"
            class="list-search"
            name="search"
            value="@Model.Search"
-           placeholder="Rechercher par numéro, variété ou produit…"
+           placeholder="Rechercher par numéro, variété ou produit…" data-tr-ar="@(Translations.For("Rechercher par numéro, variété ou produit…"))"
            autocomplete="off" />
 </form>
 
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
-        <span>Numéro</span>
-        <span>Date</span>
-        <span>Variété</span>
-        <span>Produits</span>
-        <span class="cell-bold">Huile (L)</span>
-        <span class="cell-bold">Perte (L)</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("Numéro")" /></span>
+        <span><partial name="_TrLabel" model="@("Date")" /></span>
+        <span><partial name="_TrLabel" model="@("Variété")" /></span>
+        <span><partial name="_TrLabel" model="@("Produits")" /></span>
+        <span class="cell-bold"><partial name="_TrLabel" model="@("Huile (L)")" /></span>
+        <span class="cell-bold"><partial name="_TrLabel" model="@("Perte (L)")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body">
         @if (Model.Items.Count == 0)
@@ -50,20 +50,20 @@
             foreach (var item in Model.Items)
             {
                 <div class="list-row" style="grid-template-columns:@cols">
-                    <span data-label="Numéro">
+                    <span data-label="Numéro" data-label-ar="@(Translations.For("Numéro"))">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
                     </span>
-                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
-                    <span data-label="Variété">@item.VarieteNom</span>
-                    <span data-label="Produits">@item.ProduitsResume</span>
-                    <span data-label="Huile (L)" class="cell-bold">@item.QuantiteHuile.ToString("N2")</span>
-                    <span data-label="Perte (L)" class="cell-bold">@item.Perte.ToString("N2")</span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span data-label="Date" data-label-ar="@(Translations.For("Date"))">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Variété" data-label-ar="@(Translations.For("Variété"))">@item.VarieteNom</span>
+                    <span data-label="Produits" data-label-ar="@(Translations.For("Produits"))">@item.ProduitsResume</span>
+                    <span data-label="Huile (L)" data-label-ar="@(Translations.For("Huile (L)"))" class="cell-bold">@item.QuantiteHuile.ToString("N2")</span>
+                    <span data-label="Perte (L)" data-label-ar="@(Translations.For("Perte (L)"))" class="cell-bold">@item.Perte.ToString("N2")</span>
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         <a asp-action="Edit"
                            asp-route-id="@item.Id"
                            class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                         </a>
                     </span>

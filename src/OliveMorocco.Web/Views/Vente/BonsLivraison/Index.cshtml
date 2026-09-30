@@ -15,26 +15,26 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Vente</p>
-    <h1>Bons de livraison</h1>
-    <p class="module-section">Livraisons clients</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Vente")" /></p>
+    <h1><partial name="_TrLabel" model="@("Bons de livraison")" /></h1>
+    <p class="module-section"><partial name="_TrLabel" model="@("Livraisons clients")" /></p>
 </div>
 
 <div class="list-toolbar">
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
     <form method="get"
           asp-controller="Facturation"
           asp-action="FromBonsLivraison"
           id="bl-to-facture-form"
           class="list-toolbar-form">
-        <button type="submit" class="btn btn-primary" id="bl-to-facture-btn" disabled>Vers facture</button>
+        <button type="submit" class="btn btn-primary" id="bl-to-facture-btn" disabled><partial name="_TrLabel" model="@("Vers facture")" /></button>
     </form>
     <form method="get" asp-action="Index" class="list-toolbar-search">
         <input type="search"
                class="list-search"
                name="search"
                value="@Model.Search"
-               placeholder="Rechercher par n° ou client…"
+               placeholder="Rechercher par n° ou client…" data-tr-ar="@(Translations.For("Rechercher par n° ou client…"))"
                autocomplete="off" />
     </form>
 </div>
@@ -42,12 +42,12 @@
 <div class="list-wrap">
     <div class="list-header" style="grid-template-columns:@cols">
         <span aria-hidden="true"></span>
-        <span>N°</span>
-        <span>Client</span>
-        <span>Date</span>
-        <span class="cell-bold">Total TTC</span>
-        <span>Facture</span>
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("N°")" /></span>
+        <span><partial name="_TrLabel" model="@("Client")" /></span>
+        <span><partial name="_TrLabel" model="@("Date")" /></span>
+        <span class="cell-bold"><partial name="_TrLabel" model="@("Total TTC")" /></span>
+        <span><partial name="_TrLabel" model="@("Facture")" /></span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
     </div>
     <div class="list-body" id="bl-list-body">
         @if (Model.Items.Count == 0)
@@ -60,7 +60,7 @@
             {
                 var isFactured = item.FactureId is not null;
                 <div class="list-row" style="grid-template-columns:@cols" data-client-id="@item.ClientId">
-                    <span data-label="Sélection">
+                    <span data-label="Sélection" data-label-ar="@(Translations.For("Sélection"))">
                         @if (!isFactured)
                         {
                             <input type="checkbox"
@@ -71,13 +71,13 @@
                                    aria-label="Sélectionner @item.Numero" />
                         }
                     </span>
-                    <span data-label="N°">
+                    <span data-label="N°" data-label-ar="@(Translations.For("N°"))">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="list-link">@item.Numero</a>
                     </span>
-                    <span data-label="Client">@item.ClientNom</span>
-                    <span data-label="Date">@item.Date.ToString("dd/MM/yyyy")</span>
-                    <span data-label="Total TTC" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
-                    <span data-label="Facture">
+                    <span data-label="Client" data-label-ar="@(Translations.For("Client"))">@item.ClientNom</span>
+                    <span data-label="Date" data-label-ar="@(Translations.For("Date"))">@item.Date.ToString("dd/MM/yyyy")</span>
+                    <span data-label="Total TTC" data-label-ar="@(Translations.For("Total TTC"))" class="cell-bold">@item.TotalTtc.ToString("N2") DH</span>
+                    <span data-label="Facture" data-label-ar="@(Translations.For("Facture"))">
                         @if (isFactured)
                         {
                             <a asp-controller="Facturation"
@@ -90,12 +90,12 @@
                             <span class="list-muted">—</span>
                         }
                     </span>
-                    <span class="list-row-actions" data-label="Actions">
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                         <a asp-action="Edit"
                            asp-route-id="@item.Id"
                            class="btn btn-icon"
-                           title="Modifier"
-                           aria-label="Modifier">
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
                         </a>
                     </span>

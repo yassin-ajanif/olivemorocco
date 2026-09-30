@@ -11,19 +11,19 @@
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
     <div class="form-field">
-        <label asp-for="Nom">Nom</label>
+        <label asp-for="Nom"><partial name="_TrLabel" model="@("Nom")" /></label>
         <input asp-for="Nom" autocomplete="off" maxlength="128" />
         <span asp-validation-for="Nom" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label asp-for="Code">Code</label>
-        <input asp-for="Code" autocomplete="off" maxlength="32" placeholder="SN, PS…" />
+        <label asp-for="Code"><partial name="_TrLabel" model="@("Code")" /></label>
+        <input asp-for="Code" autocomplete="off" maxlength="32" placeholder="SN, PS…" data-tr-ar="@(Translations.For("SN, PS…"))" />
         <span asp-validation-for="Code" class="field-validation-error"></span>
     </div>
 
     <div class="form-field form-field-span-2">
-        <label asp-for="SuperficieHectares">Superficie totale (ha)</label>
+        <label asp-for="SuperficieHectares"><partial name="_TrLabel" model="@("Superficie totale (ha)")" /></label>
         <input asp-for="SuperficieHectares"
                id="superficie-totale"
                type="number"
@@ -34,9 +34,9 @@
 
     <section class="secteur-varietes-section" aria-labelledby="secteurVarietesTitle">
         <div class="secteur-varietes-head">
-            <p class="secteur-varietes-title" id="secteurVarietesTitle">Répartition par variété</p>
+            <p class="secteur-varietes-title" id="secteurVarietesTitle"><partial name="_TrLabel" model="@("Répartition par variété")" /></p>
             <p class="secteur-form-hint">
-                <a asp-controller="Varietes" asp-action="Index">Gérer les variétés</a>
+                <a asp-controller="Varietes" asp-action="Index"><partial name="_TrLabel" model="@("Gérer les variétés")" /></a>
             </p>
         </div>
 
@@ -44,8 +44,8 @@
             <table class="secteur-varietes-table" id="secteur-varietes-table">
                 <thead>
                     <tr>
-                        <th>Variété</th>
-                        <th>Superficie (ha)</th>
+                        <th><partial name="_TrLabel" model="@("Variété")" /></th>
+                        <th><partial name="_TrLabel" model="@("Superficie (ha)")" /></th>
                         <th class="col-actions"></th>
                     </tr>
                 </thead>
@@ -54,9 +54,9 @@
                     {
                         var line = Model.Lignes[i];
                         <tr class="secteur-variete-line">
-                            <td data-label="Variété">
+                            <td data-label="Variété" data-label-ar="@(Translations.For("Variété"))">
                                 <select name="Lignes[@i].VarieteId" class="line-variete-id">
-                                    <option value="">— Sélectionner —</option>
+                                    <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                                     @foreach (var variete in Model.Varietes)
                                     {
                                         if (line.VarieteId == variete.Id)
@@ -70,7 +70,7 @@
                                     }
                                 </select>
                             </td>
-                            <td data-label="Superficie (ha)">
+                            <td data-label="Superficie (ha)" data-label-ar="@(Translations.For("Superficie (ha)"))">
                                 <input name="Lignes[@i].SuperficieHectares"
                                        value="@(line.SuperficieHectares > 0 ? line.SuperficieHectares.ToString(CultureInfo.InvariantCulture) : "")"
                                        type="number"
@@ -79,7 +79,7 @@
                                        class="line-superficie" />
                             </td>
                             <td class="col-actions" data-label="">
-                                <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne">Supprimer</button>
+                                <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
                             </td>
                         </tr>
                     }
@@ -90,7 +90,7 @@
             </p>
         </div>
 
-        <button type="button" id="add-variete-line" class="btn">+ Ajouter une ligne</button>
+        <button type="button" id="add-variete-line" class="btn"><partial name="_TrLabel" model="@("+ Ajouter une ligne")" /></button>
 
         <p class="secteur-allocation-total" id="allocation-total" aria-live="polite">
             Alloué : <strong id="allocation-current">0</strong> / <strong id="allocation-max">0</strong> ha
@@ -98,23 +98,23 @@
     </section>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
     </div>
 </form>
 
 <template id="secteur-variete-line-template">
     <tr class="secteur-variete-line">
-        <td data-label="Variété">
+        <td data-label="Variété" data-label-ar="@(Translations.For("Variété"))">
             <select name="Lignes[__index__].VarieteId" class="line-variete-id">
-                <option value="">— Sélectionner —</option>
+                <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                 @foreach (var variete in Model.Varietes)
                 {
                     <option value="@variete.Id">@variete.Nom</option>
                 }
             </select>
         </td>
-        <td data-label="Superficie (ha)">
+        <td data-label="Superficie (ha)" data-label-ar="@(Translations.For("Superficie (ha)"))">
             <input name="Lignes[__index__].SuperficieHectares"
                    type="number"
                    step="0.1"
@@ -122,7 +122,7 @@
                    class="line-superficie" />
         </td>
         <td class="col-actions" data-label="">
-            <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne">Supprimer</button>
+            <button type="button" class="btn btn-sm remove-variete-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </td>
     </tr>
 </template>

@@ -11,14 +11,14 @@
                    asp-route-vue="@Model.Vue"
                    asp-route-page="1"
                    class="pagination-link"
-                   title="Première page">⏮</a>
+                   title="Première page" data-tr-ar="@(Translations.For("Première page"))">⏮</a>
                 <a asp-route-id="@Model.Id"
                    asp-route-search="@Model.Search"
                    asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-vue="@Model.Vue"
                    asp-route-page="@(Model.Page - 1)"
                    class="pagination-link"
-                   title="Page précédente">‹</a>
+                   title="Page précédente" data-tr-ar="@(Translations.For("Page précédente"))">‹</a>
             }
             else
             {
@@ -36,14 +36,14 @@
                    asp-route-vue="@Model.Vue"
                    asp-route-page="@(Model.Page + 1)"
                    class="pagination-link"
-                   title="Page suivante">›</a>
+                   title="Page suivante" data-tr-ar="@(Translations.For("Page suivante"))">›</a>
                 <a asp-route-id="@Model.Id"
                    asp-route-search="@Model.Search"
                    asp-route-stockBasOnly="@(Model.StockBasOnly ? "true" : null)"
                    asp-route-vue="@Model.Vue"
                    asp-route-page="@Model.TotalPages"
                    class="pagination-link"
-                   title="Dernière page">⏭</a>
+                   title="Dernière page" data-tr-ar="@(Translations.For("Dernière page"))">⏭</a>
             }
             else
             {

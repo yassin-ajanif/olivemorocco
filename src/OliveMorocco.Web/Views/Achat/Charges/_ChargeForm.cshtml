@@ -9,9 +9,9 @@
     <div asp-validation-summary="ModelOnly" class="form-validation-summary"></div>
 
     <div class="form-field">
-        <label asp-for="TypeChargeId">Type</label>
+        <label asp-for="TypeChargeId"><partial name="_TrLabel" model="@("Type")" /></label>
         <select asp-for="TypeChargeId">
-            <option value="">— Sélectionner —</option>
+            <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
             @foreach (var type in Model.TypeCharges)
             {
                 <option value="@type.Id">@type.Nom</option>
@@ -21,19 +21,19 @@
     </div>
 
     <div class="form-field">
-        <label asp-for="Libelle">Libellé</label>
+        <label asp-for="Libelle"><partial name="_TrLabel" model="@("Libellé")" /></label>
         <input asp-for="Libelle" />
         <span asp-validation-for="Libelle" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label asp-for="Date">Date</label>
+        <label asp-for="Date"><partial name="_TrLabel" model="@("Date")" /></label>
         <input asp-for="Date" type="date" />
         <span asp-validation-for="Date" class="field-validation-error"></span>
     </div>
 
     <div class="form-field">
-        <label asp-for="MontantTtc">Montant TTC</label>
+        <label asp-for="MontantTtc"><partial name="_TrLabel" model="@("Montant TTC")" /></label>
         <input asp-for="MontantTtc"
                type="number"
                step="0.01"
@@ -43,13 +43,13 @@
     </div>
 
     <div class="form-field">
-        <label asp-for="Note">Note</label>
+        <label asp-for="Note"><partial name="_TrLabel" model="@("Note")" /></label>
         <textarea asp-for="Note" rows="5"></textarea>
         <span asp-validation-for="Note" class="field-validation-error"></span>
     </div>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
     </div>
 </form>

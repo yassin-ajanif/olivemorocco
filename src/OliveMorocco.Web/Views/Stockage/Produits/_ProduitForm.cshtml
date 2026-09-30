@@ -24,7 +24,7 @@
         var hasPhoto = !string.IsNullOrEmpty(Model.CurrentImageUrl);
     }
     <div class="form-field produit-form-photo produit-form-rail">
-        <span class="produit-form-photo-label">Photo du produit</span>
+        <span class="produit-form-photo-label"><partial name="_TrLabel" model="@("Photo du produit")" /></span>
 
         @* The frame is the positioning context for the hover overlay, and it holds the
            file input so :focus-within raises the overlay for keyboard users as well as
@@ -49,7 +49,7 @@
                     <img class="is-hidden" alt="" />
                     <span class="produit-photo-empty">
                         <partial name="Icons/Plus" />
-                        <span class="produit-photo-slot-text">Aucune photo</span>
+                        <span class="produit-photo-slot-text"><partial name="_TrLabel" model="@("Aucune photo")" /></span>
                     </span>
                 }
             </label>
@@ -63,15 +63,15 @@
                    mouse. Delete wraps a real checkbox rather than being a button:
                    deferred to save, so a misclick plus "Annuler" destroys nothing. *@
                 <div class="produit-photo-overlay">
-                    <label class="produit-photo-btn" for="ImageFile" title="Remplacer la photo">
+                    <label class="produit-photo-btn" for="ImageFile" title="Remplacer la photo" data-tr-ar="@(Translations.For("Remplacer la photo"))">
                         <partial name="Icons/Plus" />
-                        <span class="sr-only">Remplacer la photo</span>
+                        <span class="sr-only"><partial name="_TrLabel" model="@("Remplacer la photo")" /></span>
                     </label>
 
-                    <label class="produit-photo-btn produit-photo-btn--danger" title="Supprimer la photo">
+                    <label class="produit-photo-btn produit-photo-btn--danger" title="Supprimer la photo" data-tr-ar="@(Translations.For("Supprimer la photo"))">
                         <input asp-for="RemoveImage" type="checkbox" />
                         <partial name="Icons/Trash" />
-                        <span class="sr-only">Supprimer la photo</span>
+                        <span class="sr-only"><partial name="_TrLabel" model="@("Supprimer la photo")" /></span>
                     </label>
                 </div>
             }
@@ -93,13 +93,13 @@
            separates "what it looks like" from "what we call it". *@
         <div class="produit-form-rail-fields">
             <div class="form-field">
-                <label for="Reference">Référence</label>
+                <label for="Reference"><partial name="_TrLabel" model="@("Référence")" /></label>
                 <input asp-for="Reference" autocomplete="off" />
                 <span asp-validation-for="Reference" class="field-validation-error"></span>
             </div>
 
             <div class="form-field">
-                <label for="CodeBarre">Code-barres</label>
+                <label for="CodeBarre"><partial name="_TrLabel" model="@("Code-barres")" /></label>
                 <input asp-for="CodeBarre" autocomplete="off" />
                 <span asp-validation-for="CodeBarre" class="field-validation-error"></span>
             </div>
@@ -109,64 +109,64 @@
     <div class="produit-form-main">
         <div class="produit-form-row-designation">
             <div class="form-field">
-                <label for="Designation">Désignation</label>
+                <label for="Designation"><partial name="_TrLabel" model="@("Désignation")" /></label>
                 <input asp-for="Designation" autocomplete="off" />
                 <span asp-validation-for="Designation" class="field-validation-error"></span>
             </div>
 
             <div class="form-field form-check">
                 <input asp-for="Actif" type="checkbox" />
-                <label for="Actif">Actif</label>
+                <label for="Actif"><partial name="_TrLabel" model="@("Actif")" /></label>
             </div>
         </div>
 
         <div class="form-field">
-            <label for="VarieteId">Variété</label>
+            <label for="VarieteId"><partial name="_TrLabel" model="@("Variété")" /></label>
             <select asp-for="VarieteId" id="VarieteId">
-                <option value="">— Sélectionner —</option>
+                <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                 @foreach (var variete in Model.Varietes)
                 {
                     <option value="@variete.Id">@variete.Nom</option>
                 }
             </select>
             <p class="produit-form-hint">
-                <a asp-controller="Varietes" asp-action="Index">Gérer les variétés</a>
+                <a asp-controller="Varietes" asp-action="Index"><partial name="_TrLabel" model="@("Gérer les variétés")" /></a>
             </p>
             <span asp-validation-for="VarieteId" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="Unite">Unité</label>
+            <label for="Unite"><partial name="_TrLabel" model="@("Unité")" /></label>
             <input asp-for="Unite" autocomplete="off" placeholder="bouteille, L, unité…" />
             <span asp-validation-for="Unite" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="ContenanceLitres">Contenance (L)</label>
+            <label for="ContenanceLitres"><partial name="_TrLabel" model="@("Contenance (L)")" /></label>
             <input asp-for="ContenanceLitres"
                    type="number"
                    step="0.001"
                    min="0"
                    placeholder="0.5, 1, 5…"
                    value="@(Model.ContenanceLitres?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
-            <p class="produit-form-hint">Litres d'huile par unité — requis pour le remplissage.</p>
+            <p class="produit-form-hint"><partial name="_TrLabel" model="@("Litres d'huile par unité — requis pour le remplissage.")" /></p>
             <span asp-validation-for="ContenanceLitres" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="TauxTVA">Taux TVA (%)</label>
+            <label for="TauxTVA"><partial name="_TrLabel" model="@("Taux TVA (%)")" /></label>
             <input asp-for="TauxTVA" type="number" step="1" min="0" />
             <span asp-validation-for="TauxTVA" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="PrixAchatHT">Prix achat HT (DH)</label>
+            <label for="PrixAchatHT"><partial name="_TrLabel" model="@("Prix achat HT (DH)")" /></label>
             <input asp-for="PrixAchatHT" type="number" step="1" min="0" />
             <span asp-validation-for="PrixAchatHT" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="PrixVenteHT">Prix vente HT (DH)</label>
+            <label for="PrixVenteHT"><partial name="_TrLabel" model="@("Prix vente HT (DH)")" /></label>
             <input asp-for="PrixVenteHT" type="number" step="1" min="0" />
             <span asp-validation-for="PrixVenteHT" class="field-validation-error"></span>
         </div>
@@ -174,7 +174,7 @@
         @if (Model.IsEdit)
         {
             <div class="form-field">
-                <label for="StockMinimum">Stock minimum</label>
+                <label for="StockMinimum"><partial name="_TrLabel" model="@("Stock minimum")" /></label>
                 <input asp-for="StockMinimum" type="number" step="1" min="0" />
                 <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
             </div>
@@ -182,13 +182,13 @@
         else
         {
             <div class="form-field">
-                <label for="StockInitial">Stock initial</label>
+                <label for="StockInitial"><partial name="_TrLabel" model="@("Stock initial")" /></label>
                 <input asp-for="StockInitial" type="number" step="1" min="0" />
                 <span asp-validation-for="StockInitial" class="field-validation-error"></span>
             </div>
 
             <div class="form-field">
-                <label for="StockMinimum">Stock minimum</label>
+                <label for="StockMinimum"><partial name="_TrLabel" model="@("Stock minimum")" /></label>
                 <input asp-for="StockMinimum" type="number" step="1" min="0" />
                 <span asp-validation-for="StockMinimum" class="field-validation-error"></span>
             </div>
@@ -196,8 +196,8 @@
     </div>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
     </div>
 
     @* Local preview, so picking a file shows it immediately instead of only after the

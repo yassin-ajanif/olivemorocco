@@ -3,7 +3,7 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · Variétés</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Stockage · Variétés")" /></p>
     <h1>@Model.Nom</h1>
 </div>
 
@@ -17,5 +17,5 @@
       class="form-delete"
       onsubmit="return confirm('Supprimer cette variété ?');">
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <button type="submit" class="btn btn-danger"><partial name="_TrLabel" model="@("Supprimer")" /></button>
 </form>

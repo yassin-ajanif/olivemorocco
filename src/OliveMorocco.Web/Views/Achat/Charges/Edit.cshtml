@@ -3,7 +3,7 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Achat · Charges</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Achat · Charges")" /></p>
     <h1>@Model.Libelle</h1>
     <p class="form-ref">Réf. charge <strong>#@Model.Id</strong></p>
 </div>
@@ -18,5 +18,5 @@
       class="form-delete"
       onsubmit="return confirm('Supprimer cette charge ?');">
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <button type="submit" class="btn btn-danger"><partial name="_TrLabel" model="@("Supprimer")" /></button>
 </form>

@@ -14,10 +14,17 @@ namespace OliveMorocco.Web.Models.Shared;
 ///
 /// A document's own field labels do belong to that document, even when the same word also
 /// appears elsewhere: Vente.Clients.ClientTranslations keeps its "Nom" and "Ville" because
-/// those are fields of a client, not furniture.
+/// those are fields of a client, not furniture. The test is whether the word names
+/// something in the document, not whether it happens to be typed on two pages.
+/// </para>
+///
+/// <para>
+/// <c>Translations</c> merges this file first, so where a document restates one of these
+/// words the document's reading wins. That ordering only helps if a document does not
+/// restate a word it means the same way — an identical copy here is not extra coverage, it
+/// is a second answer to the same question that nobody will remember to update.
 /// </para>
 /// </summary>
-[Translations]
 public static class UiTranslations
 {
     public static IReadOnlyDictionary<string, string> Arabic { get; } =
@@ -43,6 +50,7 @@ public static class UiTranslations
             ["Rechercher…"] = "بحث…",
             ["Aucun enregistrement — cliquez sur Nouveau pour commencer."] =
                 "لا توجد سجلات — انقر على «جديد» للبدء.",
+            ["Module en construction."] = "هذه الوحدة قيد الإنجاز.",
 
             // --- Row actions and form buttons ---
             ["Actions"] = "إجراءات",
@@ -50,6 +58,14 @@ public static class UiTranslations
             ["Enregistrer"] = "حفظ",
             ["Annuler"] = "إلغاء",
             ["Supprimer"] = "حذف",
+
+            // --- Back out of an edit page, back to the list it came from. The arrow is kept
+            //     in the French string so the key matches what the view actually prints. ---
+            ["← Retour"] = "رجوع",
+
+            // --- A dropdown with nothing chosen. An <option> may only contain text, so this
+            //     one is moved by script rather than by _TrLabel. ---
+            ["— Sélectionner —"] = "— اختر —",
 
             // --- The active/inactive toggle every "master data" list carries ---
             ["Actif"] = "نشط",

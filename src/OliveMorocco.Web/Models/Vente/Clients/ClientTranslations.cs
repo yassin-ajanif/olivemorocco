@@ -13,7 +13,7 @@ namespace OliveMorocco.Web.Models.Vente.Clients;
 ///
 /// Keys are the exact French strings the views print. If a label is reworded in the Razor,
 /// the key here stops matching and the gloss silently disappears rather than going stale
-/// against wording that no longer exists — see <see cref="TranslationsAttribute"/>.
+/// against wording that no longer exists — see the Translations header comment.
 ///
 /// Two deliberate exclusions:
 ///
@@ -29,9 +29,8 @@ namespace OliveMorocco.Web.Models.Vente.Clients;
 /// A word that means the same thing everywhere ("Nom") still belongs to this file rather
 /// than to the shell, because it is a field of a client and not furniture. The next
 /// document that claims the same word has to agree on the Arabic — see the note on
-/// <see cref="TranslationsAttribute"/> before adding one.
+/// the Translations header comment before adding one.
 /// </summary>
-[Translations]
 public static class ClientTranslations
 {
     public static IReadOnlyDictionary<string, string> Arabic { get; } =
@@ -61,5 +60,8 @@ public static class ClientTranslations
 
             // --- The line under the heading on the list, naming who the list is for ---
             ["Restaurateurs, importateurs, épiciers"] = "المطاعم والمستوردون والبقالة",
+
+            // --- The breadcrumb above this document's forms: its section, then itself ---
+            ["Vente · Clients"] = "البيع · الزبائن",
         };
 }

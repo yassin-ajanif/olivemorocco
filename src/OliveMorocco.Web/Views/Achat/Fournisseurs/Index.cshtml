@@ -32,11 +32,11 @@
 
 <div class="page-head">
 
-    <p class="eyebrow">Achat</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Achat")" /></p>
 
-    <h1>Fournisseurs</h1>
+    <h1><partial name="_TrLabel" model="@("Fournisseurs")" /></h1>
 
-    <p class="module-section">Huileries, emballages, intrants</p>
+    <p class="module-section"><partial name="_TrLabel" model="@("Huileries, emballages, intrants")" /></p>
 
 </div>
 
@@ -44,7 +44,7 @@
 
 <form method="get" asp-action="Index" class="list-toolbar">
 
-    <a asp-action="Create" class="btn btn-primary">Nouveau</a>
+    <a asp-action="Create" class="btn btn-primary"><partial name="_TrLabel" model="@("Nouveau")" /></a>
 
     <input type="search"
 
@@ -54,7 +54,7 @@
 
            value="@Model.Search"
 
-           placeholder="Rechercher…"
+           placeholder="Rechercher…" data-tr-ar="@(Translations.For("Rechercher…"))"
 
            autocomplete="off" />
 
@@ -66,15 +66,15 @@
 
     <div class="list-header" style="grid-template-columns:@cols">
 
-        <span>Nom</span>
+        <span><partial name="_TrLabel" model="@("Nom")" /></span>
 
-        <span>ICE</span>
+        <span><partial name="_TrLabel" model="@("ICE")" /></span>
 
-        <span>Ville</span>
+        <span><partial name="_TrLabel" model="@("Ville")" /></span>
 
-        <span>Actif</span>
+        <span><partial name="_TrLabel" model="@("Actif")" /></span>
 
-        <span>Actions</span>
+        <span><partial name="_TrLabel" model="@("Actions")" /></span>
 
     </div>
 
@@ -98,23 +98,23 @@
 
                 <div class="list-row" style="grid-template-columns:@cols">
 
-                    <span data-label="Nom">
+                    <span data-label="Nom" data-label-ar="@(Translations.For("Nom"))">
 
                         <a asp-action="Edit" asp-route-id="@fournisseur.Id" class="list-link">@fournisseur.Nom</a>
 
                     </span>
 
-                    <span data-label="ICE">@fournisseur.ICE</span>
+                    <span data-label="ICE" data-label-ar="@(Translations.For("ICE"))">@fournisseur.ICE</span>
 
-                    <span data-label="Ville">@fournisseur.Ville</span>
+                    <span data-label="Ville" data-label-ar="@(Translations.For("Ville"))">@fournisseur.Ville</span>
 
-                    <span data-label="Actif">
+                    <span data-label="Actif" data-label-ar="@(Translations.For("Actif"))">
 
                         @if (fournisseur.Actif)
 
                         {
 
-                            <span class="badge badge-ok">Actif</span>
+                            <span class="badge badge-ok"><partial name="_TrLabel" model="@("Actif")" /></span>
 
                         }
 
@@ -122,13 +122,13 @@
 
                         {
 
-                            <span class="badge badge-warn">Inactif</span>
+                            <span class="badge badge-warn"><partial name="_TrLabel" model="@("Inactif")" /></span>
 
                         }
 
                     </span>
 
-                    <span class="list-row-actions" data-label="Actions">
+                    <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
 
                         <a asp-action="Edit"
 
@@ -136,9 +136,9 @@
 
                            class="btn btn-icon"
 
-                           title="Modifier"
+                           title="Modifier" data-tr-ar="@(Translations.For("Modifier"))"
 
-                           aria-label="Modifier">
+                           aria-label="Modifier" data-tr-ar="@(Translations.For("Modifier"))">
 
                             <partial name="~/Views/Shared/Icons/Edit.cshtml" />
 

@@ -11,9 +11,9 @@
 
     <div class="ops-form-row-2">
         <div class="form-field">
-            <label for="FournisseurId">Huilerie</label>
+            <label for="FournisseurId"><partial name="_TrLabel" model="@("Huilerie")" /></label>
             <select asp-for="FournisseurId" id="FournisseurId" data-pressage-fournisseur>
-                <option value="">— Sélectionner —</option>
+                <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                 @foreach (var fournisseur in Model.Fournisseurs)
                 {
                     <option value="@fournisseur.Id">@fournisseur.Nom</option>
@@ -23,9 +23,9 @@
         </div>
 
         <div class="form-field">
-            <label for="VarieteId">Variété</label>
+            <label for="VarieteId"><partial name="_TrLabel" model="@("Variété")" /></label>
             <select asp-for="VarieteId">
-                <option value="">— Sélectionner —</option>
+                <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                 @foreach (var variete in Model.Varietes)
                 {
                     <option value="@variete.Id">@variete.Nom</option>
@@ -37,7 +37,7 @@
 
     <div class="ops-form-row-2">
         <div class="form-field">
-            <label for="Date">Date</label>
+            <label for="Date"><partial name="_TrLabel" model="@("Date")" /></label>
             <input asp-for="Date" type="date" />
             <span asp-validation-for="Date" class="field-validation-error"></span>
         </div>
@@ -45,7 +45,7 @@
 
     <div class="ops-form-row-3">
         <div class="form-field">
-            <label for="QuantiteOlives">Quantité d'olives (kg)</label>
+            <label for="QuantiteOlives"><partial name="_TrLabel" model="@("Quantité d'olives (kg)")" /></label>
             <input asp-for="QuantiteOlives"
                    type="number"
                    step="1"
@@ -56,7 +56,7 @@
         </div>
 
         <div class="form-field">
-            <label for="Rendement">Rendement (%)</label>
+            <label for="Rendement"><partial name="_TrLabel" model="@("Rendement (%)")" /></label>
             <input asp-for="Rendement"
                    type="number"
                    step="1"
@@ -68,19 +68,19 @@
         </div>
 
         <div class="form-field">
-            <label for="QuantiteHuile">Quantité d'huile (L)</label>
+            <label for="QuantiteHuile"><partial name="_TrLabel" model="@("Quantité d'huile (L)")" /></label>
             <input asp-for="QuantiteHuile"
                    type="number"
                    step="1"
                    min="0"
                    id="QuantiteHuile"
                    data-pressage-huile />
-            <p class="pressage-form-hint">Laisser vide pour calculer automatiquement (olives × rendement).</p>
+            <p class="pressage-form-hint"><partial name="_TrLabel" model="@("Laisser vide pour calculer automatiquement (olives × rendement).")" /></p>
             <span asp-validation-for="QuantiteHuile" class="field-validation-error"></span>
         </div>
     </div>
 
-    <div class="ops-section-title">Charge associée</div>
+    <div class="ops-section-title"><partial name="_TrLabel" model="@("Charge associée")" /></div>
 
     @if (Model.ChargeId is > 0)
     {
@@ -89,15 +89,15 @@
             <a asp-controller="Charges"
                asp-action="Edit"
                asp-route-id="@Model.ChargeId"
-               class="list-link">voir la charge</a>
+               class="list-link"><partial name="_TrLabel" model="@("voir la charge")" /></a>
         </p>
     }
 
     <div class="ops-form-row-3">
         <div class="form-field">
-            <label for="TypeChargeId">Type de charge</label>
+            <label for="TypeChargeId"><partial name="_TrLabel" model="@("Type de charge")" /></label>
             <select asp-for="TypeChargeId" id="TypeChargeId">
-                <option value="">— Sélectionner —</option>
+                <option value="" data-tr-ar="@(Translations.For("— Sélectionner —"))">— Sélectionner —</option>
                 @foreach (var type in Model.TypeCharges)
                 {
                     <option value="@type.Id">@type.Nom</option>
@@ -107,13 +107,13 @@
         </div>
 
         <div class="form-field">
-            <label for="Libelle">Libellé</label>
+            <label for="Libelle"><partial name="_TrLabel" model="@("Libellé")" /></label>
             <input asp-for="Libelle" type="text" id="Libelle" />
             <span asp-validation-for="Libelle" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="ChargeDate">Date de la charge</label>
+            <label for="ChargeDate"><partial name="_TrLabel" model="@("Date de la charge")" /></label>
             <input asp-for="ChargeDate" type="date" id="ChargeDate" />
             <span asp-validation-for="ChargeDate" class="field-validation-error"></span>
         </div>
@@ -121,30 +121,28 @@
 
     <div class="ops-form-row-2">
         <div class="form-field">
-            <label for="MontantTtc">Montant TTC</label>
+            <label for="MontantTtc"><partial name="_TrLabel" model="@("Montant TTC")" /></label>
             <input asp-for="MontantTtc" type="number" step="0.01" min="0" id="MontantTtc" />
             <span asp-validation-for="MontantTtc" class="field-validation-error"></span>
         </div>
 
         <div class="form-field">
-            <label for="Note">Note</label>
+            <label for="Note"><partial name="_TrLabel" model="@("Note")" /></label>
             <input asp-for="Note" type="text" id="Note" />
             <span asp-validation-for="Note" class="field-validation-error"></span>
         </div>
     </div>
 
     <div class="form-toolbar">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a asp-action="Index" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
+        <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("Annuler")" /></a>
         @if (Model.IsEdit)
         {
             <button type="submit"
                     formaction="@Url.Action("Delete", new { id = Model.Id })"
                     formmethod="post"
                     class="btn btn-danger"
-                    onclick="return confirm('Supprimer ce pressage ?');">
-                Supprimer
-            </button>
+                    onclick="return confirm('Supprimer ce pressage ?');"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         }
     </div>
 </form>

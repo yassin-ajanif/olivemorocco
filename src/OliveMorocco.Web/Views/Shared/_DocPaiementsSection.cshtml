@@ -4,18 +4,18 @@
 
 <div class="doc-payments-section form-field form-field-full">
     <div class="doc-payments-toolbar">
-        <label>Paiements</label>
-        <button type="button" id="add-paiement-line" class="btn btn-sm">Ajouter un paiement</button>
+        <label><partial name="_TrLabel" model="@("Paiements")" /></label>
+        <button type="button" id="add-paiement-line" class="btn btn-sm"><partial name="_TrLabel" model="@("Ajouter un paiement")" /></button>
     </div>
     <div class="doc-payments-wrap">
         <table class="doc-payments-table" id="paiements-table">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Montant</th>
-                    <th>Mode</th>
-                    <th>Référence</th>
-                    <th class="col-center">Encaissé</th>
+                    <th><partial name="_TrLabel" model="@("Date")" /></th>
+                    <th><partial name="_TrLabel" model="@("Montant")" /></th>
+                    <th><partial name="_TrLabel" model="@("Mode")" /></th>
+                    <th><partial name="_TrLabel" model="@("Référence")" /></th>
+                    <th class="col-center"><partial name="_TrLabel" model="@("Encaissé")" /></th>
                     <th class="col-actions"></th>
                 </tr>
             </thead>
@@ -24,13 +24,13 @@
                 {
                     var paiement = Model[i];
                     <tr class="paiement-line">
-                        <td data-label="Date">
+                        <td data-label="Date" data-label-ar="@(Translations.For("Date"))">
                             <input name="Paiements[@i].Date"
                                    value="@paiement.Date.ToString("yyyy-MM-dd")"
                                    type="date"
                                    class="line-paiement-date" />
                         </td>
-                        <td data-label="Montant">
+                        <td data-label="Montant" data-label-ar="@(Translations.For("Montant"))">
                             <input name="Paiements[@i].Montant"
                                    value="@(paiement.Montant > 0 ? paiement.Montant.ToString(CultureInfo.InvariantCulture) : "")"
                                    type="number"
@@ -38,7 +38,7 @@
                                    min="0"
                                    class="line-paiement-montant" />
                         </td>
-                        <td data-label="Mode">
+                        <td data-label="Mode" data-label-ar="@(Translations.For("Mode"))">
                             <select name="Paiements[@i].Mode" class="line-paiement-mode">
                                 @foreach (ModePaiement mode in Enum.GetValues<ModePaiement>())
                                 {
@@ -53,14 +53,14 @@
                                 }
                             </select>
                         </td>
-                        <td data-label="Référence">
+                        <td data-label="Référence" data-label-ar="@(Translations.For("Référence"))">
                             <input name="Paiements[@i].Reference"
                                    value="@paiement.Reference"
                                    type="text"
                                    class="line-paiement-ref"
-                                   placeholder="N° chèque, virement…" />
+                                   placeholder="N° chèque, virement…" data-tr-ar="@(Translations.For("N° chèque, virement…"))" />
                         </td>
-                        <td data-label="Encaissé" class="col-center">
+                        <td data-label="Encaissé" data-label-ar="@(Translations.For("Encaissé"))" class="col-center">
                             <input type="hidden" name="Paiements[@i].EstEncaisse" value="false" />
                             <input name="Paiements[@i].EstEncaisse"
                                    value="true"
@@ -69,7 +69,7 @@
                                    @(paiement.EstEncaisse ? "checked" : null) />
                         </td>
                         <td class="col-actions" data-label="">
-                            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement">Supprimer</button>
+                            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement" data-tr-ar="@(Translations.For("Supprimer le paiement"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
                         </td>
                     </tr>
                 }
@@ -92,20 +92,20 @@
 
 <template id="paiement-line-template">
     <tr class="paiement-line">
-        <td data-label="Date">
+        <td data-label="Date" data-label-ar="@(Translations.For("Date"))">
             <input name="Paiements[__index__].Date"
                    value="@DateTime.Today.ToString("yyyy-MM-dd")"
                    type="date"
                    class="line-paiement-date" />
         </td>
-        <td data-label="Montant">
+        <td data-label="Montant" data-label-ar="@(Translations.For("Montant"))">
             <input name="Paiements[__index__].Montant"
                    type="number"
                    step="1"
                    min="0"
                    class="line-paiement-montant" />
         </td>
-        <td data-label="Mode">
+        <td data-label="Mode" data-label-ar="@(Translations.For("Mode"))">
             <select name="Paiements[__index__].Mode" class="line-paiement-mode">
                 @foreach (ModePaiement mode in Enum.GetValues<ModePaiement>())
                 {
@@ -120,13 +120,13 @@
                 }
             </select>
         </td>
-        <td data-label="Référence">
+        <td data-label="Référence" data-label-ar="@(Translations.For("Référence"))">
             <input name="Paiements[__index__].Reference"
                    type="text"
                    class="line-paiement-ref"
-                   placeholder="N° chèque, virement…" />
+                   placeholder="N° chèque, virement…" data-tr-ar="@(Translations.For("N° chèque, virement…"))" />
         </td>
-        <td data-label="Encaissé" class="col-center">
+        <td data-label="Encaissé" data-label-ar="@(Translations.For("Encaissé"))" class="col-center">
             <input type="hidden" name="Paiements[__index__].EstEncaisse" value="false" />
             <input name="Paiements[__index__].EstEncaisse"
                    value="true"
@@ -135,7 +135,7 @@
                    checked />
         </td>
         <td class="col-actions" data-label="">
-            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement">Supprimer</button>
+            <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement" data-tr-ar="@(Translations.For("Supprimer le paiement"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </td>
     </tr>
 </template>

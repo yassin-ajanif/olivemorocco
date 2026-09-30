@@ -6,13 +6,13 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Achat</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Achat")" /></p>
     <h1>@title</h1>
     <p class="form-ref">Référence <strong>@Model.Numero</strong></p>
 </div>
 
 <div class="form-toolbar">
-    <a asp-action="Index" class="btn">&larr; Retour</a>
+    <a asp-action="Index" class="btn"><partial name="_TrLabel" model="@("← Retour")" /></a>
     @if (Model.IsEdit)
     {
         if (Model.IsFactured)
@@ -29,14 +29,12 @@
             <a asp-controller="FacturesFournisseurs"
                asp-action="FromBonsReception"
                asp-route-ids="@Model.Id"
-               class="btn btn-primary">
-                Vers facture
-            </a>
+               class="btn btn-primary"><partial name="_TrLabel" model="@("Vers facture")" /></a>
         }
     }
     @if (!Model.IsFactured)
     {
-        <button type="submit" form="bon-reception-form" class="btn btn-primary">Enregistrer</button>
+        <button type="submit" form="bon-reception-form" class="btn btn-primary"><partial name="_TrLabel" model="@("Enregistrer")" /></button>
     }
 </div>
 
@@ -59,7 +57,7 @@
               class="form-delete"
               onsubmit="return confirm('Supprimer ce bon de réception ?');">
             @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-danger">Supprimer</button>
+            <button type="submit" class="btn btn-danger"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </form>
     }
 }

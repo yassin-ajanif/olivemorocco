@@ -3,7 +3,7 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage · Produits</p>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Stockage · Produits")" /></p>
     <h1>@Model.Designation</h1>
     <p class="form-ref">Réf. <strong>@Model.Reference</strong></p>
 </div>
@@ -18,5 +18,5 @@
       class="form-delete"
       onsubmit="return confirm('Supprimer ce produit ?');">
     @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <button type="submit" class="btn btn-danger"><partial name="_TrLabel" model="@("Supprimer")" /></button>
 </form>

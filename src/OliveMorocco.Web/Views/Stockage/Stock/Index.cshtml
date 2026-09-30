@@ -21,8 +21,8 @@
 <partial name="_DashboardAlerts" />
 
 <div class="page-head">
-    <p class="eyebrow">Stockage</p>
-    <h1>État du stock</h1>
+    <p class="eyebrow"><partial name="_TrLabel" model="@("Stockage")" /></p>
+    <h1><partial name="_TrLabel" model="@("État du stock")" /></h1>
     <p class="module-section">
         @(Model.IsHuile
             ? "Huile issue des pressages, stockée par variété avant mise en bouteille"
@@ -32,21 +32,21 @@
     </p>
 </div>
 
-<div class="stock-view-switch" role="tablist" aria-label="Type de stock">
+<div class="stock-view-switch" role="tablist" aria-label="Type de stock" data-tr-ar="@(Translations.For("Type de stock"))">
     <a asp-action="Index"
        class="btn@(Model.IsHuile || Model.IsIntrant ? "" : " btn-primary")"
        role="tab"
-       aria-selected="@(Model.IsHuile || Model.IsIntrant ? "false" : "true")">Produits</a>
+       aria-selected="@(Model.IsHuile || Model.IsIntrant ? "false" : "true")"><partial name="_TrLabel" model="@("Produits")" /></a>
     <a asp-action="Index"
        asp-route-vue="@StockListViewModel.VueHuile"
        class="btn@(Model.IsHuile ? " btn-primary" : "")"
        role="tab"
-       aria-selected="@(Model.IsHuile ? "true" : "false")">Huile en vrac (variétés)</a>
+       aria-selected="@(Model.IsHuile ? "true" : "false")"><partial name="_TrLabel" model="@("Huile en vrac (variétés)")" /></a>
     <a asp-action="Index"
        asp-route-vue="@StockListViewModel.VueIntrant"
        class="btn@(Model.IsIntrant ? " btn-primary" : "")"
        role="tab"
-       aria-selected="@(Model.IsIntrant ? "true" : "false")">Intrants</a>
+       aria-selected="@(Model.IsIntrant ? "true" : "false")"><partial name="_TrLabel" model="@("Intrants")" /></a>
 </div>
 
 <form method="get" asp-action="Index" class="list-toolbar stock-toolbar">
@@ -65,7 +65,7 @@
                    name="stockBasOnly"
                    value="true"
                    @(Model.StockBasOnly ? "checked" : null) />
-            <span>Stock bas uniquement</span>
+            <span><partial name="_TrLabel" model="@("Stock bas uniquement")" /></span>
         </label>
     }
     <input type="search"
@@ -80,11 +80,11 @@
 {
     <div class="list-wrap">
         <div class="list-header" style="grid-template-columns:@huileCols">
-            <span>Variété</span>
-            <span>Code</span>
-            <span class="cell-bold cell-center">Stock (L)</span>
-            <span>Statut</span>
-            <span>Actions</span>
+            <span><partial name="_TrLabel" model="@("Variété")" /></span>
+            <span><partial name="_TrLabel" model="@("Code")" /></span>
+            <span class="cell-bold cell-center"><partial name="_TrLabel" model="@("Stock (L)")" /></span>
+            <span><partial name="_TrLabel" model="@("Statut")" /></span>
+            <span><partial name="_TrLabel" model="@("Actions")" /></span>
         </div>
         <div class="list-body">
             @if (Model.HuileItems.Count == 0)
@@ -96,28 +96,26 @@
                 foreach (var item in Model.HuileItems)
                 {
                     <div class="list-row" style="grid-template-columns:@huileCols">
-                        <span data-label="Variété">
+                        <span data-label="Variété" data-label-ar="@(Translations.For("Variété"))">
                             <a asp-action="Huile" asp-route-id="@item.VarieteId" class="list-link">@item.VarieteNom</a>
                         </span>
-                        <span data-label="Code">@(item.Code ?? "—")</span>
-                        <span data-label="Stock (L)" class="cell-bold cell-center">@item.StockHuile.ToString("N2")</span>
-                        <span data-label="Statut">
+                        <span data-label="Code" data-label-ar="@(Translations.For("Code"))">@(item.Code ?? "—")</span>
+                        <span data-label="Stock (L)" data-label-ar="@(Translations.For("Stock (L)"))" class="cell-bold cell-center">@item.StockHuile.ToString("N2")</span>
+                        <span data-label="Statut" data-label-ar="@(Translations.For("Statut"))">
                             @if (item.StockHuile <= 0)
                             {
-                                <span class="badge badge-stock-rupture">Vide</span>
+                                <span class="badge badge-stock-rupture"><partial name="_TrLabel" model="@("Vide")" /></span>
                             }
                             else
                             {
-                                <span class="badge badge-ok">Disponible</span>
+                                <span class="badge badge-ok"><partial name="_TrLabel" model="@("Disponible")" /></span>
                             }
                         </span>
-                        <span class="list-row-actions" data-label="Actions">
+                        <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                             <a asp-action="Huile"
                                asp-route-id="@item.VarieteId"
                                class="btn btn-sm"
-                               title="Historique des mouvements">
-                                Historique
-                            </a>
+                               title="Historique des mouvements" data-tr-ar="@(Translations.For("Historique des mouvements"))"><partial name="_TrLabel" model="@("Historique")" /></a>
                         </span>
                     </div>
                 }
@@ -129,11 +127,11 @@ else if (Model.IsIntrant)
 {
     <div class="list-wrap">
         <div class="list-header" style="grid-template-columns:@intrantCols">
-            <span>Nom</span>
-            <span>Unité</span>
-            <span class="cell-bold cell-center">Stock actuel</span>
-            <span>Prix achat HT</span>
-            <span>Actions</span>
+            <span><partial name="_TrLabel" model="@("Nom")" /></span>
+            <span><partial name="_TrLabel" model="@("Unité")" /></span>
+            <span class="cell-bold cell-center"><partial name="_TrLabel" model="@("Stock actuel")" /></span>
+            <span><partial name="_TrLabel" model="@("Prix achat HT")" /></span>
+            <span><partial name="_TrLabel" model="@("Actions")" /></span>
         </div>
         <div class="list-body">
             @if (Model.IntrantItems.Count == 0)
@@ -145,23 +143,21 @@ else if (Model.IsIntrant)
                 foreach (var item in Model.IntrantItems)
                 {
                     <div class="list-row" style="grid-template-columns:@intrantCols">
-                        <span data-label="Nom">
+                        <span data-label="Nom" data-label-ar="@(Translations.For("Nom"))">
                             <a asp-action="Intrant" asp-route-id="@item.Id" class="list-link">@item.Nom</a>
                         </span>
-                        <span data-label="Unité">@item.Unite</span>
-                        <span data-label="Stock actuel" class="cell-bold cell-center">
+                        <span data-label="Unité" data-label-ar="@(Translations.For("Unité"))">@item.Unite</span>
+                        <span data-label="Stock actuel" data-label-ar="@(Translations.For("Stock actuel"))" class="cell-bold cell-center">
                             @item.StockActuel.ToString("N0")
                         </span>
-                        <span data-label="Prix achat HT">
+                        <span data-label="Prix achat HT" data-label-ar="@(Translations.For("Prix achat HT"))">
                             @(item.PrixAchatHT?.ToString("N2") ?? "—")
                         </span>
-                        <span class="list-row-actions" data-label="Actions">
+                        <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                             <a asp-action="Intrant"
                                asp-route-id="@item.Id"
                                class="btn btn-sm"
-                               title="Historique des mouvements">
-                                Historique
-                            </a>
+                               title="Historique des mouvements" data-tr-ar="@(Translations.For("Historique des mouvements"))"><partial name="_TrLabel" model="@("Historique")" /></a>
                         </span>
                     </div>
                 }
@@ -173,14 +169,14 @@ else
 {
     <div class="list-wrap">
         <div class="list-header" style="grid-template-columns:@produitCols">
-            <span>Réf.</span>
-            <span>Désignation</span>
-            <span>Variété</span>
-            <span>Unité</span>
-            <span class="cell-bold cell-center">Stock actuel</span>
-            <span>Stock min.</span>
-            <span>Statut</span>
-            <span>Actions</span>
+            <span><partial name="_TrLabel" model="@("Réf.")" /></span>
+            <span><partial name="_TrLabel" model="@("Désignation")" /></span>
+            <span><partial name="_TrLabel" model="@("Variété")" /></span>
+            <span><partial name="_TrLabel" model="@("Unité")" /></span>
+            <span class="cell-bold cell-center"><partial name="_TrLabel" model="@("Stock actuel")" /></span>
+            <span><partial name="_TrLabel" model="@("Stock min.")" /></span>
+            <span><partial name="_TrLabel" model="@("Statut")" /></span>
+            <span><partial name="_TrLabel" model="@("Actions")" /></span>
         </div>
         <div class="list-body">
             @if (Model.Items.Count == 0)
@@ -192,37 +188,35 @@ else
                 foreach (var item in Model.Items)
                 {
                     <div class="list-row" style="grid-template-columns:@produitCols">
-                        <span data-label="Réf.">
+                        <span data-label="Réf." data-label-ar="@(Translations.For("Réf."))">
                             <a asp-action="Produit" asp-route-id="@item.Id" class="list-link">@item.Reference</a>
                         </span>
-                        <span data-label="Désignation">@item.Designation</span>
-                        <span data-label="Variété">@item.VarieteNom</span>
-                        <span data-label="Unité">@item.Unite</span>
-                        <span data-label="Stock actuel" class="cell-bold cell-center">
+                        <span data-label="Désignation" data-label-ar="@(Translations.For("Désignation"))">@item.Designation</span>
+                        <span data-label="Variété" data-label-ar="@(Translations.For("Variété"))">@item.VarieteNom</span>
+                        <span data-label="Unité" data-label-ar="@(Translations.For("Unité"))">@item.Unite</span>
+                        <span data-label="Stock actuel" data-label-ar="@(Translations.For("Stock actuel"))" class="cell-bold cell-center">
                             @item.StockActuel.ToString("N0")
                         </span>
-                        <span data-label="Stock min.">@item.StockMinimum.ToString("N0")</span>
-                        <span data-label="Statut">
+                        <span data-label="Stock min." data-label-ar="@(Translations.For("Stock min."))">@item.StockMinimum.ToString("N0")</span>
+                        <span data-label="Statut" data-label-ar="@(Translations.For("Statut"))">
                             @if (item.Rupture)
                             {
-                                <span class="badge badge-stock-rupture">Rupture</span>
+                                <span class="badge badge-stock-rupture"><partial name="_TrLabel" model="@("Rupture")" /></span>
                             }
                             else if (item.StockBas)
                             {
-                                <span class="badge badge-warn">Stock bas</span>
+                                <span class="badge badge-warn"><partial name="_TrLabel" model="@("Stock bas")" /></span>
                             }
                             else
                             {
-                                <span class="badge badge-ok">OK</span>
+                                <span class="badge badge-ok"><partial name="_TrLabel" model="@("OK")" /></span>
                             }
                         </span>
-                        <span class="list-row-actions" data-label="Actions">
+                        <span class="list-row-actions" data-label="Actions" data-label-ar="@(Translations.For("Actions"))">
                             <a asp-action="Produit"
                                asp-route-id="@item.Id"
                                class="btn btn-sm"
-                               title="Historique des mouvements">
-                                Historique
-                            </a>
+                               title="Historique des mouvements" data-tr-ar="@(Translations.For("Historique des mouvements"))"><partial name="_TrLabel" model="@("Historique")" /></a>
                         </span>
                     </div>
                 }
