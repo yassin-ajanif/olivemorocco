@@ -16,7 +16,12 @@
 
 <div class="page-head">
     <p class="eyebrow">Vente</p>
-    <h1>Devis</h1>
+    <h1>
+        @* The Arabic gloss comes from Translations, keyed by the French text — same lookup
+           the sidebar uses, so this heading and the nav item cannot drift apart. The switch
+           that reveals it lives in the topbar (_DashboardLayout), not here. *@
+        <partial name="_TrLabel" model="@("Devis")" />
+    </h1>
     <p class="module-section">Propositions commerciales clients</p>
 </div>
 

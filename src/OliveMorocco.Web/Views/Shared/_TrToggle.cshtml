@@ -1,0 +1,26 @@
+@* The switch that reveals every Arabic gloss in the dashboard at once.
+
+   Rendered once by _DashboardLayout, so it governs the whole shell — sidebar, page
+   headings, table headers — rather than one page's labels. A visitor either reads the
+   dashboard in Arabic or they do not, and a switch per label would be a dozen ways to
+   get the same setting wrong.
+
+   The behaviour lives in wwwroot/js/translations.js; only markup here. The matching boot
+   script is inline in _DashboardLayout's <head>, because the glosses are hidden by CSS and
+   the preference has to be on <html> before anything renders — a network round trip would
+   be too late, and a page saved with translations on would flash French-only first.
+
+   Both captions ship in the markup and CSS picks between them, so the script's only job is
+   to flip an attribute and remember the choice. *@
+<button type="button"
+        class="tr-toggle"
+        data-tr-toggle
+        aria-pressed="false"
+        aria-label="Ajouter la traduction arabe des libellés"
+        title="Ajouter la traduction arabe des libellés">
+    <partial name="Icons/Translate" />
+    <span class="tr-toggle-txt">
+        <span data-tr-caption="off">Traduction</span>
+        <span data-tr-caption="on">Masquer</span>
+    </span>
+</button>

@@ -5,6 +5,7 @@
 @import "./_DashboardShell.css";
 @import "./_DashboardLists.css";
 @import "./_DashboardForms.css";
+@import "./_DashboardTranslations.css";
 @import "../Vente/Clients.css";
 @import "../Vente/Devis.css";
 @import "../Operationnel/OpsPages.css";

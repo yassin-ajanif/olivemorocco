@@ -18,6 +18,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400;1,9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @* Reads the Arabic-translation preference before the body is parsed and sets it on
+       <html>. It has to be here rather than next to the switch at the top of the page:
+       the Arabic glosses are hidden by CSS, so setting the attribute only once they were
+       already parsed would show a French-only frame first on every navigation for anyone
+       who turned translations on. Kept inline and tiny for that reason — a network round
+       trip would be too late. *@
+    <script>
+        document.documentElement.dataset.tr =
+            (function () {
+                try {
+                    return localStorage.getItem('om.translations') === 'on' ? 'on' : 'off';
+                } catch {
+                    return 'off';
+                }
+            })();
+    </script>
 </head>
 <body>
 
@@ -35,7 +51,14 @@
         </button>
         <div class="dash-topbar-brand">ZAHO <span>Gestion</span></div>
     </div>
-    <a class="dash-topbar-link" asp-controller="Home" asp-action="Index">← Accueil</a>
+    <div class="dash-topbar-end">
+        @* Shell-level, so one switch governs every gloss in the dashboard: the sidebar
+           below, page headings, table headers. Grouped with "← Accueil" on the right so the
+           brand keeps the left edge — the topbar is justify-content:space-between, and a
+           third child would otherwise drift into the middle of the bar. *@
+        <partial name="_TrToggle" />
+        <a class="dash-topbar-link" asp-controller="Home" asp-action="Index">← Accueil</a>
+    </div>
 </header>
 
 <button type="button" class="dash-nav-backdrop" id="dashNavBackdrop" hidden aria-label="Fermer le menu"></button>
@@ -47,47 +70,47 @@
 
             <nav class="dash-nav" id="dashNav">
                 <div class="@SectionClass("stockage")" data-section="stockage">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("stockage")">Stockage</button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("stockage")"><partial name="_TrLabel" model="@("Stockage")" /></button>
                     <div class="dash-section-items">
-                        <a href="/@AppSections.Stockage/Produits" class="@NavClass("produits")">Produits</a>
-                        <a href="/@AppSections.Stockage/Varietes" class="@NavClass("varietes")">Variétés</a>
-                        <a href="/@AppSections.Stockage/Intrants" class="@NavClass("intrants")">Intrants</a>
-                        <a href="/@AppSections.Stockage/Secteurs" class="@NavClass("secteurs")">Secteurs</a>
-                        <a href="/@AppSections.Stockage/Stock" class="@NavClass("stock")">État du stock</a>                    </div>
+                        <a href="/@AppSections.Stockage/Produits" class="@NavClass("produits")"><partial name="_TrLabel" model="@("Produits")" /></a>
+                        <a href="/@AppSections.Stockage/Varietes" class="@NavClass("varietes")"><partial name="_TrLabel" model="@("Variétés")" /></a>
+                        <a href="/@AppSections.Stockage/Intrants" class="@NavClass("intrants")"><partial name="_TrLabel" model="@("Intrants")" /></a>
+                        <a href="/@AppSections.Stockage/Secteurs" class="@NavClass("secteurs")"><partial name="_TrLabel" model="@("Secteurs")" /></a>
+                        <a href="/@AppSections.Stockage/Stock" class="@NavClass("stock")"><partial name="_TrLabel" model="@("État du stock")" /></a>                    </div>
                 </div>
 
                 <div class="@SectionClass("vente")" data-section="vente">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("vente")">Vente</button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("vente")"><partial name="_TrLabel" model="@("Vente")" /></button>
                     <div class="dash-section-items">
-                        <a href="/@AppSections.Vente/Clients" class="@NavClass("clients")">Clients</a>
-                        <a href="/@AppSections.Vente/Devis" class="@NavClass("devis")">Devis</a>
-                        <a href="/@AppSections.Vente/BonsCommande" class="@NavClass("bons-commande")">Bons de commande</a>
-                        <a href="/@AppSections.Vente/BonsLivraison" class="@NavClass("bons-livraison")">Bons de livraison</a>
-                        <a href="/@AppSections.Vente/Facturation" class="@NavClass("facturation")">Facturation</a>
-                        <a href="/@AppSections.Vente/Avoirs" class="@NavClass("avoirs")">Avoirs</a>
+                        <a href="/@AppSections.Vente/Clients" class="@NavClass("clients")"><partial name="_TrLabel" model="@("Clients")" /></a>
+                        <a href="/@AppSections.Vente/Devis" class="@NavClass("devis")"><partial name="_TrLabel" model="@("Devis")" /></a>
+                        <a href="/@AppSections.Vente/BonsCommande" class="@NavClass("bons-commande")"><partial name="_TrLabel" model="@("Bons de commande")" /></a>
+                        <a href="/@AppSections.Vente/BonsLivraison" class="@NavClass("bons-livraison")"><partial name="_TrLabel" model="@("Bons de livraison")" /></a>
+                        <a href="/@AppSections.Vente/Facturation" class="@NavClass("facturation")"><partial name="_TrLabel" model="@("Facturation")" /></a>
+                        <a href="/@AppSections.Vente/Avoirs" class="@NavClass("avoirs")"><partial name="_TrLabel" model="@("Avoirs")" /></a>
                     </div>
                 </div>
 
                 <div class="@SectionClass("achat")" data-section="achat">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("achat")">Achat</button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("achat")"><partial name="_TrLabel" model="@("Achat")" /></button>
                     <div class="dash-section-items">
-                        <a href="/@AppSections.Achat/Fournisseurs" class="@NavClass("fournisseurs")">Fournisseurs</a>
-                        <a href="/@AppSections.Achat/BonsCommande" class="@NavClass("bons-commande-achat")">Bons de commande</a>
-                        <a href="/@AppSections.Achat/BonsReception" class="@NavClass("bons-reception")">Bons de réception</a>
-                        <a href="/@AppSections.Achat/FacturesFournisseurs" class="@NavClass("factures-fournisseurs")">Factures fournisseur</a>
-                        <a href="/@AppSections.Achat/AvoirFournisseur" class="@NavClass("avoir-fournisseur")">Avoir fournisseur</a>
-                        <a href="/@AppSections.Achat/Charges" class="@NavClass("charges")">Charges</a>
+                        <a href="/@AppSections.Achat/Fournisseurs" class="@NavClass("fournisseurs")"><partial name="_TrLabel" model="@("Fournisseurs")" /></a>
+                        <a href="/@AppSections.Achat/BonsCommande" class="@NavClass("bons-commande-achat")"><partial name="_TrLabel" model="@("Bons de commande")" /></a>
+                        <a href="/@AppSections.Achat/BonsReception" class="@NavClass("bons-reception")"><partial name="_TrLabel" model="@("Bons de réception")" /></a>
+                        <a href="/@AppSections.Achat/FacturesFournisseurs" class="@NavClass("factures-fournisseurs")"><partial name="_TrLabel" model="@("Factures fournisseur")" /></a>
+                        <a href="/@AppSections.Achat/AvoirFournisseur" class="@NavClass("avoir-fournisseur")"><partial name="_TrLabel" model="@("Avoir fournisseur")" /></a>
+                        <a href="/@AppSections.Achat/Charges" class="@NavClass("charges")"><partial name="_TrLabel" model="@("Charges")" /></a>
                     </div>
                 </div>
 
                 <div class="dash-section-spacer"></div>
 
                 <div class="@SectionClass("operationnel")" data-section="operationnel">
-                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("operationnel")">Opérationnel</button>
+                    <button type="button" class="dash-section-toggle" aria-expanded="@SectionExpanded("operationnel")"><partial name="_TrLabel" model="@("Opérationnel")" /></button>
                     <div class="dash-section-items">
-                        <a href="/@AppSections.Operationnel/Interventions" class="@NavClass("interventions")">Interventions</a>
-                        <a href="/@AppSections.Operationnel/Pressages" class="@NavClass("pressages")">Pressages</a>
-                        <a href="/@AppSections.Operationnel/Remplissages" class="@NavClass("remplissages")">Remplissages</a>
+                        <a href="/@AppSections.Operationnel/Interventions" class="@NavClass("interventions")"><partial name="_TrLabel" model="@("Interventions")" /></a>
+                        <a href="/@AppSections.Operationnel/Pressages" class="@NavClass("pressages")"><partial name="_TrLabel" model="@("Pressages")" /></a>
+                        <a href="/@AppSections.Operationnel/Remplissages" class="@NavClass("remplissages")"><partial name="_TrLabel" model="@("Remplissages")" /></a>
                     </div>
                 </div>
             </nav>
@@ -100,6 +123,7 @@
 <script src="~/js/dashboard-nav.js" asp-append-version="true"></script>
 <script src="~/js/form-validation.js" asp-append-version="true"></script>
 <script src="~/js/doc-suggest.js" asp-append-version="true"></script>
+<script src="~/js/translations.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

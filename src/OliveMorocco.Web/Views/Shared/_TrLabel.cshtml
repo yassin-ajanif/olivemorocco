@@ -1,0 +1,32 @@
+@model string
+@* A label and its Arabic gloss, looked up from Translations by the French text:
+   <partial name="_TrLabel" model="@("Stockage")" />
+
+   The French string is the lookup key, so the same label anywhere in the app resolves
+   identically — the sidebar, a page heading and a document title can never drift apart, and
+   a translator edits one dictionary instead of hunting through Razor.
+
+   The model is the plain French string rather than a view model on purpose: the Arabic has
+   to come from the dictionary, not from the call site, and a factory taking two arguments
+   cannot be written in a tag helper attribute anyway (Razor drops the attribute straight
+   into generated C#, so Of("a","b") fails on the inner quotes and 'a' parses as a char
+   literal). The @("…") wrapper is how a string literal reaches a tag helper attribute.
+
+   A label with no translation yet renders without a gloss — Translations.For returns null —
+   so a page can adopt the partial before its words are written.
+
+   The Arabic is always in the markup; [data-tr] on <html> decides whether it is shown, so
+   switching costs nothing at runtime and find-in-page still finds it.
+
+   lang/dir matter: without them a screen reader reads Arabic with a French voice and the
+   browser is free to reorder it against the Latin label beside it. *@
+@{
+    var gloss = Translations.For(Model);
+}
+<span class="tr-label">
+    <span class="tr-label-fr">@Model</span>
+    @if (gloss is not null)
+    {
+        <span class="tr-label-ar" lang="ar" dir="rtl">@gloss</span>
+    }
+</span>

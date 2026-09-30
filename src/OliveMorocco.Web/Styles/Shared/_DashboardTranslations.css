@@ -1,0 +1,161 @@
+/* Views/Shared/_TrLabel.cshtml + _TrToggle.cshtml — Arabic gloss beside a dashboard label.
+   One switch on <html> ([data-tr]) governs every _TrLabel on the page, set by the inline
+   script in _DashboardLayout's head before anything renders, so the state never flashes. */
+
+/* The label and its gloss sit on one baseline row whatever size the label is, which is
+   what lets this drop into an <h1> (clamp() sized) and into a table header (13px) without
+   the gloss needing to know which. */
+.tr-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-md);
+}
+
+.tr-label-ar {
+  display: none;
+
+  /* In em, not a rem token: the gloss should be a fixed fraction of whatever it sits
+     beside, so it tracks the clamp() on an h1 and a 13px table header alike instead of
+     needing a size per call site. */
+  font-size: 0.85em;
+  font-weight: 500;
+
+  /* Not the 1.15 an h1 uses for Latin: Arabic script runs taller — ascenders,
+     descenders and dots below the line — and at 1.15 it collides with the label it sits
+     beside. Overridden on this element only, so the h1 keeps its own leading. */
+  line-height: 1.5;
+  color: var(--gold);
+
+  /* Neither loaded font has Arabic glyphs — Fraunces and Work Sans are Latin only — so
+     name a stack that does instead of leaving it to chance. */
+  font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+
+  /* Mandatory, not cosmetic. The dashboard sets letter-spacing:1–3px all over the shell
+     (uppercase section headers, the topbar link). Arabic is a cursive script: its letters
+     join along a baseline, and any tracking inserts visible gaps inside words — it reads as
+     broken rather than spaced. Arabic has no letter case either, so text-transform is a
+     no-op, but reset for the same reason. */
+  letter-spacing: normal;
+  text-transform: none;
+
+  /* Keeps this RTL run from reordering the Latin label next to it. */
+  unicode-bidi: isolate;
+}
+
+[data-tr="on"] .tr-label-ar {
+  display: inline;
+}
+
+/* ---------- the switch ---------- */
+
+/* In the topbar, so it matches the sibling control that is already there rather than
+   dropping a cream block onto the pine bar. Same gold-45% border and hover as
+   .dash-topbar-link, which is the shell's existing button convention. */
+.dash-topbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.tr-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  padding: var(--space-1_5) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: "Work Sans", sans-serif;
+  font-size: var(--text-sm);
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.tr-toggle:hover {
+  border-color: var(--gold-soft);
+  color: var(--btn-color);
+}
+
+.tr-toggle[aria-pressed="true"] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--btn-color);
+}
+
+.tr-toggle .icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* ---------- inside the topbar ---------- */
+
+.dash-topbar .tr-toggle {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  color: var(--gold-soft);
+  padding: 0.4375rem var(--space-lg);
+}
+
+.dash-topbar .tr-toggle:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--pine);
+}
+
+.dash-topbar .tr-toggle[aria-pressed="true"] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--pine);
+}
+
+/* ---------- sidebar fit ---------- */
+
+/* A glossed nav item is two lines tall, so the fixed control height no longer describes
+   it — the box has to be allowed to grow with its content. Padding is kept because that
+   is what provides the gap between stacked items. */
+.dash-item:has(.tr-label) {
+  min-height: 0;
+}
+
+.dash-item .tr-label {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+/* The section headers are the tightest case in the shell: uppercase, 3px tracked, and
+   they already carry the vertical rhythm of the nav. Their gloss needs to be small and
+   tightly led or the four section headings take over the sidebar. */
+.dash-section-toggle .tr-label {
+  gap: 2px;
+}
+
+.dash-section-toggle .tr-label-ar {
+  font-size: 0.7em;
+  line-height: 1.35;
+}
+
+/* Both captions ship in the markup and CSS picks one, so the only work the script does is
+   flip the attribute. */
+.tr-toggle-txt [data-tr-caption="on"] {
+  display: none;
+}
+
+[data-tr="on"] .tr-toggle-txt [data-tr-caption="off"] {
+  display: none;
+}
+
+[data-tr="on"] .tr-toggle-txt [data-tr-caption="on"] {
+  display: inline;
+}
+
+/* At the width the sidebar collapses, the topbar has the brand, the switch and "← Accueil"
+   competing for one row. The caption goes first: the globe and the gold fill still say
+   whether translations are on, and title/aria-label carry the name. */
+@media (max-width: 900px) {
+  .tr-toggle-txt {
+    display: none;
+  }
+}
