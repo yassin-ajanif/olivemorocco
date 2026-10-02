@@ -110,8 +110,15 @@
   max-width:100%;
 }
 
-.stock-ajustement-form .form-validation-summary:empty{
+/* Same reason as the shared rule in _DashboardForms.css: the tag helper emits a <ul>
+   even when clean, so :empty never matches. Keyed off the client-side valid/error
+   classes instead. */
+.stock-ajustement-form .form-validation-summary:empty,
+.stock-ajustement-form .form-validation-summary.validation-summary-valid{
   display:none;
+}
+.stock-ajustement-form .form-validation-summary.validation-summary-errors{
+  display:block;
 }
 
 .stock-ajustement-row{

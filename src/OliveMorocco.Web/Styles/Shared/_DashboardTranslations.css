@@ -182,3 +182,27 @@
   letter-spacing: normal;
   font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
 }
+
+/* Same arrangement for the two phone-sized card layouts that print their field names
+   from a <td data-label> rather than from a list-row <span>: the document line items
+   (Documents.css) and the payments table (Devis.css). Both already carry data-label-ar,
+   and both label their cells through ::before, so without this they would keep printing
+   the French name with the switch on.
+
+   The .col-center guard is the encaissé checkbox cell: it prints no ::before of its own
+   (the rule in Devis.css that would label it is scoped off [data-label=""]), so there is
+   nothing here to override either. */
+[data-tr="on"] .doc-lines-table td[data-label][data-label-ar]:not(.col-ref)::before,
+[data-tr="on"] .doc-payments-table td[data-label][data-label-ar]:not([data-label=""])::before {
+  content: attr(data-label-ar);
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+
+/* The reference cell is set apart from the others: it is a flex row on the collapsed card,
+   its label is supplied by a rule of its own that runs later in the cascade, and it is the
+   one label kept in Latin because "REF" is the abbreviation printed on the paperwork. */
+[data-tr="on"] .doc-lines-table td.col-ref::before {
+  font-family: "Work Sans", sans-serif;
+}

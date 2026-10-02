@@ -7,7 +7,9 @@
 }
 .dash-topbar-start{display:flex;align-items:center;gap:var(--space-sm);min-width:0;}
 .dash-topbar-brand{font-family:'Fraunces',serif;font-size:var(--text-lg);letter-spacing:3px;}
-.dash-topbar-brand span{font-family:'Work Sans',sans-serif;font-size:var(--text-sm);letter-spacing:1.5px;opacity:.7;margin-left:var(--space-3_5);font-weight:400;}
+/* "OliveMorocco" is a much longer mark than the old "ZAHO", so the brand is allowed
+   to shrink and truncate on narrow screens rather than push the topbar controls off
+   the bar. The narrow-screen rule lives with the rest of the shell media query. */
 .dash-topbar-link{font-size:var(--text-sm);letter-spacing:1px;color:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding:0.4375rem var(--space-lg);border-radius:0;transition:.25s;flex-shrink:0;}
 .dash-topbar-link:hover{background:var(--gold);color:var(--pine);}
 .dash-nav-toggle{
@@ -85,6 +87,7 @@ a.dash-item{text-decoration:none;}
 
 @media (max-width:900px){
   .dash-nav-toggle{display:inline-flex;}
+  .dash-topbar-brand{font-size:var(--text-base);letter-spacing:1.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .dash-layout{grid-template-columns:1fr;padding-top:var(--topbar-h);}
   .dash-sidebar{
     position:fixed;top:var(--topbar-h);left:0;bottom:0;z-index:100;

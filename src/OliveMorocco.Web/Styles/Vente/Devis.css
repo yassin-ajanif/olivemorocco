@@ -193,7 +193,10 @@
     grid-column:1 / -1;order:-1;flex-direction:row;align-items:center;gap:var(--space-sm);
     margin-bottom:var(--space-xs);
   }
-  .doc-lines-table tbody tr.devis-line td.col-ref::before{content:"Réf.";}
+  /* Reads the label off the cell rather than hard-coding the French here, so the
+     mangled copy that used to live in this file cannot reappear and the Arabic
+     gloss switch has something to swap in. */
+  .doc-lines-table tbody tr.devis-line td.col-ref::before{content:attr(data-label);text-transform:uppercase;}
   .doc-lines-table tbody tr.devis-line td.col-ref .line-ref{
     width:auto;flex:1;min-height:var(--control-h);padding:var(--space-sm) var(--space-md);
     font-size:var(--text-sm);font-weight:600;color:var(--pine);background:var(--slot-bg);
@@ -229,4 +232,45 @@
   .doc-footer{flex-direction:column;}
   .doc-totals{width:100%;min-width:0;}
   .doc-meta{grid-template-columns:1fr;}
+
+  /* Payments table → one card per payment, matching how .doc-lines-table collapses above.
+     Six columns of inputs do not fit a phone: the date, amount, mode, reference and
+     encaissé controls each keep their full intrinsic width and the row scrolls sideways
+     to reach the delete button. Collapsed to blocks, each field prints its own name from
+     data-label — the same content:attr() trick the line cards use. */
+  .doc-payments-wrap{border:none;background:transparent;}
+  .doc-payments-table{width:100%;display:block;}
+  .doc-payments-table thead{display:none;}
+  .doc-payments-table tbody{
+    display:flex;flex-direction:column;gap:var(--space-md);
+  }
+  .doc-payments-table tbody tr.paiement-line{
+    display:flex;flex-direction:column;gap:var(--space-sm);align-items:stretch;
+    border:1px solid var(--line);background:var(--surface);padding:var(--space-lg);
+  }
+  .doc-payments-table tbody tr.paiement-line td{
+    display:flex;flex-direction:column;gap:var(--space-1_5);align-items:stretch;
+    width:auto;min-width:0;max-width:none;border:none;padding:0;
+  }
+  .doc-payments-table tbody tr.paiement-line td[data-label]:not([data-label=""])::before{
+    content:attr(data-label);font-size:var(--text-xs);font-weight:600;letter-spacing:.4px;
+    text-transform:uppercase;color:var(--muted);line-height:1.2;
+  }
+  /* The encaissé checkbox is a tick box, not a text field: it reads as an empty gap with a
+     label floating above it unless the label sits beside it. */
+  .doc-payments-table tbody tr.paiement-line td.col-center{
+    flex-direction:row;align-items:center;gap:var(--space-sm);
+  }
+  .doc-payments-table tbody tr.paiement-line td.col-center input[type="checkbox"]{
+    width:1.125rem;height:1.125rem;flex-shrink:0;accent-color:var(--gold);
+  }
+  .doc-payments-table tbody tr.paiement-line td.col-actions{
+    flex-direction:row;justify-content:flex-end;align-items:center;
+    border-top:1px solid var(--line);padding-top:var(--space-sm);margin-top:var(--space-xs);
+  }
+  .doc-payments-table tfoot{display:block;}
+  .doc-payments-table tfoot tr{display:block;}
+  .doc-payments-table tfoot td{
+    display:block;padding:var(--space-md) !important;text-align:right;border-radius:0;
+  }
 }

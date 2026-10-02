@@ -39,7 +39,15 @@
   padding:var(--space-md);border:1px solid var(--danger);background:var(--danger-bg);
   color:var(--danger-hover);font-size:var(--text-base);
 }
-.form-validation-summary:empty{display:none;}
+/* The summary box must only appear when there is actually something to report.
+   `:empty` alone is not enough: the unobtrusive-validation tag helper always emits
+   a <ul> (and, once validation has run, an empty hidden <li>), so the div is never
+   truly empty. Client-side state is the authoritative signal — the tag helper adds
+   validation-summary-valid while the form is clean and validation-summary-errors once
+   something fails, so both are keyed off that rather than off box-model emptiness. */
+.form-validation-summary:empty,
+.form-validation-summary.validation-summary-valid{display:none;}
+.form-validation-summary.validation-summary-errors{display:block;}
 .form-validation-summary ul{margin:0;padding-left:var(--space-lg);}
 .form-validation-summary li{margin:0;}
 .form-validation-summary li + li{margin-top:var(--space-xs);}

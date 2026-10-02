@@ -30,6 +30,15 @@
             puTtcCell.textContent = formatMoney(unitAfter);
         if (ttcCell)
             ttcCell.textContent = formatMoney(lineTtcValue);
+
+        // Mirror onto the collapsed mobile header, which sits next to the designation in
+        // the card header rather than in a cell of its own. Reached from the TTC cell
+        // because the head is a sibling of the row's cells, not a descendant of one.
+        // Cleared when there is no cell to read from, so a document that does not render
+        // a per-line TTC cannot leave a stale figure sitting in the header.
+        const head = ttcCell?.closest("tr")?.querySelector(".devis-line-head-ttc");
+        if (head)
+            head.textContent = formatMoney(lineTtcValue);
     };
 
     window.Zaho = window.Zaho || {};
