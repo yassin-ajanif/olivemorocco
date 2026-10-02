@@ -97,6 +97,7 @@
                             <td class="col-num line-contenance" data-label="Contenance" data-label-ar="@(Translations.For("Contenance"))">—</td>
                             <td class="col-num line-litres" data-label="Litres" data-label-ar="@(Translations.For("Litres"))">—</td>
                             <td class="col-actions" data-label="">
+                                <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
                                 <button type="button" class="btn btn-sm remove-remplissage-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
                             </td>
                         </tr>
@@ -177,7 +178,8 @@
         <td class="col-num line-contenance" data-label="Contenance" data-label-ar="@(Translations.For("Contenance"))">—</td>
         <td class="col-num line-litres" data-label="Litres" data-label-ar="@(Translations.For("Litres"))">—</td>
         <td class="col-actions" data-label="">
-            <button type="button" class="btn btn-sm remove-remplissage-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
+            <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
+                                <button type="button" class="btn btn-sm remove-remplissage-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </td>
     </tr>
 </template>

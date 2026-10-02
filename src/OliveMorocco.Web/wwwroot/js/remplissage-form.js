@@ -163,7 +163,31 @@
             updateSummary();
         });
 
+        bindCollapseToggle(row);
         filterProduits(row);
+    }
+
+    // Same folding as the intervention lines: a filled row collapses to its product select
+    // once a new, empty row is opened, so a Remplissage of several products is a list of
+    // summaries rather than a stack of identical forms.
+    function bindCollapseToggle(row) {
+        const toggle = row.querySelector('.row-collapse-toggle');
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener('click', () => {
+            const collapsed = row.classList.toggle('is-collapsed');
+            toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        });
+    }
+
+    function collapseRow(row) {
+        const toggle = row.querySelector('.row-collapse-toggle');
+        row.classList.add('is-collapsed');
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+        }
     }
 
     addBtn?.addEventListener('click', () => {
@@ -172,6 +196,13 @@
         wrapper.innerHTML = template.innerHTML.replace(/__index__/g, String(index)).trim();
         const row = wrapper.firstElementChild;
         lignesBody.appendChild(row);
+
+        // Same behavior as the other two line tables: the recorded rows fold away when a
+        // fresh one is opened, so the next product is always the one at eye level.
+        lignesBody.querySelectorAll('.remplissage-line').forEach((r) => {
+            if (r !== row) collapseRow(r);
+        });
+
         bindRow(row);
         reindex();
         updateSummary();

@@ -349,7 +349,7 @@ public sealed class FacturationController(
                 p.Montant,
                 p.Mode,
                 Normalize(p.Reference) ?? string.Empty,
-                p.EstEncaisse))
+                p.EstEncaisse ?? false))
             .ToList();
 
     private static List<CreateFactureClientLigneDto> ToLineDtos(IEnumerable<FactureLigneViewModel> lignes) =>

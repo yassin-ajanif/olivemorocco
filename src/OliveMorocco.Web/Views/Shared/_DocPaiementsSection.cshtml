@@ -61,12 +61,16 @@
                                    placeholder="N° chèque, virement…" data-tr-ar="@(Translations.For("N° chèque, virement…"))" />
                         </td>
                         <td data-label="Encaissé" data-label-ar="@(Translations.For("Encaissé"))" class="col-center">
-                            <input type="hidden" name="Paiements[@i].EstEncaisse" value="false" />
+                            @* No hidden false companion: two inputs under one name make the
+                               binder read the first, which was always the hidden one, so a
+                               ticked box was thrown away. The model property is bool? and a
+                               bare checkbox already covers both states — ticked posts
+                               "true", unticked posts nothing. *@
                             <input name="Paiements[@i].EstEncaisse"
                                    value="true"
                                    type="checkbox"
                                    class="line-paiement-encaisse"
-                                   @(paiement.EstEncaisse ? "checked" : null) />
+                                   @(paiement.EstEncaisse == true ? "checked" : null) />
                         </td>
                         <td class="col-actions" data-label="">
                             <button type="button" class="btn btn-sm remove-paiement-line" aria-label="Supprimer le paiement" data-tr-ar="@(Translations.For("Supprimer le paiement"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
@@ -127,7 +131,6 @@
                    placeholder="N° chèque, virement…" data-tr-ar="@(Translations.For("N° chèque, virement…"))" />
         </td>
         <td data-label="Encaissé" data-label-ar="@(Translations.For("Encaissé"))" class="col-center">
-            <input type="hidden" name="Paiements[__index__].EstEncaisse" value="false" />
             <input name="Paiements[__index__].EstEncaisse"
                    value="true"
                    type="checkbox"

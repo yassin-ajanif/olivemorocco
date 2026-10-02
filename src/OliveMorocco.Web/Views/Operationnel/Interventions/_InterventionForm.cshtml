@@ -79,6 +79,7 @@
                                 </div>
                             </td>
                             <td class="col-actions" data-label="">
+                                <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
                                 <button type="button" class="btn btn-sm remove-intrant-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
                             </td>
                         </tr>
@@ -174,6 +175,7 @@
                                        class="line-charge-montant" />
                             </td>
                             <td class="col-actions" data-label="">
+                                <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
                                 <button type="button" class="btn btn-sm remove-charge-line" aria-label="Supprimer la charge" data-tr-ar="@(Translations.For("Supprimer la charge"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
                             </td>
                         </tr>
@@ -221,7 +223,8 @@
             </div>
         </td>
         <td class="col-actions" data-label="">
-            <button type="button" class="btn btn-sm remove-intrant-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
+            <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
+                                <button type="button" class="btn btn-sm remove-intrant-line" aria-label="Supprimer la ligne" data-tr-ar="@(Translations.For("Supprimer la ligne"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </td>
     </tr>
 </template>
@@ -256,7 +259,8 @@
                    class="line-charge-montant" />
         </td>
         <td class="col-actions" data-label="">
-            <button type="button" class="btn btn-sm remove-charge-line" aria-label="Supprimer la charge" data-tr-ar="@(Translations.For("Supprimer la charge"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
+            <button type="button" class="row-collapse-toggle" aria-expanded="true" aria-label="Réduire la ligne" data-tr-ar="@(Translations.For("Réduire la ligne"))"><span class="devis-line-toggle-icon" aria-hidden="true"></span></button>
+                                <button type="button" class="btn btn-sm remove-charge-line" aria-label="Supprimer la charge" data-tr-ar="@(Translations.For("Supprimer la charge"))"><partial name="_TrLabel" model="@("Supprimer")" /></button>
         </td>
     </tr>
 </template>

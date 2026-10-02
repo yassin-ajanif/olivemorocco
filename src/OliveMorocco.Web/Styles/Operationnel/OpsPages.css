@@ -117,7 +117,13 @@
 /* Interventions — water calculator */
 .ops-water-calc label:first-child{font-weight:600;margin-bottom:var(--space-sm);}
 .ops-water-calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-md);}
-@media (max-width:700px){.ops-water-calc-grid{grid-template-columns:1fr;}}
+/* On a phone the three columns each collapse to their own line, which buries the two
+   fields that are really a pair — the user enters débit and durée together and reads the
+   third off their product. Keep the pair side by side so the tab order and the eye agree. */
+@media (max-width:700px){
+  .ops-water-calc-grid{grid-template-columns:1fr 1fr;}
+  .ops-water-calc-grid .form-field:last-child{grid-column:1 / -1;}
+}
 
 /* Interventions — charge lines footer total */
 .ops-charges-table tfoot td{border-bottom:none;background:var(--slot-bg);}
@@ -170,9 +176,39 @@
 
 /* Pressages — form hint */
 .pressage-form-hint{font-size:var(--text-sm);color:var(--muted);margin:var(--space-xs) 0 0;}
+/* The rendement box is filled in for the user, so it should not look like a field they are
+   being asked to fill in. Kept legible and focusable rather than display:none — it is still
+   the number they want to check against the mill's paperwork. */
+.pressage-form [data-pressage-rendement]{
+  background:var(--slot-bg);color:var(--pine);font-weight:600;cursor:default;
+}
+.pressage-form [data-pressage-rendement]:focus{
+  border-color:var(--gold);outline:none;
+}
 .ops-qty-field .line-quantite{flex:1;min-width:0;max-width:8rem;}
 .line-unite-hint{font-size:var(--text-sm);color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .ops-lines-wrap .list-empty{padding:var(--space-md);margin:0;}
+
+/* Small square chevron used to fold a filled-in line away. The rest of the row hides;
+   the identifying field stays so a glance, not a scroll, tells you what is recorded. */
+.row-collapse-toggle{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:var(--control-h);height:var(--control-h);padding:0;border:1px solid var(--line);
+  background:var(--cream);cursor:pointer;margin-right:var(--space-xs);
+}
+.row-collapse-toggle .devis-line-toggle-icon{
+  display:block;width:0.625rem;height:0.625rem;border-right:2px solid var(--pine);
+  border-bottom:2px solid var(--pine);transform:rotate(45deg);margin-top:-0.1875rem;
+  transition:transform .2s;
+}
+.row-collapse-toggle[aria-expanded="false"] .devis-line-toggle-icon{
+  transform:rotate(-135deg);margin-top:0.1875rem;
+}
+/* Fold a line into its identifying field alone; the delete action stays reachable. */
+.ops-lines-table tbody tr.is-collapsed > td:not(:first-child):not(.col-actions){display:none;}
+@media (max-width:700px){
+  .ops-lines-table tbody tr.is-collapsed > td:first-child::before{display:none;}
+}
 @media (max-width:700px){
   .ops-lines-wrap{overflow-x:clip;}
   .ops-lines-table{display:block;min-width:0;}

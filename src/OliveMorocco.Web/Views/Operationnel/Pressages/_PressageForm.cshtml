@@ -43,6 +43,10 @@
         </div>
     </div>
 
+    @* Olives and oil in, rendement out. The press yields oil, so those are the two figures
+       the mill reports; the ratio is what follows from them. Rendement is therefore readonly
+       and still posted (the model needs it), kept in sync by pressage-form.js and recomputed
+       server-side regardless of what arrives — readonly is a UI guard, not a security one. *@
     <div class="ops-form-row-3">
         <div class="form-field">
             <label for="QuantiteOlives"><partial name="_TrLabel" model="@("Quantité d'olives (kg)")" /></label>
@@ -56,27 +60,30 @@
         </div>
 
         <div class="form-field">
-            <label for="Rendement"><partial name="_TrLabel" model="@("Rendement (%)")" /></label>
-            <input asp-for="Rendement"
-                   type="number"
-                   step="1"
-                   min="0"
-                   max="100"
-                   id="Rendement"
-                   data-pressage-rendement />
-            <span asp-validation-for="Rendement" class="field-validation-error"></span>
-        </div>
-
-        <div class="form-field">
-            <label for="QuantiteHuile"><partial name="_TrLabel" model="@("Quantité d'huile (L)")" /></label>
+            <label for="QuantiteHuile"><partial name="_TrLabel" model="@("Quantité d'huile obtenue (L)")" /></label>
             <input asp-for="QuantiteHuile"
                    type="number"
-                   step="1"
+                   step="0.01"
                    min="0"
                    id="QuantiteHuile"
                    data-pressage-huile />
-            <p class="pressage-form-hint"><partial name="_TrLabel" model="@("Laisser vide pour calculer automatiquement (olives × rendement).")" /></p>
+            <p class="pressage-form-hint"><partial name="_TrLabel" model="@("Quantité d'huile obtenue après pressage. Le rendement se calcule tout seul.")" /></p>
             <span asp-validation-for="QuantiteHuile" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-field">
+            <label for="Rendement"><partial name="_TrLabel" model="@("Rendement (%)")" /></label>
+            <input asp-for="Rendement"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   max="100"
+                   id="Rendement"
+                   data-pressage-rendement
+                   readonly
+                   aria-describedby="pressage-rendement-hint" />
+            <p class="pressage-form-hint" id="pressage-rendement-hint"><partial name="_TrLabel" model="@("Calculé automatiquement : huile obtenue ÷ olives.")" /></p>
+            <span asp-validation-for="Rendement" class="field-validation-error"></span>
         </div>
     </div>
 

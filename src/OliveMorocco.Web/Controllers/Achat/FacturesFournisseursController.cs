@@ -341,7 +341,7 @@ public sealed class FacturesFournisseursController(
                 p.Montant,
                 p.Mode,
                 Normalize(p.Reference) ?? string.Empty,
-                p.EstEncaisse))
+                p.EstEncaisse ?? false))
             .ToList();
 
     private static List<CreateFactureFournisseurLigneDto> ToLineDtos(IEnumerable<FactureFournisseurLigneViewModel> lignes) =>

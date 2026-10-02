@@ -111,7 +111,8 @@ public sealed class PressageService : IPressageService
 
         var entity = _mapper.Map<Pressage>(dto);
         entity.Numero = await GenerateNumeroAsync(cancellationToken);
-        entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
+        entity.QuantiteHuile = dto.QuantiteHuile;
+        entity.Rendement = ResolveRendement(dto.QuantiteOlives, dto.QuantiteHuile) ?? 0m;
 
         var charge = new Charge
         {
@@ -153,7 +154,8 @@ public sealed class PressageService : IPressageService
         var ancienneHuile = entity.QuantiteHuile ?? 0m;
 
         _mapper.Map(dto, entity);
-        entity.QuantiteHuile = ResolveQuantiteHuile(dto.QuantiteOlives, dto.Rendement, dto.QuantiteHuile);
+        entity.QuantiteHuile = dto.QuantiteHuile;
+        entity.Rendement = ResolveRendement(dto.QuantiteOlives, dto.QuantiteHuile) ?? 0m;
         var nouvelleHuile = entity.QuantiteHuile ?? 0m;
 
         await _pressages.ExecuteInTransactionAsync(async ct =>
@@ -260,6 +262,27 @@ public sealed class PressageService : IPressageService
             .Max() + 1;
 
         return $"{prefix}{next:D4}";
+    }
+
+    /// <summary>
+    /// Oil out of olives in: rendement = huile / olives * 100. The press yields oil, so the
+    /// measured quantities are the input and the ratio is what you compute from them.
+    ///
+    /// Aiming the other way — olives and rendement in, oil out — inverts the relationship
+    /// to something the mill already knows, and leaves the yield open to a figure that
+    /// never happened.
+    ///
+    /// QuantiteHuile is still nullable in the DTO for records entered before this, and a
+    /// null there means the yield is genuinely unknown rather than zero, so it is left null
+    /// rather than silently becoming 0. Only a real division is rounded; a zero olive intake
+    /// has no ratio to report and stays null instead of dividing by zero.
+    /// </summary>
+    private static decimal? ResolveRendement(decimal quantiteOlives, decimal? quantiteHuile)
+    {
+        if (quantiteHuile is null || quantiteOlives <= 0m)
+            return null;
+
+        return Math.Round(quantiteHuile.Value / quantiteOlives * 100m, 4);
     }
 
     private static decimal? ResolveQuantiteHuile(

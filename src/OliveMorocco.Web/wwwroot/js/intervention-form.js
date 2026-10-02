@@ -130,6 +130,7 @@
             });
         }
 
+        bindCollapseToggle(row);
         syncLineUnite(row);
     }
 
@@ -147,6 +148,30 @@
         if (montantInput) {
             montantInput.addEventListener('input', updateChargesTotal);
         }
+
+        bindCollapseToggle(row);
+    }
+
+    // Shared by both tables: the chevron folds a row down to its identifying field, so
+    // three recorded lines read as three one-line summaries instead of three full forms.
+    function bindCollapseToggle(row) {
+        const toggle = row.querySelector('.row-collapse-toggle');
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener('click', () => {
+            const collapsed = row.classList.toggle('is-collapsed');
+            toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        });
+    }
+
+    function collapseRow(row) {
+        const toggle = row.querySelector('.row-collapse-toggle');
+        row.classList.add('is-collapsed');
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+        }
     }
 
     if (addIntrantBtn && lignesBody && ligneTemplate) {
@@ -157,6 +182,13 @@
             wrapper.innerHTML = html.trim();
             const row = wrapper.firstElementChild;
             lignesBody.appendChild(row);
+
+            // Whatever was already recorded folds away so the fresh, (still empty) row is
+            // the one at eye level — the form grows sideways before it grows down.
+            lignesBody.querySelectorAll('.intervention-line').forEach((r) => {
+                if (r !== row) collapseRow(r);
+            });
+
             bindIntrantRow(row);
             reindexLignes();
         });
@@ -173,6 +205,11 @@
             wrapper.innerHTML = html.trim();
             const row = wrapper.firstElementChild;
             chargesBody.appendChild(row);
+
+            chargesBody.querySelectorAll('.intervention-charge-line').forEach((r) => {
+                if (r !== row) collapseRow(r);
+            });
+
             bindChargeRow(row);
             reindexCharges();
         });

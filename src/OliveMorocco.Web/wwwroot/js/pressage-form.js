@@ -9,20 +9,25 @@
     const huileInput = form.querySelector('[data-pressage-huile]');
     const facturesUrl = form.dataset.facturesUrl;
 
-    let huileManual = huileInput && huileInput.value !== '';
-
-    function calcHuile() {
-        if (!olivesInput || !rendementInput || !huileInput || huileManual) return;
+    // rendement = huile obtenue / olives * 100. The press yields oil, so those two figures
+    // are the measured inputs and the ratio is what you read off them.
+    //
+    // The service recomputes this on save whatever arrives here, so this box is a preview,
+    // not the source of truth — but keeping it live means the user sees the yield they are
+    // about to record instead of having to trust it.
+    function calcRendement() {
+        if (!olivesInput || !rendementInput || !huileInput) return;
 
         const olives = parseFloat(olivesInput.value);
-        const rendement = parseFloat(rendementInput.value);
-        if (!Number.isFinite(olives) || !Number.isFinite(rendement) || olives <= 0 || rendement <= 0) {
-            huileInput.value = '';
+        const huile = parseFloat(huileInput.value);
+
+        if (!Number.isFinite(olives) || !Number.isFinite(huile) || olives <= 0 || huile <= 0) {
+            rendementInput.value = '';
             return;
         }
 
-        const huile = Math.round(olives * rendement / 100 * 100) / 100;
-        huileInput.value = Number.isFinite(huile) ? String(huile) : '';
+        const rendement = Math.round(huile / olives * 100 * 100) / 100;
+        rendementInput.value = Number.isFinite(rendement) ? String(rendement) : '';
     }
 
     function resetFactures() {
@@ -57,13 +62,10 @@
     }
 
     if (huileInput) {
-        huileInput.addEventListener('input', () => {
-            huileManual = huileInput.value.trim() !== '';
-        });
+        huileInput.addEventListener('input', calcRendement);
     }
 
-    if (olivesInput) olivesInput.addEventListener('input', calcHuile);
-    if (rendementInput) rendementInput.addEventListener('input', calcHuile);
+    if (olivesInput) olivesInput.addEventListener('input', calcRendement);
 
     if (fournisseurSelect) {
         fournisseurSelect.addEventListener('change', () => {
@@ -71,5 +73,5 @@
         });
     }
 
-    calcHuile();
+    calcRendement();
 })();
